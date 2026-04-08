@@ -894,7 +894,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         reg = st.session_state.decisao_guardada
 
         st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">6. Decisão final</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">DECISÃO FINAL</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
 
         st.markdown(
@@ -930,7 +930,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     # Quadro de indicadores
     # -------------------------
     st.markdown('<div class="cartao">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">Quadro de indicadores</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Visualização compacta do estado, peso e impacto na decisão de cada indicador.</div>', unsafe_allow_html=True)
 
     pares = [
