@@ -775,7 +775,7 @@ with coluna_direita:
         for fator in fatores_principais:
             st.write(f"• {fator['nome']}")
 
-        st.markdown("#### Avaliação de risco")
+        st.markdown("#### AVALIAÇÃO DE RISCO")
         st.write(f"**Nível de risco:** {risco}")
         st.write(f"**Ação proposta:** {acao}")
 
