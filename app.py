@@ -197,7 +197,7 @@ st.markdown("""
     .resultado-titulo {
         font-size: 1.25rem;
         font-weight: 800;
-        color: #f8fafc;
+        color: #cbd5e1;
         margin-bottom: 4px;
     }
 
