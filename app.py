@@ -388,10 +388,38 @@ st.markdown("""
 
 with st.expander("Enquadramento Operacional"):
     st.write("""
-Sistema de apoio à decisão em ambiente marítimo.
+Este sistema constitui uma **plataforma de apoio à decisão em ambiente marítimo**, desenvolvida para avaliar comportamentos potencialmente anómalos de embarcações com base em dados operacionais.
 
-Analisa dados AIS/VMS e fontes complementares, gera uma recomendação
-e submete a decisão final a validação humana.
+A aplicação simula a análise de informação proveniente de sistemas como:
+- AIS (Automatic Identification System)
+- VMS (Vessel Monitoring System)
+- Radar e outras fontes externas
+
+Com base nos dados introduzidos pelo operador, o sistema:
+
+1. **Gera indicadores internos de risco (I1–I6)**  
+   Avalia dimensões como identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
+
+2. **Calcula uma pontuação agregada**  
+   Cada indicador contribui de forma ponderada para o risco global.
+
+3. **Classifica o nível de risco**  
+   - Baixo  
+   - Médio  
+   - Elevado  
+
+4. **Propõe uma ação operacional**  
+   - Ignorar  
+   - Monitorizar  
+   - Escalar  
+
+5. **Permite validação humana da decisão**  
+   O operador pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
+
+---
+
+⚠️ **Nota:**  
+Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
 """)
 
 # -------------------------
