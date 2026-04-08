@@ -586,12 +586,7 @@ pesos = {"I1": 3, "I2": 2, "I3": 2, "I4": 2, "I5": 1, "I6": 3}
 # -------------------------
 # Cabeçalho
 # -------------------------
-st.markdown("""
-<div class="topo-dashboard">
-    <h1>NAVISGUARD</h1>
-    <p>Sistema de Apoio e Validação da Decisão em Ambiente Marítimo.</p>
-</div>
-""", unsafe_allow_html=True)
+st.image("logo.png", use_container_width=True)
 
 id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "Não iniciado"
 st.markdown(
