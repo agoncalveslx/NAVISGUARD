@@ -136,7 +136,21 @@ st.markdown("""
         border-radius: 12px;
         padding: 10px 12px;
         margin-bottom: 10px;
-        background: #f8fafc;
+    }
+
+    .mini-cartao-baixo {
+        background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+        border: 1px solid #a7f3d0;
+    }
+
+    .mini-cartao-medio {
+        background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+        border: 1px solid #fde68a;
+    }
+
+    .mini-cartao-elevado {
+        background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fecaca;
     }
 
     .mini-cartao-titulo {
@@ -193,6 +207,13 @@ def cor_risco(risco):
     elif risco == "Médio":
         return "#fef3c7", "#92400e", "cartao-amarelo"
     return "#fee2e2", "#991b1b", "cartao-vermelho"
+
+def classe_cartao_indicador(nivel):
+    if nivel == "Baixo":
+        return "mini-cartao-baixo"
+    elif nivel == "Médio":
+        return "mini-cartao-medio"
+    return "mini-cartao-elevado"
 
 def calcular_indicadores(posicao, velocidade, radar, contexto):
     if posicao == "Muito suspeita":
@@ -609,9 +630,10 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         col_a, col_b = st.columns([1, 1], gap="small")
 
         codigo_a, info_a = pares[i]
+        classe_a = classe_cartao_indicador(info_a["Nível"])
         with col_a:
             st.markdown(f"""
-            <div class="mini-cartao-indicador">
+            <div class="mini-cartao-indicador {classe_a}">
                 <div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
                 <div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div>
                 <div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div>
@@ -622,9 +644,10 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
             """, unsafe_allow_html=True)
 
         codigo_b, info_b = pares[i + 1]
+        classe_b = classe_cartao_indicador(info_b["Nível"])
         with col_b:
             st.markdown(f"""
-            <div class="mini-cartao-indicador">
+            <div class="mini-cartao-indicador {classe_b}">
                 <div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
                 <div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div>
                 <div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div>
