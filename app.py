@@ -218,12 +218,12 @@ st.markdown("""
 
     .selo-baixo {
         background: #14532d;
-        color: #dcfce7;
+        color: #1f2937;
     }
 
     .selo-medio {
         background: #78350f;
-        color: #fef3c7;
+        color: #1f2937;
     }
 
     .selo-elevado {
