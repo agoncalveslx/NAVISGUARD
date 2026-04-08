@@ -875,6 +875,57 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     guardar = st.button("Guardar decisão final", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
+    if guardar:
+        decisao_final = acao if decisao_utilizador == "Confirmar ação proposta" else decisao_utilizador
+        id_decisao = gerar_id_decisao()
+        timestamp_decisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+        st.session_state.decisao_guardada = {
+            "id_decisao": id_decisao,
+            "timestamp_decisao": timestamp_decisao,
+            "acao_proposta": acao,
+            "decisao_final": decisao_final,
+            "risco": risco,
+            "pontuacao_total": pontuacao_total,
+            "justificacao": justificacao.strip()
+        }
+
+    if st.session_state.decisao_guardada is not None:
+        reg = st.session_state.decisao_guardada
+
+        st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">6. Decisão final</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
+
+        st.markdown(
+            f"""
+            <div class="bloco-meta">
+                <b>ID da decisão:</b> {reg["id_decisao"]}<br>
+                <b>Registado em:</b> {reg["timestamp_decisao"]}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        r1, r2, r3, r4 = st.columns(4)
+        with r1:
+            st.metric("Ação proposta", reg["acao_proposta"])
+        with r2:
+            st.metric("Decisão final", reg["decisao_final"])
+        with r3:
+            st.metric("Nível de risco", reg["risco"])
+        with r4:
+            st.metric("Pontuação total", reg["pontuacao_total"])
+
+        st.markdown("#### Justificação operacional")
+        if reg["justificacao"]:
+            st.write(reg["justificacao"])
+        else:
+            st.write("Não foi fornecida justificação.")
+
+        st.success("Registo concluído com recomendação automática e validação humana.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
     # -------------------------
     # Quadro de indicadores
     # -------------------------
@@ -955,60 +1006,6 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         - **Pontuação final > 8** → **Risco Elevado** → **Escalar**
         """)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    if guardar:
-        decisao_final = acao if decisao_utilizador == "Confirmar ação proposta" else decisao_utilizador
-        id_decisao = gerar_id_decisao()
-        timestamp_decisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-
-        st.session_state.decisao_guardada = {
-            "id_decisao": id_decisao,
-            "timestamp_decisao": timestamp_decisao,
-            "acao_proposta": acao,
-            "decisao_final": decisao_final,
-            "risco": risco,
-            "pontuacao_total": pontuacao_total,
-            "justificacao": justificacao.strip()
-        }
-
-# -------------------------
-# Decisão final
-# -------------------------
-if st.session_state.decisao_guardada is not None and not resultado_em_reserva:
-    reg = st.session_state.decisao_guardada
-
-    st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">6. Decisão final</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
-
-    st.markdown(
-        f"""
-        <div class="bloco-meta">
-            <b>ID da decisão:</b> {reg["id_decisao"]}<br>
-            <b>Registado em:</b> {reg["timestamp_decisao"]}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    r1, r2, r3, r4 = st.columns(4)
-    with r1:
-        st.metric("Ação proposta", reg["acao_proposta"])
-    with r2:
-        st.metric("Decisão final", reg["decisao_final"])
-    with r3:
-        st.metric("Nível de risco", reg["risco"])
-    with r4:
-        st.metric("Pontuação total", reg["pontuacao_total"])
-
-    st.markdown("#### Justificação operacional")
-    if reg["justificacao"]:
-        st.write(reg["justificacao"])
-    else:
-        st.write("Não foi fornecida justificação.")
-
-    st.success("Registo concluído com recomendação automática e validação humana.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 elif st.session_state.resultado_gerado and resultado_em_reserva:
