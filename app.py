@@ -176,6 +176,124 @@ st.markdown("""
         font-size: 0.92rem;
     }
 
+    .resultado-critico {
+        background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+        color: white;
+        border-radius: 18px;
+        padding: 20px;
+        border: 1px solid #1f2937;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.22);
+        margin-bottom: 20px;
+    }
+
+    .resultado-topo {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .resultado-titulo {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #f8fafc;
+        margin-bottom: 4px;
+    }
+
+    .resultado-subtitulo {
+        font-size: 0.93rem;
+        color: #cbd5e1;
+    }
+
+    .selo-risco {
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 0.82rem;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+        border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .selo-baixo {
+        background: #14532d;
+        color: #dcfce7;
+    }
+
+    .selo-medio {
+        background: #78350f;
+        color: #fef3c7;
+    }
+
+    .selo-elevado {
+        background: #7f1d1d;
+        color: #fee2e2;
+    }
+
+    .resultado-meta {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 10px 12px;
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        margin-bottom: 14px;
+    }
+
+    .grid-metricas {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .metrica-critica {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 12px;
+    }
+
+    .metrica-rotulo {
+        font-size: 0.8rem;
+        color: #93c5fd;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .metrica-valor {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #ffffff;
+    }
+
+    .acao-critica {
+        border-radius: 14px;
+        padding: 16px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        border: 1px solid rgba(255,255,255,0.10);
+        margin-top: 10px;
+    }
+
+    .acao-baixa {
+        background: linear-gradient(90deg, #14532d 0%, #166534 100%);
+        color: #dcfce7;
+    }
+
+    .acao-media {
+        background: linear-gradient(90deg, #78350f 0%, #92400e 100%);
+        color: #fef3c7;
+    }
+
+    .acao-elevada {
+        background: linear-gradient(90deg, #7f1d1d 0%, #991b1b 100%);
+        color: #fee2e2;
+    }
+
     /* Botões */
     div.stButton > button {
         background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
@@ -278,6 +396,20 @@ def classe_risco_input(valor):
     elif valor in ["Muito suspeita", "Muito suspeito", "Discordante"]:
         return "risco-elevado"
     return "risco-neutro"
+
+def classe_selo_risco(risco):
+    if risco == "Baixo":
+        return "selo-baixo"
+    elif risco == "Médio":
+        return "selo-medio"
+    return "selo-elevado"
+
+def classe_acao_resultado(risco):
+    if risco == "Baixo":
+        return "acao-baixa"
+    elif risco == "Médio":
+        return "acao-media"
+    return "acao-elevada"
 
 def calcular_indicadores(posicao, velocidade, radar, contexto):
     if posicao == "Muito suspeita":
@@ -482,11 +614,14 @@ with mini3:
 st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------------
-# Entradas e deteção de alterações
+# Layout principal
 # -------------------------
-coluna1, coluna2 = st.columns([1, 1], gap="large")
+coluna_esquerda, coluna_direita = st.columns([1, 1], gap="large")
 
-with coluna1:
+# -------------------------
+# Coluna esquerda: dados de entrada
+# -------------------------
+with coluna_esquerda:
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao">Dados de entrada</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
@@ -499,6 +634,7 @@ with coluna1:
 
     st.markdown("### Dados AIS/VMS")
     col_a, col_b = st.columns(2)
+
     with col_a:
         st.markdown('<div class="etiqueta">Posição/Trajetória</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(posicao) if "posicao" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
@@ -521,6 +657,7 @@ with coluna1:
 
     st.markdown("### Outras fontes")
     col_e, col_f = st.columns(2)
+
     with col_e:
         st.markdown('<div class="etiqueta">Concordância com radar/outras fontes</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(radar) if "radar" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
@@ -544,6 +681,9 @@ with coluna1:
     gerar = st.button("Gerar recomendação", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
+# -------------------------
+# Deteção de alterações
+# -------------------------
 estado_atual = {
     "posicao": posicao,
     "velocidade": velocidade,
@@ -603,77 +743,27 @@ if gerar:
     resultado_em_reserva = False
 
 # -------------------------
-# Resultado do sistema
+# Coluna direita: avaliação tática + resultado automático
 # -------------------------
-with coluna2:
+with coluna_direita:
     if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
         dados = st.session_state.dados_resultado
+        contributos = dados["contributos"]
         pontuacao_total = dados["pontuacao_total"]
         risco = dados["risco"]
         acao = dados["acao"]
-        fundo, texto, classe_cartao = cor_risco(risco)
 
-        st.markdown(f'<div class="cartao {classe_cartao}">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">Resultado automático</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">Resultado gerado automaticamente pelo sistema com base nas entradas submetidas.</div>', unsafe_allow_html=True)
+        ordenados = sorted(contributos.items(), key=lambda x: x[1]["Contributo"], reverse=True)
+        fatores_principais = [
+            {
+                "codigo": item[0],
+                "nome": item[1]["Nome"],
+                "nivel": item[1]["Nível"],
+                "contributo": item[1]["Contributo"]
+            }
+            for item in ordenados[:3]
+        ]
 
-        st.markdown(
-            f'<div class="bloco-meta"><b>ID do caso:</b> {dados["id_caso"]}<br><b>Processado em:</b> {dados["timestamp"]}</div>',
-            unsafe_allow_html=True
-        )
-
-        m1, m2, m3 = st.columns(3)
-        with m1:
-            st.metric("Pontuação total", pontuacao_total)
-        with m2:
-            st.metric("Nível de risco", risco)
-        with m3:
-            st.metric("Ação proposta", acao)
-
-        st.markdown(
-            f'<div class="acao-final" style="background-color:{fundo}; color:{texto};">Ação recomendada: {acao}</div>',
-            unsafe_allow_html=True
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    elif st.session_state.resultado_gerado and resultado_em_reserva:
-        st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">Resultado automático</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">Resultado anterior invalidado.</div>', unsafe_allow_html=True)
-        st.warning("Configuração alterada. O resultado anterior ficou em reserva e deve ser regenerado antes de nova validação.")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    else:
-        st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">Resultado automático</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">Aguardando processamento operacional.</div>', unsafe_allow_html=True)
-        st.info("Introduza os dados do caso e clique em “Gerar recomendação”.")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# -------------------------
-# Secções seguintes
-# -------------------------
-if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
-    dados = st.session_state.dados_resultado
-    contributos = dados["contributos"]
-    pontuacao_total = dados["pontuacao_total"]
-    risco = dados["risco"]
-    acao = dados["acao"]
-
-    ordenados = sorted(contributos.items(), key=lambda x: x[1]["Contributo"], reverse=True)
-    fatores_principais = [
-        {
-            "codigo": item[0],
-            "nome": item[1]["Nome"],
-            "nivel": item[1]["Nível"],
-            "contributo": item[1]["Contributo"]
-        }
-        for item in ordenados[:3]
-    ]
-
-    col_avaliacao, col_validacao = st.columns([1, 1], gap="large")
-
-    with col_avaliacao:
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
         st.markdown('<div class="titulo-secao">4. Avaliação Tática</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Síntese dos fatores críticos e impacto na recomendação.</div>', unsafe_allow_html=True)
@@ -692,28 +782,98 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         st.markdown(
             f"**Avaliação:** Situação classificada com risco **{risco.lower()}** devido à combinação dos fatores críticos identificados."
         )
-
         st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_validacao:
-        st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">5. Confirmação do operador</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="resultado-critico">
+            <div class="resultado-topo">
+                <div>
+                    <div class="resultado-titulo">Resultado automático</div>
+                    <div class="resultado-subtitulo">Recomendação do sistema gerada a partir das entradas submetidas.</div>
+                </div>
+                <div class="selo-risco {classe_selo_risco(risco)}">RISCO {risco.upper()}</div>
+            </div>
 
-        decisao_utilizador = st.selectbox(
-            "Decisão final do operador",
-            ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
-            label_visibility="visible"
-        )
+            <div class="resultado-meta">
+                <b>ID do caso:</b> {dados["id_caso"]}<br>
+                <b>Processado em:</b> {dados["timestamp"]}
+            </div>
 
-        justificacao = st.text_area(
-            "Justificação da decisão final",
-            placeholder="Explica por que motivo confirmas ou alteras a ação proposta...",
-            height=220
-        )
+            <div class="grid-metricas">
+                <div class="metrica-critica">
+                    <div class="metrica-rotulo">Pontuação total</div>
+                    <div class="metrica-valor">{pontuacao_total}</div>
+                </div>
+                <div class="metrica-critica">
+                    <div class="metrica-rotulo">Nível de risco</div>
+                    <div class="metrica-valor">{risco}</div>
+                </div>
+                <div class="metrica-critica">
+                    <div class="metrica-rotulo">Ação proposta</div>
+                    <div class="metrica-valor">{acao}</div>
+                </div>
+            </div>
 
-        guardar = st.button("Guardar decisão final", use_container_width=True)
+            <div class="acao-critica {classe_acao_resultado(risco)}">
+                AÇÃO RECOMENDADA: {acao.upper()}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    elif st.session_state.resultado_gerado and resultado_em_reserva:
+        st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">4. Avaliação Tática</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Informação em reserva.</div>', unsafe_allow_html=True)
+        st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática.")
         st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">Resultado automático</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Resultado anterior invalidado.</div>', unsafe_allow_html=True)
+        st.warning("Configuração alterada. O resultado anterior ficou em reserva e deve ser regenerado antes de nova validação.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    else:
+        st.markdown('<div class="cartao">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">4. Avaliação Tática</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Aguardando processamento.</div>', unsafe_allow_html=True)
+        st.info("A avaliação tática será apresentada após a geração da recomendação.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        st.markdown('<div class="cartao">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">Resultado automático</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Aguardando processamento operacional.</div>', unsafe_allow_html=True)
+        st.info("Introduza os dados do caso e clique em “Gerar recomendação”.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# -------------------------
+# Bloco de confirmação do operador
+# -------------------------
+if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
+    dados = st.session_state.dados_resultado
+    contributos = dados["contributos"]
+    pontuacao_total = dados["pontuacao_total"]
+    risco = dados["risco"]
+    acao = dados["acao"]
+
+    st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">5. Confirmação do operador</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
+
+    decisao_utilizador = st.selectbox(
+        "Decisão final do operador",
+        ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
+        label_visibility="visible"
+    )
+
+    justificacao = st.text_area(
+        "Justificação da decisão final",
+        placeholder="Explica por que motivo confirmas ou alteras a ação proposta...",
+        height=180
+    )
+
+    guardar = st.button("Guardar decisão final", use_container_width=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------
     # Quadro de indicadores
@@ -797,9 +957,6 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # -------------------------
-    # Decisão final
-    # -------------------------
     if guardar:
         decisao_final = acao if decisao_utilizador == "Confirmar ação proposta" else decisao_utilizador
 
@@ -811,6 +968,9 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
             "justificacao": justificacao.strip()
         }
 
+# -------------------------
+# Decisão final
+# -------------------------
 if st.session_state.decisao_guardada is not None and not resultado_em_reserva:
     reg = st.session_state.decisao_guardada
 
@@ -839,7 +999,7 @@ if st.session_state.decisao_guardada is not None and not resultado_em_reserva:
 
 elif st.session_state.resultado_gerado and resultado_em_reserva:
     st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">4. Avaliação Tática</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">Informação em reserva.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">Informação em reserva</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">O caso foi alterado após a última geração.</div>', unsafe_allow_html=True)
     st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática, a rastreabilidade e a confirmação do operador.")
     st.markdown('</div>', unsafe_allow_html=True)
