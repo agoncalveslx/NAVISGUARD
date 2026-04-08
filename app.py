@@ -14,506 +14,360 @@ st.set_page_config(
 # -------------------------
 if "resultado_gerado" not in st.session_state:
     st.session_state.resultado_gerado = False
+
 if "dados_resultado" not in st.session_state:
     st.session_state.dados_resultado = None
+
 if "contador_casos" not in st.session_state:
     st.session_state.contador_casos = 0
+
 if "decisao_guardada" not in st.session_state:
     st.session_state.decisao_guardada = None
 
 # -------------------------
-# CSS — Clean & Corporativo
+# Estilo visual
 # -------------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    .stApp {
+        background: linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
+    }
 
-html, body, [class*="css"] {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-}
+    .topo-dashboard {
+        background: linear-gradient(90deg, #0f172a 0%, #1d4ed8 100%);
+        padding: 24px;
+        border-radius: 18px;
+        color: white;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
 
-/* ── FUNDO ── */
-.stApp {
-    background-color: #f5f7fa !important;
-}
+    .topo-dashboard h1 {
+        margin: 0;
+        font-size: 2rem;
+    }
 
-/* ── CABEÇALHO ── */
-.ng-header {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 28px 32px;
-    margin-bottom: 16px;
-    border: 1px solid #e8ecf0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-}
-.ng-header-left { flex: 1; }
-.ng-logo-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 4px;
-}
-.ng-logo-icon {
-    width: 40px; height: 40px;
-    background: #1d4ed8;
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-}
-.ng-title {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #0f172a;
-    letter-spacing: -0.02em;
-    line-height: 1;
-}
-.ng-subtitle {
-    font-size: 0.88rem;
-    color: #64748b;
-    font-weight: 400;
-    margin-left: 54px;
-}
-.ng-header-right {
-    display: flex;
-    gap: 20px;
-    flex-shrink: 0;
-}
-.ng-header-stat {
-    text-align: right;
-    border-left: 1px solid #e8ecf0;
-    padding-left: 20px;
-}
-.ng-header-stat .val {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #0f172a;
-    display: block;
-}
-.ng-header-stat .lbl {
-    font-size: 0.72rem;
-    color: #94a3b8;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-.ng-live {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 999px;
-    padding: 4px 12px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #15803d;
-    margin-bottom: 4px;
-}
-.ng-live-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: #22c55e;
-    animation: pulse-green 2s infinite;
-}
+    .topo-dashboard p {
+        margin-top: 8px;
+        font-size: 1rem;
+        color: #eef4ff;
+    }
 
-/* ── BARRA DE ESTADO ── */
-.ng-status-bar {
-    background: #ffffff;
-    border: 1px solid #e8ecf0;
-    border-radius: 10px;
-    padding: 12px 20px;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.85rem;
-    color: #475569;
-    font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.ng-status-bar .ng-case-id {
-    font-weight: 700;
-    color: #1d4ed8;
-    font-family: 'Inter', monospace;
-    font-size: 0.82rem;
-}
-.ng-status-bar .sep { color: #cbd5e1; }
-.ng-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    font-weight: 600;
-    border: 1px solid;
-}
-.ng-badge-blue { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-.ng-badge-green { background: #f0fdf4; color: #15803d; border-color: #bbf7d0; }
-.ng-badge-amber { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+    .cartao {
+        background: white;
+        padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+        border: 1px solid #e5e7eb;
+        margin-bottom: 20px;
+    }
 
-/* ── CARDS ── */
-.ng-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    border: 1px solid #e8ecf0;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-    margin-bottom: 16px;
-}
-.ng-card-blue {
-    background: #ffffff;
-    border-top: 3px solid #1d4ed8;
-}
-.ng-card-green {
-    background: #ffffff;
-    border-top: 3px solid #16a34a;
-}
-.ng-card-amber {
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    border-top: 3px solid #d97706;
-}
-.ng-card-red {
-    background: #fff5f5;
-    border: 1px solid #fecaca;
-    border-top: 3px solid #dc2626;
-}
+    .cartao-azul {
+        background: linear-gradient(180deg, #eff6ff 0%, #eef4ff 100%);
+        border: 1px solid #bfdbfe;
+    }
 
-/* ── SECTION HEADER ── */
-.ng-section-title {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #94a3b8;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 2px;
-}
-.ng-section-heading {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 2px;
-}
-.ng-section-sub {
-    font-size: 0.83rem;
-    color: #64748b;
-    margin-bottom: 18px;
-    font-weight: 400;
-}
-.ng-divider {
-    border: none;
-    border-top: 1px solid #f1f5f9;
-    margin: 16px 0;
-}
+    .cartao-verde {
+        background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+        border: 1px solid #a7f3d0;
+    }
 
-/* ── INPUT LABELS ── */
-.ng-label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #374151;
-    margin-top: 10px;
-    margin-bottom: 6px;
-    display: block;
-}
-.ng-group-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #94a3b8;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin: 14px 0 8px 0;
-    display: block;
-}
+    .cartao-amarelo {
+        background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+        border: 1px solid #fde68a;
+    }
 
-/* ── SELECTBOX ── */
-div[data-baseweb="select"] > div {
-    border-radius: 8px !important;
-    min-height: 42px !important;
-    font-size: 0.88rem !important;
-    font-weight: 500 !important;
-    background: #ffffff !important;
-    border: 1px solid #d1d5db !important;
-    color: #0f172a !important;
-    transition: border-color 0.15s, box-shadow 0.15s !important;
-}
-div[data-baseweb="select"] > div:hover {
-    border-color: #93c5fd !important;
-}
-div[data-baseweb="select"] > div:focus-within {
-    border-color: #1d4ed8 !important;
-    box-shadow: 0 0 0 3px rgba(29,78,216,0.1) !important;
-}
-.risco-baixo div[data-baseweb="select"] > div {
-    background: #f0fdf4 !important;
-    border-color: #86efac !important;
-    color: #15803d !important;
-}
-.risco-medio div[data-baseweb="select"] > div {
-    background: #fffbeb !important;
-    border-color: #fcd34d !important;
-    color: #92400e !important;
-}
-.risco-elevado div[data-baseweb="select"] > div {
-    background: #fff1f2 !important;
-    border-color: #fca5a5 !important;
-    color: #dc2626 !important;
-}
-.risco-neutro div[data-baseweb="select"] > div {
-    background: #ffffff !important;
-    border-color: #d1d5db !important;
-    color: #0f172a !important;
-}
+    .cartao-vermelho {
+        background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fecaca;
+    }
 
-/* ── BUTTONS ── */
-div.stButton > button {
-    background: #1d4ed8 !important;
-    color: #ffffff !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.85rem !important;
-    font-weight: 600 !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 0.6rem 1.2rem !important;
-    box-shadow: 0 1px 3px rgba(29,78,216,0.3) !important;
-    transition: background 0.15s, box-shadow 0.15s !important;
-    letter-spacing: 0.01em !important;
-}
-div.stButton > button:hover {
-    background: #1e40af !important;
-    box-shadow: 0 4px 12px rgba(29,78,216,0.35) !important;
-    color: #ffffff !important;
-}
-div.stButton > button:focus {
-    background: #1d4ed8 !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 0 3px rgba(29,78,216,0.25) !important;
-}
+    .titulo-secao {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
 
-/* ── TEXTAREA ── */
-textarea {
-    border-radius: 8px !important;
-    border: 1px solid #d1d5db !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.88rem !important;
-    color: #0f172a !important;
-    background: #ffffff !important;
-}
-textarea:focus {
-    border-color: #1d4ed8 !important;
-    box-shadow: 0 0 0 3px rgba(29,78,216,0.1) !important;
-}
+    .subtitulo-secao {
+        font-size: 0.95rem;
+        color: #475569;
+        margin-bottom: 16px;
+    }
 
-/* ── LABELS STREAMLIT ── */
-label {
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.8rem !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
-}
+    .etiqueta {
+        font-weight: 600;
+        color: #0f172a;
+        margin-top: 10px;
+        margin-bottom: 6px;
+    }
 
-/* ── METRICS ── */
-[data-testid="metric-container"] {
-    background: #f8fafc !important;
-    border: 1px solid #e8ecf0 !important;
-    border-radius: 10px !important;
-    padding: 14px 16px !important;
-}
-[data-testid="metric-container"] [data-testid="stMetricLabel"] {
-    font-size: 0.72rem !important;
-    font-weight: 600 !important;
-    color: #64748b !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.06em !important;
-}
-[data-testid="metric-container"] [data-testid="stMetricValue"] {
-    font-size: 1.35rem !important;
-    font-weight: 800 !important;
-    color: #0f172a !important;
-}
+    .acao-final {
+        padding: 16px;
+        border-radius: 14px;
+        font-weight: 700;
+        text-align: center;
+        margin-top: 12px;
+        border: 1px solid #d1d5db;
+        font-size: 1.05rem;
+    }
 
-/* ── ALERTS ── */
-div[data-testid="stNotification"] {
-    border-radius: 8px !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-}
+    .mini-indicador {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
 
-/* ── EXPANDER ── */
-.streamlit-expanderHeader {
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.83rem !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
-    background: #f8fafc !important;
-    border-radius: 8px !important;
-    border: 1px solid #e8ecf0 !important;
-}
-.streamlit-expanderContent {
-    background: #fafafa !important;
-    border: 1px solid #e8ecf0 !important;
-    border-top: none !important;
-    font-family: 'Inter', sans-serif !important;
-    font-size: 0.85rem !important;
-    color: #374151 !important;
-}
+    .mini-indicador .valor {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
 
-/* ── INDICATOR MINI CARD ── */
-.ng-stat {
-    background: #f8fafc;
-    border: 1px solid #e8ecf0;
-    border-radius: 10px;
-    padding: 14px 16px;
-    text-align: center;
-}
-.ng-stat .v { font-size: 1.6rem; font-weight: 800; color: #0f172a; }
-.ng-stat .l { font-size: 0.72rem; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .mini-indicador .rotulo {
+        font-size: 0.9rem;
+        color: #64748b;
+    }
 
-/* ── INDICATOR ROW CARD ── */
-.ng-ind {
-    background: #f8fafc;
-    border: 1px solid #e8ecf0;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 12px;
-}
-.ng-ind-low  { border-left: 3px solid #22c55e; }
-.ng-ind-med  { border-left: 3px solid #f59e0b; }
-.ng-ind-high { border-left: 3px solid #ef4444; }
-.ng-ind-code {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #94a3b8;
-    letter-spacing: 0.08em;
-    min-width: 26px;
-}
-.ng-ind-name { font-size: 0.88rem; font-weight: 600; color: #0f172a; }
-.ng-ind-sub  { font-size: 0.76rem; color: #64748b; font-weight: 400; }
-.ng-ind-right { text-align: right; }
-.ng-ind-score {
-    font-size: 1rem;
-    font-weight: 800;
-    color: #0f172a;
-}
-.ng-ind-weight { font-size: 0.7rem; color: #94a3b8; }
+    .mini-cartao-indicador {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        position: relative;
+    }
 
-/* ── RISK PILL ── */
-.ng-risk {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-}
-.ng-risk-low  { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
-.ng-risk-med  { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
-.ng-risk-high { background: #fff1f2; color: #dc2626; border: 1px solid #fca5a5; }
+    .mini-cartao-baixo {
+        background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
+        border: 1px solid #a7f3d0;
+    }
 
-/* ── ACTION BOX ── */
-.ng-action {
-    border-radius: 10px;
-    padding: 18px 20px;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: 700;
-    margin-top: 12px;
-    letter-spacing: 0.02em;
-}
-.ng-action-low  { background: #f0fdf4; color: #15803d; border: 1px solid #86efac; }
-.ng-action-med  { background: #fffbeb; color: #92400e; border: 1px solid #fcd34d; }
-.ng-action-high { background: #fff1f2; color: #dc2626; border: 1px solid #fca5a5; }
+    .mini-cartao-medio {
+        background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+        border: 1px solid #fde68a;
+    }
 
-/* ── RESULT HEADER CARD ── */
-.ng-result-header {
-    background: #f8fafc;
-    border: 1px solid #e8ecf0;
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.ng-result-header .meta-id {
-    font-size: 0.78rem;
-    font-weight: 700;
-    color: #1d4ed8;
-    font-family: 'Inter', monospace;
-}
-.ng-result-header .meta-ts {
-    font-size: 0.75rem;
-    color: #94a3b8;
-    margin-top: 2px;
-}
+    .mini-cartao-elevado {
+        background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fecaca;
+    }
 
-/* ── CRITICAL BADGE ── */
-.ng-critical {
-    display: inline-block;
-    background: #fff1f2;
-    color: #dc2626;
-    border: 1px solid #fca5a5;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
+    .mini-cartao-titulo {
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 6px;
+        font-size: 0.96rem;
+    }
 
-/* ── FORMULA ── */
-.ng-formula {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-family: 'Inter', monospace;
-    font-size: 0.8rem;
-    color: #334155;
-    margin-top: 8px;
-}
+    .mini-cartao-linha {
+        font-size: 0.9rem;
+        color: #334155;
+        line-height: 1.4;
+    }
 
-/* ── DECISION BADGE ── */
-.ng-dec-confirmed { background:#f0fdf4; color:#15803d; border:1px solid #86efac; border-radius:999px; padding:3px 10px; font-size:0.72rem; font-weight:700; }
-.ng-dec-changed   { background:#fffbeb; color:#92400e; border:1px solid #fcd34d; border-radius:999px; padding:3px 10px; font-size:0.72rem; font-weight:700; }
+    .bloco-meta {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        color: #334155;
+        font-size: 0.92rem;
+    }
 
-/* ── DOWNLOAD BUTTON ── */
-[data-testid="stDownloadButton"] button {
-    background: #ffffff !important;
-    color: #374151 !important;
-    border: 1px solid #d1d5db !important;
-    font-size: 0.83rem !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
-}
-[data-testid="stDownloadButton"] button:hover {
-    background: #f8fafc !important;
-    border-color: #9ca3af !important;
-    color: #111827 !important;
-}
+    .barra-estado-caso {
+        background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        border-radius: 14px;
+        padding: 12px 16px;
+        margin-bottom: 18px;
+        border: 1px solid #334155;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+    }
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .resultado-critico {
+        background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+        color: white;
+        border-radius: 18px;
+        padding: 20px;
+        border: 1px solid #1f2937;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.22);
+        margin-bottom: 20px;
+    }
 
-/* ── ANIMATIONS ── */
-@keyframes pulse-green {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-}
+    .resultado-titulo {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 4px;
+    }
+
+    .resultado-subtitulo {
+        font-size: 0.93rem;
+        color: #1f2937;
+    }
+
+    .selo-risco {
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 0.82rem;
+        letter-spacing: 0.03em;
+        white-space: nowrap;
+        border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .selo-baixo {
+        background: #14532d;
+        color: #dcfce7;
+    }
+
+    .selo-medio {
+        background: #78350f;
+        color: #fef3c7;
+    }
+
+    .selo-elevado {
+        background: #7f1d1d;
+        color: #fee2e2;
+    }
+
+    .resultado-meta {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 10px 12px;
+        color: #1f2937;
+        font-size: 0.9rem;
+        margin-bottom: 14px;
+    }
+
+    .acao-critica {
+        border-radius: 14px;
+        padding: 16px;
+        text-align: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        border: 1px solid rgba(255,255,255,0.10);
+        margin-top: 10px;
+    }
+
+    .acao-baixa {
+        background: linear-gradient(90deg, #14532d 0%, #166534 100%);
+        color: #dcfce7;
+    }
+
+    .acao-media {
+        background: linear-gradient(90deg, #78350f 0%, #92400e 100%);
+        color: #fef3c7;
+    }
+
+    .acao-elevada {
+        background: linear-gradient(90deg, #7f1d1d 0%, #991b1b 100%);
+        color: #fee2e2;
+    }
+
+    .fator-critico {
+        display: inline-block;
+        background: #0f172a;
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 999px;
+        margin-bottom: 6px;
+    }
+
+    .estado-confirmacao {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-top: 6px;
+    }
+
+    .estado-alteracao {
+        display: inline-block;
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fcd34d;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-top: 6px;
+    }
+
+    .formula-caso {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 12px;
+        color: #334155;
+        font-size: 0.92rem;
+        margin-top: 10px;
+    }
+
+    /* Botões */
+    div.stButton > button {
+        background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
+        color: white;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 1rem;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    div.stButton > button:hover {
+        background: linear-gradient(90deg, #1e40af 0%, #1d4ed8 100%);
+        color: white;
+        border: none;
+    }
+
+    div.stButton > button:focus {
+        color: white !important;
+        border: none !important;
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    }
+
+    /* Selectbox */
+    div[data-baseweb="select"] > div {
+        border-radius: 10px !important;
+        min-height: 44px;
+        font-weight: 600;
+    }
+
+    .risco-baixo div[data-baseweb="select"] > div {
+        background: #ecfdf5 !important;
+        border: 1px solid #a7f3d0 !important;
+        color: #065f46 !important;
+    }
+
+    .risco-medio div[data-baseweb="select"] > div {
+        background: #fffbeb !important;
+        border: 1px solid #fde68a !important;
+        color: #92400e !important;
+    }
+
+    .risco-elevado div[data-baseweb="select"] > div {
+        background: #fef2f2 !important;
+        border: 1px solid #fecaca !important;
+        color: #991b1b !important;
+    }
+
+    .risco-neutro div[data-baseweb="select"] > div {
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -537,12 +391,19 @@ def acao_proposta(pontuacao):
         return "Monitorizar"
     return "Escalar"
 
+def cor_risco(risco):
+    if risco == "Baixo":
+        return "#d1fae5", "#065f46", "cartao-verde"
+    elif risco == "Médio":
+        return "#fef3c7", "#92400e", "cartao-amarelo"
+    return "#fee2e2", "#991b1b", "cartao-vermelho"
+
 def classe_cartao_indicador(contributo):
     if contributo >= 5:
-        return "ng-ind-high"
+        return "mini-cartao-elevado"
     elif contributo >= 2:
-        return "ng-ind-med"
-    return "ng-ind-low"
+        return "mini-cartao-medio"
+    return "mini-cartao-baixo"
 
 def classe_risco_input(valor):
     if valor in ["Normal", "Concordante"]:
@@ -553,29 +414,72 @@ def classe_risco_input(valor):
         return "risco-elevado"
     return "risco-neutro"
 
-def classe_risco_pill(risco):
-    if risco == "Baixo": return "ng-risk-low"
-    elif risco == "Médio": return "ng-risk-med"
-    return "ng-risk-high"
+def classe_selo_risco(risco):
+    if risco == "Baixo":
+        return "selo-baixo"
+    elif risco == "Médio":
+        return "selo-medio"
+    return "selo-elevado"
 
-def classe_acao_box(risco):
-    if risco == "Baixo": return "ng-action-low"
-    elif risco == "Médio": return "ng-action-med"
-    return "ng-action-high"
+def classe_acao_resultado(risco):
+    if risco == "Baixo":
+        return "acao-baixa"
+    elif risco == "Médio":
+        return "acao-media"
+    return "acao-elevada"
 
 def calcular_indicadores(posicao, velocidade, radar, contexto):
-    i1 = "Elevado" if posicao == "Muito suspeita" else ("Médio" if posicao == "Ligeiramente suspeita" else "Baixo")
-    i2 = "Elevado" if (posicao == "Muito suspeita" and radar == "Discordante") else ("Médio" if (posicao == "Ligeiramente suspeita" or radar == "Parcialmente discordante") else "Baixo")
-    i3 = "Elevado" if velocidade == "Muito suspeito" else ("Médio" if velocidade == "Ligeiramente suspeito" else "Baixo")
-    i4 = "Elevado" if (posicao == "Muito suspeita" and velocidade == "Muito suspeito") else ("Médio" if (posicao == "Ligeiramente suspeita" or velocidade == "Ligeiramente suspeito") else "Baixo")
-    i5 = "Elevado" if contexto == "Muito suspeito" else ("Médio" if contexto == "Pouco habitual" else "Baixo")
-    i6 = "Elevado" if radar == "Discordante" else ("Médio" if radar == "Parcialmente discordante" else "Baixo")
+    if posicao == "Muito suspeita":
+        i1 = "Elevado"
+    elif posicao == "Ligeiramente suspeita":
+        i1 = "Médio"
+    else:
+        i1 = "Baixo"
+
+    if posicao == "Muito suspeita" and radar == "Discordante":
+        i2 = "Elevado"
+    elif posicao == "Ligeiramente suspeita" or radar == "Parcialmente discordante":
+        i2 = "Médio"
+    else:
+        i2 = "Baixo"
+
+    if velocidade == "Muito suspeito":
+        i3 = "Elevado"
+    elif velocidade == "Ligeiramente suspeito":
+        i3 = "Médio"
+    else:
+        i3 = "Baixo"
+
+    if posicao == "Muito suspeita" and velocidade == "Muito suspeito":
+        i4 = "Elevado"
+    elif posicao == "Ligeiramente suspeita" or velocidade == "Ligeiramente suspeito":
+        i4 = "Médio"
+    else:
+        i4 = "Baixo"
+
+    if contexto == "Muito suspeito":
+        i5 = "Elevado"
+    elif contexto == "Pouco habitual":
+        i5 = "Médio"
+    else:
+        i5 = "Baixo"
+
+    if radar == "Discordante":
+        i6 = "Elevado"
+    elif radar == "Parcialmente discordante":
+        i6 = "Médio"
+    else:
+        i6 = "Baixo"
+
     return {"I1": i1, "I2": i2, "I3": i3, "I4": i4, "I5": i5, "I6": i6}
 
-def impacto_textual(c):
-    if c >= 5: return "Elevado"
-    elif c >= 2: return "Moderado"
-    elif c >= 1: return "Reduzido"
+def impacto_textual(contributo):
+    if contributo >= 5:
+        return "Elevado"
+    elif contributo >= 2:
+        return "Moderado"
+    elif contributo >= 1:
+        return "Reduzido"
     return "Muito reduzido"
 
 def novo_id_caso():
@@ -597,290 +501,428 @@ def estado_do_caso():
         return "Recomendação gerada"
     return "Em análise"
 
-def tipo_decisao(acao_prop, dec_final):
-    return "Confirmada" if acao_prop == dec_final else "Alterada pelo operador"
+def tipo_decisao(acao_proposta_atual, decisao_final):
+    if acao_proposta_atual == decisao_final:
+        return "Confirmada"
+    return "Alterada pelo operador"
 
 def obter_fatores_principais(contributos, top_n=3):
     ordenados = sorted(contributos.items(), key=lambda x: x[1]["Contributo"], reverse=True)
-    return [{"codigo": k, "nome": v["Nome"], "nivel": v["Nível"], "contributo": v["Contributo"]} for k, v in ordenados[:top_n]]
+    return [
+        {
+            "codigo": item[0],
+            "nome": item[1]["Nome"],
+            "nivel": item[1]["Nível"],
+            "contributo": item[1]["Contributo"]
+        }
+        for item in ordenados[:top_n]
+    ]
 
 def formula_caso_texto(contributos):
-    termos, total = [], 0
-    for c in ["I1","I2","I3","I4","I5","I6"]:
-        p, w, cont = contributos[c]["Pontos"], contributos[c]["Peso"], contributos[c]["Contributo"]
-        termos.append(f"({c}: {p}×{w}={cont})")
-        total += cont
+    termos = []
+    total = 0
+    for chave in ["I1", "I2", "I3", "I4", "I5", "I6"]:
+        pontos = contributos[chave]["Pontos"]
+        peso = contributos[chave]["Peso"]
+        contributo = contributos[chave]["Contributo"]
+        termos.append(f"({chave}: {pontos}×{peso}={contributo})")
+        total += contributo
     return " + ".join(termos) + f" = {total}"
 
 def exportar_registo_txt(dados, decisao=None):
-    linhas = ["NAVISGUARD — REGISTO OPERACIONAL", "=" * 44,
-              f"ID do caso: {dados['id_caso']}", f"Processado em: {dados['timestamp']}",
-              f"Posição/Trajetória: {dados['posicao']}", f"Velocidade/Curso: {dados['velocidade']}",
-              f"Concordância radar: {dados['radar']}", f"Contexto operacional: {dados['contexto']}", ""]
+    linhas = []
+    linhas.append("NAVISGUARD - REGISTO OPERACIONAL")
+    linhas.append("=" * 42)
+    linhas.append(f"ID do caso: {dados['id_caso']}")
+    linhas.append(f"Processado em: {dados['timestamp']}")
+    linhas.append(f"Posição/Trajetória: {dados['posicao']}")
+    linhas.append(f"Velocidade/Curso: {dados['velocidade']}")
+    linhas.append(f"Concordância com radar/outras fontes: {dados['radar']}")
+    linhas.append(f"Contexto operacional: {dados['contexto']}")
+    linhas.append("")
     linhas.append("Indicadores:")
-    for c in ["I1","I2","I3","I4","I5","I6"]:
-        info = dados["contributos"][c]
-        linhas.append(f"  {c} — {info['Nome']}: {info['Nível']} | Pontos={info['Pontos']} | Peso={info['Peso']} | Contributo={info['Contributo']}")
-    linhas += ["", f"Pontuação final: {dados['pontuacao_total']}", f"Nível de risco: {dados['risco']}", f"Ação proposta: {dados['acao']}", f"Fórmula: {formula_caso_texto(dados['contributos'])}"]
-    if decisao:
-        linhas += ["", "Decisão final:", f"  ID: {decisao['id_decisao']}", f"  Registado em: {decisao['timestamp_decisao']}",
-                   f"  Tipo: {tipo_decisao(decisao['acao_proposta'], decisao['decisao_final'])}",
-                   f"  Decisão: {decisao['decisao_final']}",
-                   f"  Justificação: {decisao['justificacao'] or 'Não fornecida.'}"]
+    for chave in ["I1", "I2", "I3", "I4", "I5", "I6"]:
+        info = dados["contributos"][chave]
+        linhas.append(
+            f"{chave} - {info['Nome']}: Estado={info['Nível']}, Pontos={info['Pontos']}, Peso={info['Peso']}, Contributo={info['Contributo']}"
+        )
+    linhas.append("")
+    linhas.append(f"Pontuação final: {dados['pontuacao_total']}")
+    linhas.append(f"Nível de risco: {dados['risco']}")
+    linhas.append(f"Ação proposta: {dados['acao']}")
+    linhas.append(f"Fórmula aplicada: {formula_caso_texto(dados['contributos'])}")
+
+    if decisao is not None:
+        linhas.append("")
+        linhas.append("Decisão final:")
+        linhas.append(f"ID da decisão: {decisao['id_decisao']}")
+        linhas.append(f"Registado em: {decisao['timestamp_decisao']}")
+        linhas.append(f"Tipo de decisão: {tipo_decisao(decisao['acao_proposta'], decisao['decisao_final'])}")
+        linhas.append(f"Decisão final: {decisao['decisao_final']}")
+        linhas.append(f"Justificação: {decisao['justificacao'] if decisao['justificacao'] else 'Não foi fornecida justificação.'}")
+
     return "\n".join(linhas)
 
 nomes_indicadores = {
-    "I1": "Anomalia de identidade", "I2": "Alteração anormal de identidade",
-    "I3": "Plausibilidade cinemática", "I4": "Consistência espaço-temporal",
-    "I5": "Consistência contextual", "I6": "Consistência entre fontes"
+    "I1": "Anomalia de identidade",
+    "I2": "Alteração anormal de identidade",
+    "I3": "Plausibilidade cinemática",
+    "I4": "Consistência espaço-temporal",
+    "I5": "Consistência contextual",
+    "I6": "Consistência entre fontes"
 }
+
 siglas_indicadores = {
-    "I1": "Identidade", "I2": "Alt. Identidade", "I3": "Cinemática",
-    "I4": "Espaço-Tempo", "I5": "Contexto", "I6": "Entre Fontes"
+    "I1": "Identidade",
+    "I2": "Alt. identidade",
+    "I3": "Cinemática",
+    "I4": "Espaço-tempo",
+    "I5": "Contexto",
+    "I6": "Entre fontes"
 }
+
 pesos = {"I1": 3, "I2": 2, "I3": 2, "I4": 2, "I5": 1, "I6": 3}
 
-# ─────────────────────────────────────────────
-# CABEÇALHO
-# ─────────────────────────────────────────────
-ts_now = datetime.now().strftime("%d %b %Y  %H:%M")
-st.markdown(f"""
-<div class="ng-header">
-    <div class="ng-header-left">
-        <div class="ng-logo-row">
-            <div class="ng-logo-icon">🛡️</div>
-            <span class="ng-title">NAVISGUARD</span>
-        </div>
-        <div class="ng-subtitle">Sistema de Apoio e Validação da Decisão em Ambiente Marítimo</div>
-    </div>
-    <div class="ng-header-right">
-        <div class="ng-header-stat">
-            <span class="val">AIS · VMS · RAD</span>
-            <span class="lbl">Fontes ativas</span>
-        </div>
-        <div class="ng-header-stat">
-            <div class="ng-live"><div class="ng-live-dot"></div> Online</div>
-            <span class="lbl">{ts_now}</span>
-        </div>
-    </div>
+# -------------------------
+# Cabeçalho
+# -------------------------
+st.markdown("""
+<div class="topo-dashboard">
+    <h1>NAVISGUARD</h1>
+    <p>Sistema de Apoio e Validação da Decisão em Ambiente Marítimo.</p>
 </div>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-# BARRA DE ESTADO
-# ─────────────────────────────────────────────
-id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "—"
-estado_str = estado_do_caso()
-badge_class = "ng-badge-green" if "registada" in estado_str.lower() else ("ng-badge-blue" if "gerada" in estado_str.lower() else "ng-badge-amber")
+id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "Não iniciado"
+st.markdown(
+    f"""
+    <div class="barra-estado-caso">
+        <b>Caso atual:</b> {id_atual} &nbsp;&nbsp;|&nbsp;&nbsp;
+        <b>Estado:</b> {estado_do_caso()}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-st.markdown(f"""
-<div class="ng-status-bar">
-    <span>Caso ativo:</span>
-    <span class="ng-case-id">{id_atual}</span>
-    <span class="sep">·</span>
-    <span class="ng-badge {badge_class}">{estado_str}</span>
-</div>
-""", unsafe_allow_html=True)
-
-with st.expander("Sobre o sistema"):
+with st.expander("Enquadramento Operacional"):
     st.write("""
-Esta plataforma avalia comportamentos potencialmente anómalos de embarcações com base em dados de AIS, VMS, radar e contexto operacional.
+Este sistema constitui uma **plataforma de apoio à decisão em ambiente marítimo**, desenvolvida para avaliar comportamentos potencialmente anómalos de embarcações com base em dados operacionais.
 
-O sistema gera 6 indicadores internos (I1–I6), calcula uma pontuação ponderada, classifica o nível de risco (**Baixo / Médio / Elevado**) e propõe uma ação (**Ignorar / Monitorizar / Escalar**). O operador pode confirmar ou ajustar a recomendação.
+A aplicação simula a análise de informação proveniente de sistemas como:
+- AIS (Automatic Identification System)
+- VMS (Vessel Monitoring System)
+- Radar e outras fontes externas
 
-⚠️ **Demo conceptual** — não substitui sistemas reais de vigilância ou comando operacional.
+Com base nos dados introduzidos pelo operador, o sistema:
+
+1. **Gera indicadores internos de risco (I1–I6)**  
+   Avalia dimensões como identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
+
+2. **Calcula uma pontuação agregada**  
+   Cada indicador contribui de forma ponderada para o risco global.
+
+3. **Classifica o nível de risco**  
+   - Baixo  
+   - Médio  
+   - Elevado  
+
+4. **Propõe uma ação operacional**  
+   - Ignorar  
+   - Monitorizar  
+   - Escalar  
+
+5. **Permite validação humana da decisão**  
+   O operador pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
+
+⚠️ **Nota:**  
+Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
 """)
 
-# ─────────────────────────────────────────────
-# SECÇÃO 1 — PROCESSAMENTO
-# ─────────────────────────────────────────────
-st.markdown('<div class="ng-card">', unsafe_allow_html=True)
-st.markdown('<div class="ng-section-title">Secção 01</div>', unsafe_allow_html=True)
-st.markdown('<div class="ng-section-heading">Processamento operacional</div>', unsafe_allow_html=True)
-st.markdown('<div class="ng-section-sub">O sistema gera indicadores, calcula o risco e emite uma recomendação automática.</div>', unsafe_allow_html=True)
+# -------------------------
+# 1. Processamento operacional
+# -------------------------
+st.markdown('<div class="cartao">', unsafe_allow_html=True)
+st.markdown('<div class="titulo-secao">1. PROCESSAMENTO OPERACIONAL</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitulo-secao">O sistema calcula indicadores, avalia o risco e emite uma recomendação.</div>', unsafe_allow_html=True)
 
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.markdown('<div class="ng-stat"><div class="v">6</div><div class="l">Indicadores internos</div></div>', unsafe_allow_html=True)
+st.info("Após clicar em “Gerar recomendação”, o sistema processa os indicadores, calcula a pontuação total, determina o nível de risco e emite a ação proposta.")
+
+mini1, mini2, mini3 = st.columns(3)
+
+with mini1:
+    st.markdown("""
+    <div class="mini-indicador" style="background: linear-gradient(180deg,#eff6ff,#eef4ff); border:1px solid #bfdbfe;">
+        <div class="valor">6</div>
+        <div class="rotulo">Indicadores internos</div>
+    </div>
+    """, unsafe_allow_html=True)
     with st.expander("Ver indicadores"):
         st.markdown("""
-**I1** — Identidade *(Posição/Trajetória)*
-**I2** — Alt. Identidade *(Posição + Radar)*
-**I3** — Cinemática *(Velocidade/Curso)*
-**I4** — Espaço-Temporal *(Posição + Velocidade)*
-**I5** — Contexto *(Contexto operacional)*
-**I6** — Entre Fontes *(Concordância Radar)*
-""")
-with c2:
-    st.markdown('<div class="ng-stat"><div class="v">3</div><div class="l">Níveis de risco</div></div>', unsafe_allow_html=True)
-    with st.expander("Ver níveis"):
-        st.markdown("**Baixo** — Sem impacto  \n**Médio** — Atenção  \n**Elevado** — Prioridade máxima")
-with c3:
-    st.markdown('<div class="ng-stat"><div class="v">4</div><div class="l">Ações possíveis</div></div>', unsafe_allow_html=True)
+        **I1 — Identidade** *(calculado a partir de Posição/Trajetória)*  
+        **I2 — Alteração de identidade** *(calculado a partir de Posição/Trajetória + Concordância com radar/outras fontes)*  
+        **I3 — Cinemática** *(calculado a partir de Velocidade/Curso)*  
+        **I4 — Consistência espaço-temporal** *(calculado a partir de Posição/Trajetória + Velocidade/Curso)*  
+        **I5 — Contexto operacional** *(calculado a partir de Contexto operacional)*  
+        **I6 — Consistência entre fontes** *(calculado a partir de Concordância com radar/outras fontes)*  
+        """)
+
+with mini2:
+    st.markdown("""
+    <div class="mini-indicador">
+        <div class="valor">3</div>
+        <div class="rotulo">Níveis de risco</div>
+    </div>
+    """, unsafe_allow_html=True)
+    with st.expander("Ver níveis de risco"):
+        st.markdown("""
+        **Baixo** — sem impacto  
+        **Médio** — atenção  
+        **Elevado** — prioridade  
+        """)
+
+with mini3:
+    st.markdown("""
+    <div class="mini-indicador">
+        <div class="valor">4</div>
+        <div class="rotulo">Ações possíveis</div>
+    </div>
+    """, unsafe_allow_html=True)
     with st.expander("Ver ações"):
-        st.markdown("**Ignorar** — Sem ação  \n**Monitorizar** — Vigilância  \n**Escalar** — Intervenção  \n**Rever** — Análise adicional")
+        st.markdown("""
+        **Ignorar** — sem ação  
+        **Monitorizar** — vigilância  
+        **Escalar** — intervenção  
+        **Rever** — análise adicional  
+        """)
+
 st.markdown('</div>', unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-# LAYOUT PRINCIPAL
-# ─────────────────────────────────────────────
-col_esq, col_dir = st.columns([1, 1], gap="large")
+# -------------------------
+# Layout principal
+# -------------------------
+coluna_esquerda, coluna_direita = st.columns([1, 1], gap="large")
 
-# ─────────────────────────────────────────────
-# SECÇÃO 2 — DADOS DE ENTRADA
-# ─────────────────────────────────────────────
-with col_esq:
-    st.markdown('<div class="ng-card ng-card-blue">', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-title">Secção 02</div>', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-heading">Dados de entrada</div>', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-sub">Descreve o caso em análise com base nos dados disponíveis.</div>', unsafe_allow_html=True)
+# -------------------------
+# 2. Coluna esquerda: dados de entrada
+# -------------------------
+with coluna_esquerda:
+    st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">2. DADOS DE ENTRADA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
 
-    col_t, col_r = st.columns([3, 1])
-    with col_r:
+    col_titulo_entrada, col_botao_reset = st.columns([3, 1])
+    with col_titulo_entrada:
+        st.markdown("##### PREPARAÇÃO DO CASO")
+    with col_botao_reset:
         st.button("Novo caso", use_container_width=True, on_click=reiniciar_caso)
 
-    st.markdown('<span class="ng-group-label">Dados AIS / VMS</span>', unsafe_allow_html=True)
-    ca, cb = st.columns(2)
-    with ca:
-        st.markdown('<span class="ng-label">Posição / Trajetória</span>', unsafe_allow_html=True)
+    st.markdown("##### Dados AIS/VMS")
+    col_a, col_b = st.columns(2)
+
+    with col_a:
+        st.markdown('<div class="etiqueta">Posição/Trajetória</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(posicao) if "posicao" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
-        posicao = st.selectbox("Posição/Trajetória", ["Normal", "Ligeiramente suspeita", "Muito suspeita"], label_visibility="collapsed")
-        st.markdown('</div>', unsafe_allow_html=True)
-    with cb:
-        st.markdown('<span class="ng-label">Velocidade / Curso</span>', unsafe_allow_html=True)
-        st.markdown(f'<div class="{classe_risco_input(velocidade) if "velocidade" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
-        velocidade = st.selectbox("Velocidade/Curso", ["Normal", "Ligeiramente suspeito", "Muito suspeito"], label_visibility="collapsed")
+        posicao = st.selectbox(
+            "Posição/Trajetória",
+            ["Normal", "Ligeiramente suspeita", "Muito suspeita"],
+            label_visibility="collapsed"
+        )
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<span class="ng-group-label">Outras fontes</span>', unsafe_allow_html=True)
-    ce, cf = st.columns(2)
-    with ce:
-        st.markdown('<span class="ng-label">Concordância com radar</span>', unsafe_allow_html=True)
-        st.markdown(f'<div class="{classe_risco_input(radar) if "radar" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
-        radar = st.selectbox("Radar", ["Concordante", "Parcialmente discordante", "Discordante"], label_visibility="collapsed")
+    with col_b:
+        st.markdown('<div class="etiqueta">Velocidade/Curso</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(velocidade) if "velocidade" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
+        velocidade = st.selectbox(
+            "Velocidade/Curso",
+            ["Normal", "Ligeiramente suspeito", "Muito suspeito"],
+            label_visibility="collapsed"
+        )
         st.markdown('</div>', unsafe_allow_html=True)
-    with cf:
-        st.markdown('<span class="ng-label">Contexto operacional</span>', unsafe_allow_html=True)
+
+    st.markdown("##### Outras fontes")
+    col_e, col_f = st.columns(2)
+
+    with col_e:
+        st.markdown('<div class="etiqueta">Concordância com radar/outras fontes</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(radar) if "radar" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
+        radar = st.selectbox(
+            "Concordância com radar/outras fontes",
+            ["Concordante", "Parcialmente discordante", "Discordante"],
+            label_visibility="collapsed"
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col_f:
+        st.markdown('<div class="etiqueta">Contexto operacional</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(contexto) if "contexto" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
-        contexto = st.selectbox("Contexto", ["Normal", "Pouco habitual", "Muito suspeito"], label_visibility="collapsed")
+        contexto = st.selectbox(
+            "Contexto operacional",
+            ["Normal", "Pouco habitual", "Muito suspeito"],
+            label_visibility="collapsed"
+        )
         st.markdown('</div>', unsafe_allow_html=True)
 
     gerar = st.button("Gerar recomendação", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
+# -------------------------
 # Deteção de alterações
-# ─────────────────────────────────────────────
-estado_atual = {"posicao": posicao, "velocidade": velocidade, "radar": radar, "contexto": contexto}
+# -------------------------
+estado_atual = {
+    "posicao": posicao,
+    "velocidade": velocidade,
+    "radar": radar,
+    "contexto": contexto
+}
+
 resultado_em_reserva = False
+
 if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None:
-    ultimo_estado = {k: st.session_state.dados_resultado[k] for k in ["posicao","velocidade","radar","contexto"]}
+    ultimo_estado = {
+        "posicao": st.session_state.dados_resultado["posicao"],
+        "velocidade": st.session_state.dados_resultado["velocidade"],
+        "radar": st.session_state.dados_resultado["radar"],
+        "contexto": st.session_state.dados_resultado["contexto"]
+    }
     if estado_atual != ultimo_estado:
         resultado_em_reserva = True
 
 if gerar:
     indicadores = calcular_indicadores(posicao, velocidade, radar, contexto)
+
     contributos = {}
     pontuacao_total = 0
+
     for chave, valor in indicadores.items():
         pontos = nivel_para_pontos(valor)
         contributo = pontos * pesos[chave]
-        contributos[chave] = {"Código": chave, "Nome": nomes_indicadores[chave], "Nível": valor,
-                               "Pontos": pontos, "Peso": pesos[chave], "Contributo": contributo}
+        contributos[chave] = {
+            "Código": chave,
+            "Nome": nomes_indicadores[chave],
+            "Nível": valor,
+            "Pontos": pontos,
+            "Peso": pesos[chave],
+            "Contributo": contributo
+        }
         pontuacao_total += contributo
+
     risco = nivel_risco(pontuacao_total)
     acao = acao_proposta(pontuacao_total)
+
     st.session_state.dados_resultado = {
-        "id_caso": novo_id_caso(), "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-        "posicao": posicao, "velocidade": velocidade, "radar": radar, "contexto": contexto,
-        "indicadores": indicadores, "contributos": contributos,
-        "pontuacao_total": pontuacao_total, "risco": risco, "acao": acao
+        "id_caso": novo_id_caso(),
+        "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        "posicao": posicao,
+        "velocidade": velocidade,
+        "radar": radar,
+        "contexto": contexto,
+        "indicadores": indicadores,
+        "contributos": contributos,
+        "pontuacao_total": pontuacao_total,
+        "risco": risco,
+        "acao": acao
     }
     st.session_state.resultado_gerado = True
     st.session_state.decisao_guardada = None
     resultado_em_reserva = False
 
-# ─────────────────────────────────────────────
-# SECÇÕES 3 + 4 — COLUNA DIREITA
-# ─────────────────────────────────────────────
-with col_dir:
+# -------------------------
+# 3 + 4. Coluna direita: avaliação tática + proposta de ação
+# -------------------------
+with coluna_direita:
     if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
         dados = st.session_state.dados_resultado
         contributos = dados["contributos"]
         pontuacao_total = dados["pontuacao_total"]
         risco = dados["risco"]
         acao = dados["acao"]
+
         fatores_principais = obter_fatores_principais(contributos, top_n=3)
 
-        # ── SECÇÃO 3
-        st.markdown('<div class="ng-card">', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-title">Secção 03</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-heading">Avaliação tática</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-sub">Síntese dos fatores críticos e impacto na recomendação.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="cartao">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Síntese dos fatores críticos e impacto na recomendação.</div>', unsafe_allow_html=True)
 
-        st.info("Avaliação concluída.")
-        st.markdown(f"**Nível de risco:** {risco} &nbsp;&nbsp; **Ação proposta:** {acao}")
-        st.markdown("**Fatores críticos identificados:**")
-        for idx, f in enumerate(fatores_principais):
-            pref = "Principal —" if idx == 0 else "        —"
-            st.write(f"{pref} {f['nome']}")
+        st.info("BRIEFING OPERACIONAL")
+        st.markdown("**Estado:** Avaliação concluída")
+
+        st.markdown("**Fatores críticos:**")
+        for idx, fator in enumerate(fatores_principais):
+            prefixo = "• "
+            if idx == 0:
+                prefixo = "• Principal fator: "
+            st.write(f"{prefixo}{fator['nome']}")
+
+        st.markdown("##### AVALIAÇÃO DE RISCO")
+        st.write(f"**Nível de risco:** {risco}")
+        st.write(f"**Ação proposta:** {acao}")
+        st.markdown(
+            f"**Avaliação:** Situação classificada com risco **{risco.lower()}** devido à combinação dos fatores críticos identificados."
+        )
+        st.markdown("**Fundamento principal:** inconsistência entre fatores com maior contributo e necessidade de resposta proporcional ao risco.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # ── SECÇÃO 4
-        st.markdown('<div class="ng-card">', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-title">Secção 04</div>', unsafe_allow_html=True)
+        st.markdown('<div class="resultado-critico">', unsafe_allow_html=True)
 
-        col_h1, col_h2 = st.columns([3,1])
-        with col_h1:
-            st.markdown('<div class="ng-section-heading">Proposta de ação</div>', unsafe_allow_html=True)
-            st.markdown('<div class="ng-section-sub">Recomendação automática baseada nas entradas submetidas.</div>', unsafe_allow_html=True)
-        with col_h2:
-            st.markdown(f'<div style="text-align:right; padding-top:4px;"><span class="ng-risk {classe_risco_pill(risco)}">Risco {risco}</span></div>', unsafe_allow_html=True)
+        col_res_1, col_res_2 = st.columns([3, 1])
+        with col_res_1:
+            st.markdown('<div class="resultado-titulo">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
+            st.markdown('<div class="resultado-subtitulo">Recomendação do sistema gerada a partir das entradas submetidas.</div>', unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div class="ng-result-header">
-            <div>
-                <div class="meta-id">{dados['id_caso']}</div>
-                <div class="meta-ts">{dados['timestamp']}</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        with col_res_2:
+            st.markdown(
+                f'<div class="selo-risco {classe_selo_risco(risco)}" style="text-align:center;">RISCO {risco.upper()}</div>',
+                unsafe_allow_html=True
+            )
+
+        st.markdown(
+            f'<div class="resultado-meta"><b>ID do caso:</b> {dados["id_caso"]}<br><b>Processado em:</b> {dados["timestamp"]}</div>',
+            unsafe_allow_html=True
+        )
 
         m1, m2, m3 = st.columns(3)
-        with m1: st.metric("Pontuação", pontuacao_total)
-        with m2: st.metric("Nível de risco", risco)
-        with m3: st.metric("Ação proposta", acao)
+        with m1:
+            st.metric("Pontuação total", pontuacao_total)
+        with m2:
+            st.metric("Nível de risco", risco)
+        with m3:
+            st.metric("Ação proposta", acao)
 
-        st.markdown(f'<div class="ng-action {classe_acao_box(risco)}">Ação recomendada: {acao}</div>', unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="acao-critica {classe_acao_resultado(risco)}">AÇÃO RECOMENDADA: {acao.upper()}</div>',
+            unsafe_allow_html=True
+        )
         st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.resultado_gerado and resultado_em_reserva:
-        st.markdown('<div class="ng-card ng-card-amber">', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-title">Secção 03</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-heading">Avaliação tática</div>', unsafe_allow_html=True)
-        st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação.")
+        st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Informação em reserva.</div>', unsafe_allow_html=True)
+        st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática.")
         st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-card ng-card-amber">', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-title">Secção 04</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-heading">Proposta de ação</div>', unsafe_allow_html=True)
-        st.warning("Resultado anterior suspenso. Regenere para nova validação.")
+
+        st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Resultado anterior invalidado.</div>', unsafe_allow_html=True)
+        st.warning("Configuração alterada. O resultado anterior ficou em reserva e deve ser regenerado antes de nova validação.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     else:
-        st.markdown('<div class="ng-card">', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-title">Secção 03</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-heading">Avaliação tática</div>', unsafe_allow_html=True)
-        st.info("A avaliação tática será apresentada após gerar a recomendação.")
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-card">', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-title">Secção 04</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-heading">Proposta de ação</div>', unsafe_allow_html=True)
-        st.info("Introduza os dados do caso e clique em "Gerar recomendação".")
+        st.markdown('<div class="cartao">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Aguardando processamento.</div>', unsafe_allow_html=True)
+        st.info("A avaliação tática será apresentada após a geração da recomendação.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-# SECÇÃO 5 — CONFIRMAÇÃO DO OPERADOR
-# ─────────────────────────────────────────────
+        st.markdown('<div class="cartao">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Aguardando processamento operacional.</div>', unsafe_allow_html=True)
+        st.info("Introduza os dados do caso e clique em “Gerar recomendação”.")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+# -------------------------
+# 5. Confirmação do operador
+# -------------------------
 if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
     dados = st.session_state.dados_resultado
     contributos = dados["contributos"]
@@ -888,153 +930,197 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     risco = dados["risco"]
     acao = dados["acao"]
 
-    st.markdown('<div class="ng-card ng-card-blue">', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-title">Secção 05</div>', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-heading">Confirmação do operador</div>', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-sub">O operador pode confirmar ou ajustar a recomendação automática.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">5. CONFIRMAÇÃO DO OPERADOR</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
 
     decisao_utilizador = st.selectbox(
         "Decisão final do operador",
-        ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"]
+        ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
+        label_visibility="visible"
     )
+
     justificacao = st.text_area(
-        "Justificação da decisão",
-        placeholder="Explica o motivo da confirmação ou da alteração da ação proposta...",
-        height=140
+        "Justificação da decisão final",
+        placeholder="Explica por que motivo confirmas ou alteras a ação proposta...",
+        height=180
     )
+
     alterou_decisao = decisao_utilizador != "Confirmar ação proposta"
     if alterou_decisao:
-        st.warning("A justificação é obrigatória quando a decisão altera a ação proposta pelo sistema.")
+        st.warning("A justificação é obrigatória quando a decisão final altera a ação proposta pelo sistema.")
 
-    guardar = st.button("Registar decisão final", use_container_width=True)
+    guardar = st.button("Guardar decisão final", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     if guardar:
         decisao_final = acao if decisao_utilizador == "Confirmar ação proposta" else decisao_utilizador
+
         if alterou_decisao and not justificacao.strip():
-            st.error("A justificação é obrigatória quando alteras a ação proposta.")
+            st.error("Não é possível guardar: a justificação é obrigatória quando alteras a ação proposta.")
         else:
+            id_decisao = gerar_id_decisao()
+            timestamp_decisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
             st.session_state.decisao_guardada = {
-                "id_decisao": gerar_id_decisao(),
-                "timestamp_decisao": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                "acao_proposta": acao, "decisao_final": decisao_final,
-                "risco": risco, "pontuacao_total": pontuacao_total,
+                "id_decisao": id_decisao,
+                "timestamp_decisao": timestamp_decisao,
+                "acao_proposta": acao,
+                "decisao_final": decisao_final,
+                "risco": risco,
+                "pontuacao_total": pontuacao_total,
                 "justificacao": justificacao.strip()
             }
 
-    # ─────────────────────────────────────────────
-    # SECÇÃO 6 — DECISÃO FINAL
-    # ─────────────────────────────────────────────
+    # -------------------------
+    # 6. Decisão final
+    # -------------------------
     if st.session_state.decisao_guardada is not None:
         reg = st.session_state.decisao_guardada
         tipo = tipo_decisao(reg["acao_proposta"], reg["decisao_final"])
-        classe_dec = "ng-dec-confirmed" if tipo == "Confirmada" else "ng-dec-changed"
+        classe_tipo = "estado-confirmacao" if tipo == "Confirmada" else "estado-alteracao"
 
-        st.markdown('<div class="ng-card ng-card-green">', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-title">Secção 06</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-heading">Decisão final</div>', unsafe_allow_html=True)
-        st.markdown('<div class="ng-section-sub">Registo da decisão humana validada pelo operador.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">6. DECISÃO FINAL</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div class="ng-result-header">
-            <div>
-                <div class="meta-id">{reg['id_decisao']}</div>
-                <div class="meta-ts">{reg['timestamp_decisao']}</div>
+        st.markdown(
+            f"""
+            <div class="bloco-meta">
+                <b>ID da decisão:</b> {reg["id_decisao"]}<br>
+                <b>Registado em:</b> {reg["timestamp_decisao"]}<br>
+                <b>Tipo de decisão:</b> {tipo}<br>
+                <span class="{classe_tipo}">{tipo}</span>
             </div>
-            <span class="{classe_dec}">{tipo}</span>
-        </div>
-        """, unsafe_allow_html=True)
+            """,
+            unsafe_allow_html=True
+        )
 
         r1, r2, r3, r4 = st.columns(4)
-        with r1: st.metric("Ação proposta", reg["acao_proposta"])
-        with r2: st.metric("Decisão final", reg["decisao_final"])
-        with r3: st.metric("Nível de risco", reg["risco"])
-        with r4: st.metric("Pontuação", reg["pontuacao_total"])
+        with r1:
+            st.metric("Ação proposta", reg["acao_proposta"])
+        with r2:
+            st.metric("Decisão final", reg["decisao_final"])
+        with r3:
+            st.metric("Nível de risco", reg["risco"])
+        with r4:
+            st.metric("Pontuação total", reg["pontuacao_total"])
 
-        st.markdown("**Justificação operacional**")
-        st.write(reg["justificacao"] if reg["justificacao"] else "Sem justificação registada.")
-        st.success("Decisão final registada com sucesso.")
+        st.markdown("#### Justificação operacional")
+        if reg["justificacao"]:
+            st.write(reg["justificacao"])
+        else:
+            st.write("Não foi fornecida justificação.")
+
+        st.success("Decisão final registada com sucesso no sistema.")
 
         if st.session_state.dados_resultado is not None:
             conteudo_txt = exportar_registo_txt(st.session_state.dados_resultado, reg)
             st.download_button(
-                label="Exportar registo operacional (.txt)",
+                label="Exportar registo TXT",
                 data=conteudo_txt,
                 file_name=f"{st.session_state.dados_resultado['id_caso']}_{reg['id_decisao']}.txt",
                 mime="text/plain",
                 use_container_width=True
             )
+
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # ─────────────────────────────────────────────
-    # SECÇÃO 7 — QUADRO DE INDICADORES
-    # ─────────────────────────────────────────────
-    st.markdown('<div class="ng-card">', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-title">Secção 07</div>', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-heading">Quadro de indicadores</div>', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-sub">Estado, peso e contributo de cada indicador para a decisão.</div>', unsafe_allow_html=True)
+    # -------------------------
+    # 7. Quadro de indicadores
+    # -------------------------
+    st.markdown('<div class="cartao">', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">7. QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">Visualização compacta do estado, peso e impacto na decisão de cada indicador.</div>', unsafe_allow_html=True)
 
     fatores_top = {f["codigo"] for f in obter_fatores_principais(contributos, top_n=3)}
-    pares = [(c, contributos[c]) for c in ["I1","I2","I3","I4","I5","I6"]]
+
+    pares = [
+        ("I1", contributos["I1"]),
+        ("I2", contributos["I2"]),
+        ("I3", contributos["I3"]),
+        ("I4", contributos["I4"]),
+        ("I5", contributos["I5"]),
+        ("I6", contributos["I6"])
+    ]
 
     for i in range(0, len(pares), 2):
-        ca, cb = st.columns(2, gap="small")
-        cod_a, info_a = pares[i]
-        cod_b, info_b = pares[i+1]
-        cls_a = classe_cartao_indicador(info_a["Contributo"])
-        cls_b = classe_cartao_indicador(info_b["Contributo"])
-        badge_a = '<span class="ng-critical">Fator crítico</span><br>' if cod_a in fatores_top else ""
-        badge_b = '<span class="ng-critical">Fator crítico</span><br>' if cod_b in fatores_top else ""
+        col_a, col_b = st.columns([1, 1], gap="small")
 
-        with ca:
-            st.markdown(f"""
-            <div class="ng-ind {cls_a}">
-                <div>
-                    <div class="ng-ind-code">{cod_a}</div>
-                </div>
-                <div>
-                    {badge_a}
-                    <div class="ng-ind-name">{siglas_indicadores[cod_a]}</div>
-                    <div class="ng-ind-sub">{info_a['Nível']} · Impacto {impacto_textual(info_a['Contributo']).lower()}</div>
-                </div>
-                <div class="ng-ind-right">
-                    <div class="ng-ind-score">{info_a['Contributo']}</div>
-                    <div class="ng-ind-weight">×{info_a['Peso']}</div>
-                </div>
-            </div>""", unsafe_allow_html=True)
+        codigo_a, info_a = pares[i]
+        classe_a = classe_cartao_indicador(info_a["Contributo"])
+        destaque_a = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_a in fatores_top else ""
 
-        with cb:
-            st.markdown(f"""
-            <div class="ng-ind {cls_b}">
-                <div>
-                    <div class="ng-ind-code">{cod_b}</div>
-                </div>
-                <div>
-                    {badge_b}
-                    <div class="ng-ind-name">{siglas_indicadores[cod_b]}</div>
-                    <div class="ng-ind-sub">{info_b['Nível']} · Impacto {impacto_textual(info_b['Contributo']).lower()}</div>
-                </div>
-                <div class="ng-ind-right">
-                    <div class="ng-ind-score">{info_b['Contributo']}</div>
-                    <div class="ng-ind-weight">×{info_b['Peso']}</div>
-                </div>
-            </div>""", unsafe_allow_html=True)
+        with col_a:
+            html_a = f"""<div class="mini-cartao-indicador {classe_a}">
+{destaque_a}
+<div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
+<div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div>
+<div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div>
+<div class="mini-cartao-linha">Peso: <b>{info_a['Peso']}</b></div>
+<div class="mini-cartao-linha">Contributo: <b>{info_a['Contributo']}</b></div>
+<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_a['Contributo'])}</b></div>
+</div>"""
+            st.markdown(html_a, unsafe_allow_html=True)
+
+        codigo_b, info_b = pares[i + 1]
+        classe_b = classe_cartao_indicador(info_b["Contributo"])
+        destaque_b = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_b in fatores_top else ""
+
+        with col_b:
+            html_b = f"""<div class="mini-cartao-indicador {classe_b}">
+{destaque_b}
+<div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
+<div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div>
+<div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div>
+<div class="mini-cartao-linha">Peso: <b>{info_b['Peso']}</b></div>
+<div class="mini-cartao-linha">Contributo: <b>{info_b['Contributo']}</b></div>
+<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_b['Contributo'])}</b></div>
+</div>"""
+            st.markdown(html_b, unsafe_allow_html=True)
 
     with st.expander("Ver regra de cálculo"):
         st.markdown(f"""
-**Pesos dos indicadores:** I1=3 · I2=2 · I3=2 · I4=2 · I5=1 · I6=3
+        **Origem dos indicadores**
+        - **I1** = calculado a partir de **Posição/Trajetória**
+        - **I2** = calculado a partir de **Posição/Trajetória + Concordância com radar/outras fontes**
+        - **I3** = calculado a partir de **Velocidade/Curso**
+        - **I4** = calculado a partir de **Posição/Trajetória + Velocidade/Curso**
+        - **I5** = calculado a partir de **Contexto operacional**
+        - **I6** = calculado a partir de **Concordância com radar/outras fontes**
 
-**Estados:** Baixo = 0 pts · Médio = 1 pt · Elevado = 2 pts
+        **Estados dos indicadores**
+        - **Baixo** = 0 pontos
+        - **Médio** = 1 ponto
+        - **Elevado** = 2 pontos
 
-**Fórmula:** Pontuação = Σ (pontosᵢ × pesoᵢ)
+        **Pesos dos indicadores**
+        - **I1** = 3
+        - **I2** = 2
+        - **I3** = 2
+        - **I4** = 2
+        - **I5** = 1
+        - **I6** = 3
 
-**Limiares:** ≤ 4 → Baixo / Ignorar · ≤ 8 → Médio / Monitorizar · > 8 → Elevado / Escalar
-""")
-        st.markdown(f'<div class="ng-formula">{formula_caso_texto(contributos)}</div>', unsafe_allow_html=True)
+        **Fórmula de cálculo**
+        - **Pontuação final = Σ (pontosᵢ × pesoᵢ), i ∈ {{I1, I2, I3, I4, I5, I6}}**
+        - **Pontuação final = (pontos_I1 × 3) + (pontos_I2 × 2) + (pontos_I3 × 2) + (pontos_I4 × 2) + (pontos_I5 × 1) + (pontos_I6 × 3)**
+
+        **Fórmula aplicada a este caso**
+        <div class="formula-caso"><b>{formula_caso_texto(contributos)}</b></div>
+
+        **Conversão da pontuação em risco e ação**
+        - **Pontuação final ≤ 4** → **Risco Baixo** → **Ignorar**
+        - **Pontuação final ≤ 8** → **Risco Médio** → **Monitorizar**
+        - **Pontuação final > 8** → **Risco Elevado** → **Escalar**
+        """, unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
 
+
 elif st.session_state.resultado_gerado and resultado_em_reserva:
-    st.markdown('<div class="ng-card ng-card-amber">', unsafe_allow_html=True)
-    st.markdown('<div class="ng-section-heading">Informação em reserva</div>', unsafe_allow_html=True)
-    st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação e os indicadores.")
+    st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">Informação em reserva</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">O caso foi alterado após a última geração.</div>', unsafe_allow_html=True)
+    st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática, a rastreabilidade e a confirmação do operador.")
     st.markdown('</div>', unsafe_allow_html=True)
