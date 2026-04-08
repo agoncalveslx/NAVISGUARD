@@ -4,7 +4,7 @@ from datetime import datetime
 import io
 
 st.set_page_config(
-    page_title="NAVISGUARD",
+    page_title="NAVISGUARD // NATO RESTRICTED",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -14,359 +14,754 @@ st.set_page_config(
 # -------------------------
 if "resultado_gerado" not in st.session_state:
     st.session_state.resultado_gerado = False
-
 if "dados_resultado" not in st.session_state:
     st.session_state.dados_resultado = None
-
 if "contador_casos" not in st.session_state:
     st.session_state.contador_casos = 0
-
 if "decisao_guardada" not in st.session_state:
     st.session_state.decisao_guardada = None
 
 # -------------------------
-# Estilo visual
+# Estilo visual NATO / Militar
 # -------------------------
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+    /* ─── BASE ─────────────────────────────────────────────────── */
+    html, body, [class*="css"] {
+        font-family: 'Rajdhani', 'Share Tech Mono', monospace !important;
+    }
+
     .stApp {
-        background: linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
+        background-color: #040d06 !important;
+        background-image:
+            linear-gradient(rgba(0,255,80,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,255,80,0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
     }
 
+    /* Scanline overlay */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0,0,0,0.15) 2px,
+            rgba(0,0,0,0.15) 4px
+        );
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* ─── CLASSIFICATION BANNER ────────────────────────────────── */
+    .classification-banner {
+        background: #b80000;
+        color: #fff;
+        text-align: center;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.25em;
+        padding: 4px 0;
+        margin-bottom: 0;
+        border-bottom: 2px solid #ff2222;
+        text-shadow: 0 0 8px rgba(255,80,80,0.8);
+    }
+
+    /* ─── HEADER ────────────────────────────────────────────────── */
     .topo-dashboard {
-        background: linear-gradient(90deg, #0f172a 0%, #1d4ed8 100%);
-        padding: 24px;
-        border-radius: 18px;
-        color: white;
-        margin-bottom: 20px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        background: linear-gradient(180deg, #050f07 0%, #071a0a 100%);
+        border: 1px solid #0d5c1e;
+        border-top: 3px solid #00ff50;
+        padding: 22px 28px;
+        border-radius: 4px;
+        margin-bottom: 14px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 30px rgba(0,255,80,0.12), inset 0 0 60px rgba(0,20,8,0.5);
     }
-
+    .topo-dashboard::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 8px,
+            rgba(0,255,80,0.01) 8px,
+            rgba(0,255,80,0.01) 16px
+        );
+        pointer-events: none;
+    }
+    .topo-dashboard .header-grid {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+    }
+    .topo-dashboard .header-left { flex: 1; }
+    .topo-dashboard .system-id {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.65rem;
+        color: #00ff5088;
+        letter-spacing: 0.18em;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+    }
     .topo-dashboard h1 {
         margin: 0;
-        font-size: 2rem;
-    }
-
-    .topo-dashboard p {
-        margin-top: 8px;
-        font-size: 1rem;
-        color: #eef4ff;
-    }
-
-    .cartao {
-        background: white;
-        padding: 20px;
-        border-radius: 18px;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
-        border: 1px solid #e5e7eb;
-        margin-bottom: 20px;
-    }
-
-    .cartao-azul {
-        background: linear-gradient(180deg, #eff6ff 0%, #eef4ff 100%);
-        border: 1px solid #bfdbfe;
-    }
-
-    .cartao-verde {
-        background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
-        border: 1px solid #a7f3d0;
-    }
-
-    .cartao-amarelo {
-        background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
-        border: 1px solid #fde68a;
-    }
-
-    .cartao-vermelho {
-        background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
-        border: 1px solid #fecaca;
-    }
-
-    .titulo-secao {
-        font-size: 1.3rem;
+        font-size: 2.6rem;
         font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 4px;
+        color: #00ff50;
+        text-shadow: 0 0 18px rgba(0,255,80,0.7), 0 0 40px rgba(0,255,80,0.3);
+        letter-spacing: 0.08em;
+        font-family: 'Share Tech Mono', monospace;
     }
-
-    .subtitulo-secao {
-        font-size: 0.95rem;
-        color: #475569;
-        margin-bottom: 16px;
-    }
-
-    .etiqueta {
+    .topo-dashboard .subtitle {
+        margin-top: 6px;
+        font-size: 0.9rem;
+        color: #5aff8a;
+        letter-spacing: 0.06em;
+        font-family: 'Rajdhani', sans-serif;
         font-weight: 600;
-        color: #0f172a;
+    }
+    .topo-dashboard .header-right {
+        text-align: right;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
+        color: #00ff5066;
+        letter-spacing: 0.1em;
+        line-height: 1.9;
+        border-left: 1px solid #0d5c1e;
+        padding-left: 20px;
+        min-width: 180px;
+    }
+    .topo-dashboard .header-right .live-dot {
+        display: inline-block;
+        width: 7px; height: 7px;
+        background: #00ff50;
+        border-radius: 50%;
+        margin-right: 5px;
+        box-shadow: 0 0 8px #00ff50;
+        animation: blink 1.4s infinite;
+        vertical-align: middle;
+    }
+    .corner-tl, .corner-tr, .corner-bl, .corner-br {
+        position: absolute;
+        width: 16px; height: 16px;
+        border-color: #00ff50;
+        border-style: solid;
+        opacity: 0.6;
+    }
+    .corner-tl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+    .corner-tr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+    .corner-bl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+    .corner-br { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+    /* ─── BARRA DE ESTADO ────────────────────────────────────────── */
+    .barra-estado-caso {
+        background: linear-gradient(90deg, #040d06 0%, #071408 100%);
+        color: #5aff8a;
+        border-radius: 3px;
+        padding: 10px 16px;
+        margin-bottom: 14px;
+        border: 1px solid #0d4018;
+        border-left: 3px solid #00ff50;
+        box-shadow: 0 0 12px rgba(0,255,80,0.06);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+    }
+    .barra-estado-caso b { color: #00ff50; }
+
+    /* ─── CARDS ─────────────────────────────────────────────────── */
+    .cartao {
+        background: linear-gradient(180deg, #05120a 0%, #040d06 100%);
+        padding: 20px;
+        border-radius: 4px;
+        border: 1px solid #0d4018;
+        border-top: 2px solid #1a7a34;
+        margin-bottom: 16px;
+        position: relative;
+        box-shadow: 0 0 20px rgba(0,255,80,0.04), inset 0 0 30px rgba(0,0,0,0.3);
+    }
+    .cartao-azul {
+        background: linear-gradient(180deg, #040e12 0%, #030c10 100%);
+        border-color: #0d3d4d;
+        border-top-color: #1a7aaa;
+    }
+    .cartao-verde {
+        background: linear-gradient(180deg, #040f06 0%, #051008 100%);
+        border-color: #0a4018;
+        border-top-color: #00ff50;
+    }
+    .cartao-amarelo {
+        background: linear-gradient(180deg, #100e03 0%, #0d0b02 100%);
+        border-color: #3d3300;
+        border-top-color: #ffb000;
+    }
+    .cartao-vermelho {
+        background: linear-gradient(180deg, #100303 0%, #0d0202 100%);
+        border-color: #3d0a0a;
+        border-top-color: #ff3333;
+    }
+
+    /* ─── SECTION TITLES ─────────────────────────────────────────── */
+    .titulo-secao {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #00ff50;
+        letter-spacing: 0.2em;
+        margin-bottom: 3px;
+        font-family: 'Share Tech Mono', monospace;
+        text-shadow: 0 0 10px rgba(0,255,80,0.5);
+    }
+    .subtitulo-secao {
+        font-size: 0.82rem;
+        color: #3a8a52;
+        letter-spacing: 0.05em;
+        margin-bottom: 14px;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 600;
+    }
+    .etiqueta {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.72rem;
+        color: #3aaa5a;
+        letter-spacing: 0.12em;
         margin-top: 10px;
         margin-bottom: 6px;
+        text-transform: uppercase;
     }
 
-    .acao-final {
-        padding: 16px;
-        border-radius: 14px;
-        font-weight: 700;
-        text-align: center;
-        margin-top: 12px;
-        border: 1px solid #d1d5db;
-        font-size: 1.05rem;
-    }
-
+    /* ─── MINI INDICATORS ────────────────────────────────────────── */
     .mini-indicador {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
+        background: #040d06;
+        border: 1px solid #0d4018;
+        border-top: 2px solid #1a7a34;
+        border-radius: 3px;
         padding: 14px;
         text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        box-shadow: 0 0 16px rgba(0,255,80,0.05);
+        position: relative;
+        overflow: hidden;
     }
-
+    .mini-indicador::after {
+        content: "";
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #00ff50, transparent);
+        opacity: 0.3;
+    }
     .mini-indicador .valor {
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: #0f172a;
+        font-size: 2rem;
+        font-weight: 700;
+        color: #00ff50;
+        text-shadow: 0 0 14px rgba(0,255,80,0.7);
+        font-family: 'Share Tech Mono', monospace;
     }
-
     .mini-indicador .rotulo {
-        font-size: 0.9rem;
-        color: #64748b;
+        font-size: 0.72rem;
+        color: #3a7a52;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-family: 'Share Tech Mono', monospace;
     }
 
+    /* ─── INDICATOR CARDS ────────────────────────────────────────── */
     .mini-cartao-indicador {
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
+        border: 1px solid #0d4018;
+        border-left: 3px solid #1a7a34;
+        border-radius: 3px;
         padding: 10px 12px;
         margin-bottom: 10px;
         position: relative;
+        background: #040d06;
     }
-
     .mini-cartao-baixo {
-        background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
-        border: 1px solid #a7f3d0;
+        border-left-color: #00ff50;
+        background: linear-gradient(90deg, #040f07 0%, #040d06 100%);
     }
-
     .mini-cartao-medio {
-        background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
-        border: 1px solid #fde68a;
+        border-left-color: #ffb000;
+        background: linear-gradient(90deg, #0f0d03 0%, #040d06 100%);
     }
-
     .mini-cartao-elevado {
-        background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
-        border: 1px solid #fecaca;
+        border-left-color: #ff3333;
+        background: linear-gradient(90deg, #0f0303 0%, #040d06 100%);
     }
-
     .mini-cartao-titulo {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.75rem;
         font-weight: 700;
-        color: #0f172a;
+        color: #5aff8a;
+        letter-spacing: 0.1em;
         margin-bottom: 6px;
-        font-size: 0.96rem;
+        text-transform: uppercase;
     }
-
     .mini-cartao-linha {
-        font-size: 0.9rem;
-        color: #334155;
-        line-height: 1.4;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.88rem;
+        color: #3a8a52;
+        line-height: 1.5;
+        font-weight: 600;
     }
+    .mini-cartao-linha b { color: #8aff9a; }
 
-    .bloco-meta {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 10px 12px;
-        margin-bottom: 12px;
-        color: #334155;
-        font-size: 0.92rem;
-    }
-
-    .barra-estado-caso {
-        background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
-        color: white;
-        border-radius: 14px;
-        padding: 12px 16px;
-        margin-bottom: 18px;
-        border: 1px solid #334155;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
-    }
-
+    /* ─── RESULT BLOCK ────────────────────────────────────────────── */
     .resultado-critico {
-        background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
-        color: white;
-        border-radius: 18px;
+        background: linear-gradient(180deg, #040d06 0%, #030c05 100%);
+        border-radius: 4px;
         padding: 20px;
-        border: 1px solid #1f2937;
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.22);
-        margin-bottom: 20px;
+        border: 1px solid #0d4018;
+        border-top: 3px solid #00ff50;
+        box-shadow: 0 0 30px rgba(0,255,80,0.08), inset 0 0 40px rgba(0,0,0,0.3);
+        margin-bottom: 16px;
+        position: relative;
     }
-
     .resultado-titulo {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: #1f2937;
-        margin-bottom: 4px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #00ff50;
+        letter-spacing: 0.2em;
+        margin-bottom: 3px;
+        font-family: 'Share Tech Mono', monospace;
+        text-shadow: 0 0 10px rgba(0,255,80,0.5);
     }
-
     .resultado-subtitulo {
-        font-size: 0.93rem;
-        color: #1f2937;
+        font-size: 0.8rem;
+        color: #3a7a52;
+        letter-spacing: 0.06em;
+        font-family: 'Rajdhani', sans-serif;
+        font-weight: 600;
     }
-
-    .selo-risco {
-        padding: 8px 12px;
-        border-radius: 999px;
-        font-weight: 800;
-        font-size: 0.82rem;
-        letter-spacing: 0.03em;
-        white-space: nowrap;
-        border: 1px solid rgba(255,255,255,0.15);
-    }
-
-    .selo-baixo {
-        background: #14532d;
-        color: #dcfce7;
-    }
-
-    .selo-medio {
-        background: #78350f;
-        color: #fef3c7;
-    }
-
-    .selo-elevado {
-        background: #7f1d1d;
-        color: #fee2e2;
-    }
-
     .resultado-meta {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 12px;
+        background: rgba(0,255,80,0.03);
+        border: 1px solid #0d4018;
+        border-left: 2px solid #00ff50;
+        border-radius: 3px;
         padding: 10px 12px;
-        color: #1f2937;
-        font-size: 0.9rem;
+        color: #5aff8a;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
         margin-bottom: 14px;
     }
 
+    /* ─── RISK SEALS ─────────────────────────────────────────────── */
+    .selo-risco {
+        padding: 6px 14px;
+        border-radius: 2px;
+        font-weight: 700;
+        font-size: 0.68rem;
+        letter-spacing: 0.2em;
+        white-space: nowrap;
+        font-family: 'Share Tech Mono', monospace;
+        text-align: center;
+        text-transform: uppercase;
+        border: 1px solid currentColor;
+    }
+    .selo-baixo {
+        background: rgba(0,255,80,0.08);
+        color: #00ff50;
+        border-color: #00ff50;
+        box-shadow: 0 0 10px rgba(0,255,80,0.25), inset 0 0 10px rgba(0,255,80,0.05);
+    }
+    .selo-medio {
+        background: rgba(255,176,0,0.08);
+        color: #ffb000;
+        border-color: #ffb000;
+        box-shadow: 0 0 10px rgba(255,176,0,0.25), inset 0 0 10px rgba(255,176,0,0.05);
+    }
+    .selo-elevado {
+        background: rgba(255,51,51,0.08);
+        color: #ff3333;
+        border-color: #ff3333;
+        box-shadow: 0 0 10px rgba(255,51,51,0.3), inset 0 0 10px rgba(255,51,51,0.05);
+        animation: blink-red 1.8s infinite;
+    }
+
+    /* ─── ACTION BLOCK ───────────────────────────────────────────── */
     .acao-critica {
-        border-radius: 14px;
+        border-radius: 3px;
         padding: 16px;
         text-align: center;
-        font-weight: 800;
-        font-size: 1.1rem;
-        border: 1px solid rgba(255,255,255,0.10);
+        font-family: 'Share Tech Mono', monospace;
+        font-weight: 700;
+        font-size: 1rem;
+        letter-spacing: 0.22em;
         margin-top: 10px;
+        text-transform: uppercase;
+        position: relative;
+        overflow: hidden;
     }
-
+    .acao-critica::before {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 60%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+        animation: sweep 3s infinite;
+    }
     .acao-baixa {
-        background: linear-gradient(90deg, #14532d 0%, #166534 100%);
-        color: #dcfce7;
+        background: rgba(0,255,80,0.06);
+        color: #00ff50;
+        border: 1px solid #00ff50;
+        box-shadow: 0 0 20px rgba(0,255,80,0.15), inset 0 0 20px rgba(0,255,80,0.03);
     }
-
     .acao-media {
-        background: linear-gradient(90deg, #78350f 0%, #92400e 100%);
-        color: #fef3c7;
+        background: rgba(255,176,0,0.06);
+        color: #ffb000;
+        border: 1px solid #ffb000;
+        box-shadow: 0 0 20px rgba(255,176,0,0.15), inset 0 0 20px rgba(255,176,0,0.03);
     }
-
     .acao-elevada {
-        background: linear-gradient(90deg, #7f1d1d 0%, #991b1b 100%);
-        color: #fee2e2;
+        background: rgba(255,51,51,0.06);
+        color: #ff3333;
+        border: 1px solid #ff3333;
+        box-shadow: 0 0 20px rgba(255,51,51,0.2), inset 0 0 20px rgba(255,51,51,0.03);
+        animation: blink-red 1.8s infinite;
     }
 
+    /* ─── BLOCO META ─────────────────────────────────────────────── */
+    .bloco-meta {
+        background: rgba(0,255,80,0.03);
+        border: 1px solid #0d4018;
+        border-left: 2px solid #1a7a34;
+        border-radius: 3px;
+        padding: 10px 12px;
+        margin-bottom: 12px;
+        color: #5aff8a;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+    }
+
+    /* ─── FACTOR CRITICAL BADGE ──────────────────────────────────── */
     .fator-critico {
         display: inline-block;
-        background: #0f172a;
-        color: white;
-        font-size: 0.72rem;
+        background: transparent;
+        color: #ff3333;
+        border: 1px solid #ff3333;
+        font-size: 0.6rem;
         font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 999px;
-        margin-bottom: 6px;
+        padding: 2px 7px;
+        border-radius: 1px;
+        margin-bottom: 5px;
+        font-family: 'Share Tech Mono', monospace;
+        letter-spacing: 0.15em;
+        box-shadow: 0 0 6px rgba(255,51,51,0.3);
+        animation: blink-red 2s infinite;
     }
 
+    /* ─── DECISION STATE BADGES ─────────────────────────────────── */
     .estado-confirmacao {
         display: inline-block;
-        background: #dcfce7;
-        color: #166534;
-        border: 1px solid #86efac;
-        border-radius: 999px;
-        padding: 4px 10px;
-        font-size: 0.78rem;
+        background: rgba(0,255,80,0.08);
+        color: #00ff50;
+        border: 1px solid #00ff50;
+        border-radius: 2px;
+        padding: 3px 10px;
+        font-size: 0.7rem;
         font-weight: 700;
         margin-top: 6px;
+        font-family: 'Share Tech Mono', monospace;
+        letter-spacing: 0.12em;
+        box-shadow: 0 0 8px rgba(0,255,80,0.2);
     }
-
     .estado-alteracao {
         display: inline-block;
-        background: #fef3c7;
-        color: #92400e;
-        border: 1px solid #fcd34d;
-        border-radius: 999px;
-        padding: 4px 10px;
-        font-size: 0.78rem;
+        background: rgba(255,176,0,0.08);
+        color: #ffb000;
+        border: 1px solid #ffb000;
+        border-radius: 2px;
+        padding: 3px 10px;
+        font-size: 0.7rem;
         font-weight: 700;
         margin-top: 6px;
+        font-family: 'Share Tech Mono', monospace;
+        letter-spacing: 0.12em;
+        box-shadow: 0 0 8px rgba(255,176,0,0.2);
     }
 
+    /* ─── FORMULA BLOCK ──────────────────────────────────────────── */
     .formula-caso {
-        background: #f8fafc;
-        border: 1px dashed #cbd5e1;
-        border-radius: 12px;
+        background: #030c05;
+        border: 1px dashed #0d4018;
+        border-radius: 3px;
         padding: 12px;
-        color: #334155;
-        font-size: 0.92rem;
+        color: #5aff8a;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.78rem;
         margin-top: 10px;
+        letter-spacing: 0.06em;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
     }
 
-    /* Botões */
-    div.stButton > button {
-        background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
-        color: white;
+    /* ─── AÇÃO FINAL ──────────────────────────────────────────────── */
+    .acao-final {
+        padding: 14px;
+        border-radius: 3px;
+        font-family: 'Share Tech Mono', monospace;
         font-weight: 700;
-        border: none;
-        border-radius: 10px;
-        padding: 0.6rem 1rem;
-        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        text-align: center;
+        margin-top: 12px;
+        border: 1px solid #0d4018;
+        font-size: 0.88rem;
+        letter-spacing: 0.12em;
+        color: #5aff8a;
+        background: #040d06;
     }
 
-    div.stButton > button:hover {
-        background: linear-gradient(90deg, #1e40af 0%, #1d4ed8 100%);
-        color: white;
-        border: none;
-    }
-
-    div.stButton > button:focus {
-        color: white !important;
-        border: none !important;
-        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
-    }
-
-    /* Selectbox */
+    /* ─── SELECTBOXES ────────────────────────────────────────────── */
     div[data-baseweb="select"] > div {
-        border-radius: 10px !important;
+        border-radius: 3px !important;
         min-height: 44px;
         font-weight: 600;
+        font-family: 'Rajdhani', sans-serif !important;
+        letter-spacing: 0.05em;
+        background: #040d06 !important;
+        border-color: #0d4018 !important;
+        color: #5aff8a !important;
     }
+    div[data-baseweb="select"] > div:hover {
+        border-color: #1a7a34 !important;
+        box-shadow: 0 0 8px rgba(0,255,80,0.15) !important;
+    }
+    div[data-baseweb="select"] svg { fill: #1a7a34 !important; }
 
     .risco-baixo div[data-baseweb="select"] > div {
-        background: #ecfdf5 !important;
-        border: 1px solid #a7f3d0 !important;
-        color: #065f46 !important;
+        background: #030f05 !important;
+        border-color: #00ff50 !important;
+        color: #00ff50 !important;
+        box-shadow: 0 0 8px rgba(0,255,80,0.15) !important;
     }
-
     .risco-medio div[data-baseweb="select"] > div {
-        background: #fffbeb !important;
-        border: 1px solid #fde68a !important;
-        color: #92400e !important;
+        background: #0d0a02 !important;
+        border-color: #ffb000 !important;
+        color: #ffb000 !important;
+        box-shadow: 0 0 8px rgba(255,176,0,0.15) !important;
     }
-
     .risco-elevado div[data-baseweb="select"] > div {
-        background: #fef2f2 !important;
-        border: 1px solid #fecaca !important;
-        color: #991b1b !important;
+        background: #0d0202 !important;
+        border-color: #ff3333 !important;
+        color: #ff3333 !important;
+        box-shadow: 0 0 8px rgba(255,51,51,0.2) !important;
+    }
+    .risco-neutro div[data-baseweb="select"] > div {
+        background: #040d06 !important;
+        border-color: #0d4018 !important;
+        color: #3a7a52 !important;
     }
 
-    .risco-neutro div[data-baseweb="select"] > div {
-        background: #f8fafc !important;
-        border: 1px solid #cbd5e1 !important;
-        color: #0f172a !important;
+    /* ─── BUTTONS ────────────────────────────────────────────────── */
+    div.stButton > button {
+        background: transparent !important;
+        color: #00ff50 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.18em !important;
+        border: 1px solid #00ff50 !important;
+        border-radius: 3px !important;
+        padding: 0.6rem 1rem !important;
+        box-shadow: 0 0 12px rgba(0,255,80,0.15), inset 0 0 12px rgba(0,255,80,0.03) !important;
+        text-transform: uppercase !important;
+        transition: all 0.2s ease !important;
+    }
+    div.stButton > button:hover {
+        background: rgba(0,255,80,0.06) !important;
+        box-shadow: 0 0 20px rgba(0,255,80,0.3), inset 0 0 20px rgba(0,255,80,0.06) !important;
+        color: #00ff50 !important;
+        border-color: #00ff50 !important;
+    }
+    div.stButton > button:focus {
+        color: #00ff50 !important;
+        border-color: #00ff50 !important;
+        box-shadow: 0 0 20px rgba(0,255,80,0.3) !important;
+    }
+
+    /* ─── TEXT AREA ──────────────────────────────────────────────── */
+    textarea {
+        background: #030c05 !important;
+        color: #5aff8a !important;
+        border: 1px solid #0d4018 !important;
+        border-radius: 3px !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 0.95rem !important;
+    }
+    textarea:focus {
+        border-color: #1a7a34 !important;
+        box-shadow: 0 0 10px rgba(0,255,80,0.1) !important;
+    }
+
+    /* ─── LABELS ─────────────────────────────────────────────────── */
+    label, .stSelectbox label, .stTextArea label {
+        color: #3a8a52 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 0.72rem !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase !important;
+    }
+
+    /* ─── METRIC ─────────────────────────────────────────────────── */
+    [data-testid="metric-container"] {
+        background: #040d06 !important;
+        border: 1px solid #0d4018 !important;
+        border-top: 2px solid #1a7a34 !important;
+        border-radius: 3px !important;
+        padding: 12px !important;
+    }
+    [data-testid="metric-container"] [data-testid="stMetricLabel"] {
+        color: #3a7a52 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 0.68rem !important;
+        letter-spacing: 0.12em !important;
+        text-transform: uppercase !important;
+    }
+    [data-testid="metric-container"] [data-testid="stMetricValue"] {
+        color: #00ff50 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 1.3rem !important;
+        text-shadow: 0 0 10px rgba(0,255,80,0.5) !important;
+    }
+
+    /* ─── ALERTS / INFO ──────────────────────────────────────────── */
+    .stAlert {
+        background: rgba(0,0,0,0.3) !important;
+        border-radius: 3px !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+    }
+    .stAlert[data-baseweb="notification"] {
+        border-left: 3px solid #00ff50 !important;
+        color: #5aff8a !important;
+    }
+    div[data-testid="stNotification"] {
+        border: 1px solid #0d4018 !important;
+        background: rgba(0,255,80,0.03) !important;
+        color: #5aff8a !important;
+    }
+    div[data-testid="stNotification"] p {
+        color: #5aff8a !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 600 !important;
+    }
+    .element-container div[data-testid="stNotification"] > div {
+        color: #5aff8a !important;
+    }
+
+    /* ─── EXPANDER ───────────────────────────────────────────────── */
+    .streamlit-expanderHeader {
+        background: #040d06 !important;
+        color: #3a8a52 !important;
+        border: 1px solid #0d4018 !important;
+        border-radius: 3px !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.1em !important;
+    }
+    .streamlit-expanderContent {
+        background: #030c05 !important;
+        border: 1px solid #0a3012 !important;
+        border-top: none !important;
+        color: #5aff8a !important;
+    }
+    .streamlit-expanderContent p,
+    .streamlit-expanderContent li,
+    .streamlit-expanderContent strong {
+        color: #5aff8a !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 600 !important;
+    }
+
+    /* ─── MARKDOWN / TEXT ────────────────────────────────────────── */
+    .stMarkdown p, .stMarkdown li {
+        color: #5aff8a !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-weight: 600 !important;
+    }
+    .stMarkdown h5 {
+        color: #00ff50 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        letter-spacing: 0.1em !important;
+        font-size: 0.82rem !important;
+        text-shadow: 0 0 8px rgba(0,255,80,0.4) !important;
+    }
+    .stMarkdown strong {
+        color: #8aff9a !important;
+    }
+    h4, h5, h6 {
+        font-family: 'Share Tech Mono', monospace !important;
+        color: #00ff50 !important;
+        letter-spacing: 0.1em !important;
+    }
+
+    /* ─── DOWNLOAD BUTTON ────────────────────────────────────────── */
+    [data-testid="stDownloadButton"] button {
+        background: transparent !important;
+        color: #3aaa5a !important;
+        border: 1px solid #1a7a34 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 0.75rem !important;
+        letter-spacing: 0.12em !important;
+        border-radius: 3px !important;
+    }
+    [data-testid="stDownloadButton"] button:hover {
+        background: rgba(0,255,80,0.05) !important;
+        color: #00ff50 !important;
+        border-color: #00ff50 !important;
+        box-shadow: 0 0 12px rgba(0,255,80,0.2) !important;
+    }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #030c05; }
+    ::-webkit-scrollbar-thumb { background: #1a7a34; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00ff50; }
+
+    /* ─── SECTION DIVIDER ────────────────────────────────────────── */
+    .nato-divider {
+        border: none;
+        border-top: 1px solid #0d4018;
+        margin: 6px 0 14px 0;
+    }
+
+    /* ─── THREAT LEVEL BAR ───────────────────────────────────────── */
+    .threat-bar {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 14px;
+    }
+    .threat-seg {
+        flex: 1;
+        height: 4px;
+        border-radius: 1px;
+    }
+    .threat-seg-active-low   { background: #00ff50; box-shadow: 0 0 6px #00ff50; }
+    .threat-seg-active-med   { background: #ffb000; box-shadow: 0 0 6px #ffb000; }
+    .threat-seg-active-high  { background: #ff3333; box-shadow: 0 0 6px #ff3333; }
+    .threat-seg-inactive     { background: #0d4018; }
+
+    /* ─── KEYFRAMES ──────────────────────────────────────────────── */
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+    @keyframes blink-red {
+        0%, 100% { box-shadow: 0 0 10px rgba(255,51,51,0.3); }
+        50% { box-shadow: 0 0 20px rgba(255,51,51,0.6); }
+    }
+    @keyframes sweep {
+        0% { left: -100%; }
+        100% { left: 200%; }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -496,10 +891,10 @@ def reiniciar_caso():
 
 def estado_do_caso():
     if st.session_state.decisao_guardada is not None:
-        return "Decisão registada"
+        return "DECISÃO REGISTADA"
     if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None:
-        return "Recomendação gerada"
-    return "Em análise"
+        return "RECOMENDAÇÃO GERADA"
+    return "EM ANÁLISE"
 
 def tipo_decisao(acao_proposta_atual, decisao_final):
     if acao_proposta_atual == decisao_final:
@@ -531,36 +926,35 @@ def formula_caso_texto(contributos):
 
 def exportar_registo_txt(dados, decisao=None):
     linhas = []
-    linhas.append("NAVISGUARD - REGISTO OPERACIONAL")
-    linhas.append("=" * 42)
-    linhas.append(f"ID do caso: {dados['id_caso']}")
-    linhas.append(f"Processado em: {dados['timestamp']}")
-    linhas.append(f"Posição/Trajetória: {dados['posicao']}")
-    linhas.append(f"Velocidade/Curso: {dados['velocidade']}")
-    linhas.append(f"Concordância com radar/outras fontes: {dados['radar']}")
-    linhas.append(f"Contexto operacional: {dados['contexto']}")
+    linhas.append("NAVISGUARD // NATO RESTRICTED")
+    linhas.append("REGISTO OPERACIONAL")
+    linhas.append("=" * 50)
+    linhas.append(f"ID DO CASO: {dados['id_caso']}")
+    linhas.append(f"PROCESSADO EM: {dados['timestamp']}")
+    linhas.append(f"POSIÇÃO/TRAJETÓRIA: {dados['posicao']}")
+    linhas.append(f"VELOCIDADE/CURSO: {dados['velocidade']}")
+    linhas.append(f"CONCORDÂNCIA COM RADAR/OUTRAS FONTES: {dados['radar']}")
+    linhas.append(f"CONTEXTO OPERACIONAL: {dados['contexto']}")
     linhas.append("")
-    linhas.append("Indicadores:")
+    linhas.append("INDICADORES:")
     for chave in ["I1", "I2", "I3", "I4", "I5", "I6"]:
         info = dados["contributos"][chave]
         linhas.append(
-            f"{chave} - {info['Nome']}: Estado={info['Nível']}, Pontos={info['Pontos']}, Peso={info['Peso']}, Contributo={info['Contributo']}"
+            f"  {chave} - {info['Nome']}: Estado={info['Nível']}, Pontos={info['Pontos']}, Peso={info['Peso']}, Contributo={info['Contributo']}"
         )
     linhas.append("")
-    linhas.append(f"Pontuação final: {dados['pontuacao_total']}")
-    linhas.append(f"Nível de risco: {dados['risco']}")
-    linhas.append(f"Ação proposta: {dados['acao']}")
-    linhas.append(f"Fórmula aplicada: {formula_caso_texto(dados['contributos'])}")
-
+    linhas.append(f"PONTUAÇÃO FINAL: {dados['pontuacao_total']}")
+    linhas.append(f"NÍVEL DE RISCO: {dados['risco']}")
+    linhas.append(f"AÇÃO PROPOSTA: {dados['acao']}")
+    linhas.append(f"FÓRMULA APLICADA: {formula_caso_texto(dados['contributos'])}")
     if decisao is not None:
         linhas.append("")
-        linhas.append("Decisão final:")
-        linhas.append(f"ID da decisão: {decisao['id_decisao']}")
-        linhas.append(f"Registado em: {decisao['timestamp_decisao']}")
-        linhas.append(f"Tipo de decisão: {tipo_decisao(decisao['acao_proposta'], decisao['decisao_final'])}")
-        linhas.append(f"Decisão final: {decisao['decisao_final']}")
-        linhas.append(f"Justificação: {decisao['justificacao'] if decisao['justificacao'] else 'Não foi fornecida justificação.'}")
-
+        linhas.append("DECISÃO FINAL:")
+        linhas.append(f"  ID DA DECISÃO: {decisao['id_decisao']}")
+        linhas.append(f"  REGISTADO EM: {decisao['timestamp_decisao']}")
+        linhas.append(f"  TIPO DE DECISÃO: {tipo_decisao(decisao['acao_proposta'], decisao['decisao_final'])}")
+        linhas.append(f"  DECISÃO FINAL: {decisao['decisao_final']}")
+        linhas.append(f"  JUSTIFICAÇÃO: {decisao['justificacao'] if decisao['justificacao'] else 'Não foi fornecida justificação.'}")
     return "\n".join(linhas)
 
 nomes_indicadores = {
@@ -571,156 +965,165 @@ nomes_indicadores = {
     "I5": "Consistência contextual",
     "I6": "Consistência entre fontes"
 }
-
 siglas_indicadores = {
     "I1": "Identidade",
-    "I2": "Alt. identidade",
+    "I2": "Alt. Identidade",
     "I3": "Cinemática",
-    "I4": "Espaço-tempo",
+    "I4": "Espaço-Tempo",
     "I5": "Contexto",
-    "I6": "Entre fontes"
+    "I6": "Entre Fontes"
 }
-
 pesos = {"I1": 3, "I2": 2, "I3": 2, "I4": 2, "I5": 1, "I6": 3}
 
-# -------------------------
-# Cabeçalho
-# -------------------------
+# ─────────────────────────────────────────────
+# CLASSIFICATION BANNER
+# ─────────────────────────────────────────────
 st.markdown("""
-<div class="topo-dashboard">
-    <h1>NAVISGUARD</h1>
-    <p>Sistema de Apoio e Validação da Decisão em Ambiente Marítimo.</p>
+<div class="classification-banner">
+    ⬛ NATO RESTRICTED // NAVISGUARD MARITIME DECISION SUPPORT SYSTEM // ACESSO CONTROLADO ⬛
 </div>
 """, unsafe_allow_html=True)
 
-id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "Não iniciado"
+# ─────────────────────────────────────────────
+# HEADER
+# ─────────────────────────────────────────────
+ts_now = datetime.now().strftime("%Y-%m-%d  %H:%M:%S")
+st.markdown(f"""
+<div class="topo-dashboard">
+    <div class="corner-tl"></div>
+    <div class="corner-tr"></div>
+    <div class="corner-bl"></div>
+    <div class="corner-br"></div>
+    <div class="header-grid">
+        <div class="header-left">
+            <div class="system-id">SYS // MARITIME TACTICAL COMMAND // v2.0</div>
+            <h1>NAVISGUARD</h1>
+            <div class="subtitle">Sistema de Apoio e Validação da Decisão em Ambiente Marítimo</div>
+        </div>
+        <div class="header-right">
+            <span class="live-dot"></span>SISTEMA OPERACIONAL<br>
+            SESSION: {datetime.now().strftime('%Y%m%d-%H%M')}<br>
+            LOCAL: {ts_now}<br>
+            PROTOCOLO: NATO STANAG<br>
+            CLASSIFICAÇÃO: RESTRICTED
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+# STATUS BAR
+# ─────────────────────────────────────────────
+id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "N/A"
 st.markdown(
     f"""
     <div class="barra-estado-caso">
-        <b>Caso atual:</b> {id_atual} &nbsp;&nbsp;|&nbsp;&nbsp;
-        <b>Estado:</b> {estado_do_caso()}
+        ▶ &nbsp;<b>CASO ATIVO:</b> {id_atual}
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <b>ESTADO:</b> {estado_do_caso()}
+        &nbsp;&nbsp;|&nbsp;&nbsp;
+        <b>UTC:</b> {datetime.utcnow().strftime('%H:%M:%S Z')}
     </div>
     """,
     unsafe_allow_html=True
 )
 
-with st.expander("Enquadramento Operacional"):
+with st.expander("◈  ENQUADRAMENTO OPERACIONAL"):
     st.write("""
 Este sistema constitui uma **plataforma de apoio à decisão em ambiente marítimo**, desenvolvida para avaliar comportamentos potencialmente anómalos de embarcações com base em dados operacionais.
-
 A aplicação simula a análise de informação proveniente de sistemas como:
 - AIS (Automatic Identification System)
 - VMS (Vessel Monitoring System)
 - Radar e outras fontes externas
 
 Com base nos dados introduzidos pelo operador, o sistema:
+1. **Gera indicadores internos de risco (I1–I6)**
+2. **Calcula uma pontuação agregada**
+3. **Classifica o nível de risco** (Baixo / Médio / Elevado)
+4. **Propõe uma ação operacional** (Ignorar / Monitorizar / Escalar)
+5. **Permite validação humana da decisão**
 
-1. **Gera indicadores internos de risco (I1–I6)**  
-   Avalia dimensões como identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
-
-2. **Calcula uma pontuação agregada**  
-   Cada indicador contribui de forma ponderada para o risco global.
-
-3. **Classifica o nível de risco**  
-   - Baixo  
-   - Médio  
-   - Elevado  
-
-4. **Propõe uma ação operacional**  
-   - Ignorar  
-   - Monitorizar  
-   - Escalar  
-
-5. **Permite validação humana da decisão**  
-   O operador pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
-
-⚠️ **Nota:**  
-Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
+⚠️ **NOTA:** Esta aplicação é uma **demo conceptual** e não substitui sistemas reais de vigilância ou comando operacional.
 """)
 
-# -------------------------
-# 1. Processamento operacional
-# -------------------------
+# ─────────────────────────────────────────────
+# SECÇÃO 1 — PROCESSAMENTO
+# ─────────────────────────────────────────────
 st.markdown('<div class="cartao">', unsafe_allow_html=True)
-st.markdown('<div class="titulo-secao">1. PROCESSAMENTO OPERACIONAL</div>', unsafe_allow_html=True)
+st.markdown('<div class="titulo-secao">◈ 01 // PROCESSAMENTO OPERACIONAL</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitulo-secao">O sistema calcula indicadores, avalia o risco e emite uma recomendação.</div>', unsafe_allow_html=True)
 
-st.info("Após clicar em “Gerar recomendação”, o sistema processa os indicadores, calcula a pontuação total, determina o nível de risco e emite a ação proposta.")
+st.info("BRIEFING: Após clicar em 'GERAR RECOMENDAÇÃO', o sistema processa os indicadores, calcula a pontuação total, determina o nível de risco e emite a ação proposta.")
 
 mini1, mini2, mini3 = st.columns(3)
-
 with mini1:
     st.markdown("""
-    <div class="mini-indicador" style="background: linear-gradient(180deg,#eff6ff,#eef4ff); border:1px solid #bfdbfe;">
-        <div class="valor">6</div>
-        <div class="rotulo">Indicadores internos</div>
+    <div class="mini-indicador" style="border-top-color:#1a7aaa;">
+        <div class="valor" style="color:#5ab4ff; text-shadow:0 0 14px rgba(90,180,255,0.7);">6</div>
+        <div class="rotulo">Indicadores Internos</div>
     </div>
     """, unsafe_allow_html=True)
     with st.expander("Ver indicadores"):
         st.markdown("""
-        **I1 — Identidade** *(calculado a partir de Posição/Trajetória)*  
-        **I2 — Alteração de identidade** *(calculado a partir de Posição/Trajetória + Concordância com radar/outras fontes)*  
-        **I3 — Cinemática** *(calculado a partir de Velocidade/Curso)*  
-        **I4 — Consistência espaço-temporal** *(calculado a partir de Posição/Trajetória + Velocidade/Curso)*  
-        **I5 — Contexto operacional** *(calculado a partir de Contexto operacional)*  
-        **I6 — Consistência entre fontes** *(calculado a partir de Concordância com radar/outras fontes)*  
+        **I1 — Identidade** *(Posição/Trajetória)*
+        **I2 — Alt. Identidade** *(Posição + Radar)*
+        **I3 — Cinemática** *(Velocidade/Curso)*
+        **I4 — Espaço-Temporal** *(Posição + Velocidade)*
+        **I5 — Contexto** *(Contexto Operacional)*
+        **I6 — Entre Fontes** *(Concordância Radar)*
         """)
-
 with mini2:
     st.markdown("""
     <div class="mini-indicador">
         <div class="valor">3</div>
-        <div class="rotulo">Níveis de risco</div>
+        <div class="rotulo">Níveis de Risco</div>
     </div>
     """, unsafe_allow_html=True)
-    with st.expander("Ver níveis de risco"):
+    with st.expander("Ver níveis"):
         st.markdown("""
-        **Baixo** — sem impacto  
-        **Médio** — atenção  
-        **Elevado** — prioridade  
+        **BAIXO** — Sem impacto
+        **MÉDIO** — Atenção requerida
+        **ELEVADO** — Prioridade máxima
         """)
-
 with mini3:
     st.markdown("""
     <div class="mini-indicador">
         <div class="valor">4</div>
-        <div class="rotulo">Ações possíveis</div>
+        <div class="rotulo">Ações Possíveis</div>
     </div>
     """, unsafe_allow_html=True)
     with st.expander("Ver ações"):
         st.markdown("""
-        **Ignorar** — sem ação  
-        **Monitorizar** — vigilância  
-        **Escalar** — intervenção  
-        **Rever** — análise adicional  
+        **IGNORAR** — Sem ação
+        **MONITORIZAR** — Vigilância ativa
+        **ESCALAR** — Intervenção imediata
+        **REVER** — Análise adicional
         """)
-
 st.markdown('</div>', unsafe_allow_html=True)
 
-# -------------------------
-# Layout principal
-# -------------------------
+# ─────────────────────────────────────────────
+# LAYOUT PRINCIPAL
+# ─────────────────────────────────────────────
 coluna_esquerda, coluna_direita = st.columns([1, 1], gap="large")
 
-# -------------------------
-# 2. Coluna esquerda: dados de entrada
-# -------------------------
+# ─────────────────────────────────────────────
+# SECÇÃO 2 — DADOS DE ENTRADA
+# ─────────────────────────────────────────────
 with coluna_esquerda:
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">2. DADOS DE ENTRADA</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">◈ 02 // DADOS DE ENTRADA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">Operador: introduzir dados do caso em análise.</div>', unsafe_allow_html=True)
 
     col_titulo_entrada, col_botao_reset = st.columns([3, 1])
     with col_titulo_entrada:
-        st.markdown("##### PREPARAÇÃO DO CASO")
+        st.markdown('<div class="etiqueta">▸ PREPARAÇÃO DO CASO</div>', unsafe_allow_html=True)
     with col_botao_reset:
-        st.button("Novo caso", use_container_width=True, on_click=reiniciar_caso)
+        st.button("NOVO CASO", use_container_width=True, on_click=reiniciar_caso)
 
-    st.markdown("##### Dados AIS/VMS")
+    st.markdown('<div class="etiqueta">▸ DADOS AIS / VMS</div>', unsafe_allow_html=True)
     col_a, col_b = st.columns(2)
-
     with col_a:
-        st.markdown('<div class="etiqueta">Posição/Trajetória</div>', unsafe_allow_html=True)
+        st.markdown('<div class="etiqueta">Posição / Trajetória</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(posicao) if "posicao" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         posicao = st.selectbox(
             "Posição/Trajetória",
@@ -728,9 +1131,8 @@ with coluna_esquerda:
             label_visibility="collapsed"
         )
         st.markdown('</div>', unsafe_allow_html=True)
-
     with col_b:
-        st.markdown('<div class="etiqueta">Velocidade/Curso</div>', unsafe_allow_html=True)
+        st.markdown('<div class="etiqueta">Velocidade / Curso</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(velocidade) if "velocidade" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         velocidade = st.selectbox(
             "Velocidade/Curso",
@@ -739,11 +1141,10 @@ with coluna_esquerda:
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("##### Outras fontes")
+    st.markdown('<div class="etiqueta">▸ OUTRAS FONTES</div>', unsafe_allow_html=True)
     col_e, col_f = st.columns(2)
-
     with col_e:
-        st.markdown('<div class="etiqueta">Concordância com radar/outras fontes</div>', unsafe_allow_html=True)
+        st.markdown('<div class="etiqueta">Concordância Radar</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(radar) if "radar" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         radar = st.selectbox(
             "Concordância com radar/outras fontes",
@@ -751,9 +1152,8 @@ with coluna_esquerda:
             label_visibility="collapsed"
         )
         st.markdown('</div>', unsafe_allow_html=True)
-
     with col_f:
-        st.markdown('<div class="etiqueta">Contexto operacional</div>', unsafe_allow_html=True)
+        st.markdown('<div class="etiqueta">Contexto Operacional</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="{classe_risco_input(contexto) if "contexto" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         contexto = st.selectbox(
             "Contexto operacional",
@@ -762,21 +1162,19 @@ with coluna_esquerda:
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-    gerar = st.button("Gerar recomendação", use_container_width=True)
+    gerar = st.button("◈  GERAR RECOMENDAÇÃO", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# -------------------------
+# ─────────────────────────────────────────────
 # Deteção de alterações
-# -------------------------
+# ─────────────────────────────────────────────
 estado_atual = {
     "posicao": posicao,
     "velocidade": velocidade,
     "radar": radar,
     "contexto": contexto
 }
-
 resultado_em_reserva = False
-
 if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None:
     ultimo_estado = {
         "posicao": st.session_state.dados_resultado["posicao"],
@@ -789,10 +1187,8 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
 if gerar:
     indicadores = calcular_indicadores(posicao, velocidade, radar, contexto)
-
     contributos = {}
     pontuacao_total = 0
-
     for chave, valor in indicadores.items():
         pontos = nivel_para_pontos(valor)
         contributo = pontos * pesos[chave]
@@ -805,10 +1201,8 @@ if gerar:
             "Contributo": contributo
         }
         pontuacao_total += contributo
-
     risco = nivel_risco(pontuacao_total)
     acao = acao_proposta(pontuacao_total)
-
     st.session_state.dados_resultado = {
         "id_caso": novo_id_caso(),
         "timestamp": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
@@ -826,9 +1220,9 @@ if gerar:
     st.session_state.decisao_guardada = None
     resultado_em_reserva = False
 
-# -------------------------
-# 3 + 4. Coluna direita: avaliação tática + proposta de ação
-# -------------------------
+# ─────────────────────────────────────────────
+# SECÇÕES 3 + 4 — COLUNA DIREITA
+# ─────────────────────────────────────────────
 with coluna_direita:
     if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
         dados = st.session_state.dados_resultado
@@ -836,93 +1230,99 @@ with coluna_direita:
         pontuacao_total = dados["pontuacao_total"]
         risco = dados["risco"]
         acao = dados["acao"]
-
         fatores_principais = obter_fatores_principais(contributos, top_n=3)
 
+        # Threat level bar
+        segs = []
+        if risco == "Baixo":
+            segs = ["threat-seg-active-low", "threat-seg-inactive", "threat-seg-inactive", "threat-seg-inactive", "threat-seg-inactive"]
+        elif risco == "Médio":
+            segs = ["threat-seg-active-low", "threat-seg-active-med", "threat-seg-active-med", "threat-seg-inactive", "threat-seg-inactive"]
+        else:
+            segs = ["threat-seg-active-low", "threat-seg-active-med", "threat-seg-active-high", "threat-seg-active-high", "threat-seg-active-high"]
+        seg_html = "".join([f'<div class="threat-seg {s}"></div>' for s in segs])
+        st.markdown(f'<div class="threat-bar">{seg_html}</div>', unsafe_allow_html=True)
+
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">◈ 03 // AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Síntese dos fatores críticos e impacto na recomendação.</div>', unsafe_allow_html=True)
 
-        st.info("BRIEFING OPERACIONAL")
-        st.markdown("**Estado:** Avaliação concluída")
-
-        st.markdown("**Fatores críticos:**")
+        st.info("▸ BRIEFING OPERACIONAL — Avaliação concluída")
+        st.markdown("**ESTADO:** Avaliação concluída")
+        st.markdown("**FATORES CRÍTICOS:**")
         for idx, fator in enumerate(fatores_principais):
-            prefixo = "• "
+            prefixo = "  ►  "
             if idx == 0:
-                prefixo = "• Principal fator: "
+                prefixo = "  ◉  PRINCIPAL: "
             st.write(f"{prefixo}{fator['nome']}")
 
-        st.markdown("##### AVALIAÇÃO DE RISCO")
-        st.write(f"**Nível de risco:** {risco}")
-        st.write(f"**Ação proposta:** {acao}")
+        st.markdown('<div class="etiqueta">▸ AVALIAÇÃO DE RISCO</div>', unsafe_allow_html=True)
+        st.write(f"**NÍVEL DE RISCO:** {risco.upper()}")
+        st.write(f"**AÇÃO PROPOSTA:** {acao.upper()}")
         st.markdown(
-            f"**Avaliação:** Situação classificada com risco **{risco.lower()}** devido à combinação dos fatores críticos identificados."
+            f"**AVALIAÇÃO:** Situação classificada com risco **{risco.upper()}** pela combinação dos fatores críticos identificados."
         )
-        st.markdown("**Fundamento principal:** inconsistência entre fatores com maior contributo e necessidade de resposta proporcional ao risco.")
         st.markdown('</div>', unsafe_allow_html=True)
 
+        # SECÇÃO 4 — PROPOSTA DE AÇÃO
         st.markdown('<div class="resultado-critico">', unsafe_allow_html=True)
-
         col_res_1, col_res_2 = st.columns([3, 1])
         with col_res_1:
-            st.markdown('<div class="resultado-titulo">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
-            st.markdown('<div class="resultado-subtitulo">Recomendação do sistema gerada a partir das entradas submetidas.</div>', unsafe_allow_html=True)
-
+            st.markdown('<div class="resultado-titulo">◈ 04 // PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
+            st.markdown('<div class="resultado-subtitulo">Recomendação gerada a partir das entradas submetidas.</div>', unsafe_allow_html=True)
         with col_res_2:
             st.markdown(
-                f'<div class="selo-risco {classe_selo_risco(risco)}" style="text-align:center;">RISCO {risco.upper()}</div>',
+                f'<div class="selo-risco {classe_selo_risco(risco)}" style="text-align:center; margin-top:6px;">RISCO {risco.upper()}</div>',
                 unsafe_allow_html=True
             )
 
         st.markdown(
-            f'<div class="resultado-meta"><b>ID do caso:</b> {dados["id_caso"]}<br><b>Processado em:</b> {dados["timestamp"]}</div>',
+            f'<div class="resultado-meta">▸ ID CASO: {dados["id_caso"]}<br>▸ TIMESTAMP: {dados["timestamp"]}</div>',
             unsafe_allow_html=True
         )
-
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric("Pontuação total", pontuacao_total)
+            st.metric("Pontuação Total", pontuacao_total)
         with m2:
-            st.metric("Nível de risco", risco)
+            st.metric("Nível de Risco", risco)
         with m3:
-            st.metric("Ação proposta", acao)
+            st.metric("Ação Proposta", acao)
 
         st.markdown(
-            f'<div class="acao-critica {classe_acao_resultado(risco)}">AÇÃO RECOMENDADA: {acao.upper()}</div>',
+            f'<div class="acao-critica {classe_acao_resultado(risco)}">▸ AÇÃO RECOMENDADA: {acao.upper()}</div>',
             unsafe_allow_html=True
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.resultado_gerado and resultado_em_reserva:
         st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">◈ 03 // AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Informação em reserva.</div>', unsafe_allow_html=True)
-        st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática.")
+        st.warning("⚠ ALERTA: Entradas alteradas. Gere nova recomendação para atualizar a avaliação tática.")
         st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">◈ 04 // PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Resultado anterior invalidado.</div>', unsafe_allow_html=True)
-        st.warning("Configuração alterada. O resultado anterior ficou em reserva e deve ser regenerado antes de nova validação.")
+        st.warning("⚠ RESULTADO SUSPENSO: Configuração alterada. Regenerar antes de nova validação.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     else:
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">◈ 03 // AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Aguardando processamento.</div>', unsafe_allow_html=True)
-        st.info("A avaliação tática será apresentada após a geração da recomendação.")
+        st.info("◌  STANDBY — A avaliação tática será apresentada após a geração da recomendação.")
         st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">◈ 04 // PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Aguardando processamento operacional.</div>', unsafe_allow_html=True)
-        st.info("Introduza os dados do caso e clique em “Gerar recomendação”.")
+        st.info("◌  STANDBY — Introduza os dados do caso e clique em 'GERAR RECOMENDAÇÃO'.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-# -------------------------
-# 5. Confirmação do operador
-# -------------------------
+# ─────────────────────────────────────────────
+# SECÇÃO 5 — CONFIRMAÇÃO DO OPERADOR
+# ─────────────────────────────────────────────
 if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
     dados = st.session_state.dados_resultado
     contributos = dados["contributos"]
@@ -931,37 +1331,33 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     acao = dados["acao"]
 
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">5. CONFIRMAÇÃO DO OPERADOR</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">◈ 05 // CONFIRMAÇÃO DO OPERADOR</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática.</div>', unsafe_allow_html=True)
 
     decisao_utilizador = st.selectbox(
         "Decisão final do operador",
         ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
         label_visibility="visible"
     )
-
     justificacao = st.text_area(
-        "Justificação da decisão final",
-        placeholder="Explica por que motivo confirmas ou alteras a ação proposta...",
-        height=180
+        "Justificação operacional",
+        placeholder="Descreve o motivo pelo qual confirmas ou alteras a ação proposta...",
+        height=150
     )
-
     alterou_decisao = decisao_utilizador != "Confirmar ação proposta"
     if alterou_decisao:
-        st.warning("A justificação é obrigatória quando a decisão final altera a ação proposta pelo sistema.")
+        st.warning("⚠ PROTOCOLO: A justificação é obrigatória quando a decisão altera a ação proposta pelo sistema.")
 
-    guardar = st.button("Guardar decisão final", use_container_width=True)
+    guardar = st.button("◈  REGISTAR DECISÃO FINAL", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     if guardar:
         decisao_final = acao if decisao_utilizador == "Confirmar ação proposta" else decisao_utilizador
-
         if alterou_decisao and not justificacao.strip():
-            st.error("Não é possível guardar: a justificação é obrigatória quando alteras a ação proposta.")
+            st.error("ERRO DE PROTOCOLO: A justificação é obrigatória quando alteras a ação proposta.")
         else:
             id_decisao = gerar_id_decisao()
             timestamp_decisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-
             st.session_state.decisao_guardada = {
                 "id_decisao": id_decisao,
                 "timestamp_decisao": timestamp_decisao,
@@ -972,66 +1368,64 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
                 "justificacao": justificacao.strip()
             }
 
-    # -------------------------
-    # 6. Decisão final
-    # -------------------------
+    # ─────────────────────────────────────────────
+    # SECÇÃO 6 — DECISÃO FINAL
+    # ─────────────────────────────────────────────
     if st.session_state.decisao_guardada is not None:
         reg = st.session_state.decisao_guardada
         tipo = tipo_decisao(reg["acao_proposta"], reg["decisao_final"])
         classe_tipo = "estado-confirmacao" if tipo == "Confirmada" else "estado-alteracao"
 
         st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">6. DECISÃO FINAL</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">◈ 06 // DECISÃO FINAL</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
 
         st.markdown(
             f"""
             <div class="bloco-meta">
-                <b>ID da decisão:</b> {reg["id_decisao"]}<br>
-                <b>Registado em:</b> {reg["timestamp_decisao"]}<br>
-                <b>Tipo de decisão:</b> {tipo}<br>
-                <span class="{classe_tipo}">{tipo}</span>
+                ▸ ID DECISÃO: {reg["id_decisao"]}<br>
+                ▸ REGISTADO EM: {reg["timestamp_decisao"]}<br>
+                ▸ TIPO: {tipo}<br>
+                <span class="{classe_tipo}">{tipo.upper()}</span>
             </div>
             """,
             unsafe_allow_html=True
         )
-
         r1, r2, r3, r4 = st.columns(4)
         with r1:
-            st.metric("Ação proposta", reg["acao_proposta"])
+            st.metric("Ação Proposta", reg["acao_proposta"])
         with r2:
-            st.metric("Decisão final", reg["decisao_final"])
+            st.metric("Decisão Final", reg["decisao_final"])
         with r3:
-            st.metric("Nível de risco", reg["risco"])
+            st.metric("Nível de Risco", reg["risco"])
         with r4:
-            st.metric("Pontuação total", reg["pontuacao_total"])
+            st.metric("Pontuação", reg["pontuacao_total"])
 
-        st.markdown("#### Justificação operacional")
+        st.markdown('<div class="etiqueta">▸ JUSTIFICAÇÃO OPERACIONAL</div>', unsafe_allow_html=True)
         if reg["justificacao"]:
             st.write(reg["justificacao"])
         else:
-            st.write("Não foi fornecida justificação.")
+            st.write("Sem justificação registada.")
 
-        st.success("Decisão final registada com sucesso no sistema.")
+        st.success("◉  DECISÃO FINAL REGISTADA COM SUCESSO NO SISTEMA NAVISGUARD.")
 
         if st.session_state.dados_resultado is not None:
             conteudo_txt = exportar_registo_txt(st.session_state.dados_resultado, reg)
             st.download_button(
-                label="Exportar registo TXT",
+                label="◈  EXPORTAR REGISTO OPERACIONAL (TXT)",
                 data=conteudo_txt,
                 file_name=f"{st.session_state.dados_resultado['id_caso']}_{reg['id_decisao']}.txt",
                 mime="text/plain",
                 use_container_width=True
             )
-
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # -------------------------
-    # 7. Quadro de indicadores
-    # -------------------------
+    # ─────────────────────────────────────────────
+    # SECÇÃO 7 — QUADRO DE INDICADORES
+    # ─────────────────────────────────────────────
     st.markdown('<div class="cartao">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">7. QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">Visualização compacta do estado, peso e impacto na decisão de cada indicador.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">◈ 07 // QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">Estado, peso e impacto na decisão de cada indicador de risco.</div>', unsafe_allow_html=True)
 
     fatores_top = {f["codigo"] for f in obter_fatores_principais(contributos, top_n=3)}
 
@@ -1049,78 +1443,74 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
         codigo_a, info_a = pares[i]
         classe_a = classe_cartao_indicador(info_a["Contributo"])
-        destaque_a = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_a in fatores_top else ""
-
+        destaque_a = '<div class="fator-critico">◉ FATOR CRÍTICO</div>' if codigo_a in fatores_top else ""
         with col_a:
             html_a = f"""<div class="mini-cartao-indicador {classe_a}">
 {destaque_a}
-<div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
-<div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div>
-<div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div>
-<div class="mini-cartao-linha">Peso: <b>{info_a['Peso']}</b></div>
+<div class="mini-cartao-titulo">{codigo_a} // {siglas_indicadores[codigo_a]}</div>
+<div class="mini-cartao-linha">Estado: <b>{info_a['Nível'].upper()}</b></div>
+<div class="mini-cartao-linha">Pontos: <b>{info_a['Pontos']}</b> &nbsp;|&nbsp; Peso: <b>{info_a['Peso']}</b></div>
 <div class="mini-cartao-linha">Contributo: <b>{info_a['Contributo']}</b></div>
-<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_a['Contributo'])}</b></div>
+<div class="mini-cartao-linha">Impacto: <b>{impacto_textual(info_a['Contributo']).upper()}</b></div>
 </div>"""
             st.markdown(html_a, unsafe_allow_html=True)
 
         codigo_b, info_b = pares[i + 1]
         classe_b = classe_cartao_indicador(info_b["Contributo"])
-        destaque_b = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_b in fatores_top else ""
-
+        destaque_b = '<div class="fator-critico">◉ FATOR CRÍTICO</div>' if codigo_b in fatores_top else ""
         with col_b:
             html_b = f"""<div class="mini-cartao-indicador {classe_b}">
 {destaque_b}
-<div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
-<div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div>
-<div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div>
-<div class="mini-cartao-linha">Peso: <b>{info_b['Peso']}</b></div>
+<div class="mini-cartao-titulo">{codigo_b} // {siglas_indicadores[codigo_b]}</div>
+<div class="mini-cartao-linha">Estado: <b>{info_b['Nível'].upper()}</b></div>
+<div class="mini-cartao-linha">Pontos: <b>{info_b['Pontos']}</b> &nbsp;|&nbsp; Peso: <b>{info_b['Peso']}</b></div>
 <div class="mini-cartao-linha">Contributo: <b>{info_b['Contributo']}</b></div>
-<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_b['Contributo'])}</b></div>
+<div class="mini-cartao-linha">Impacto: <b>{impacto_textual(info_b['Contributo']).upper()}</b></div>
 </div>"""
             st.markdown(html_b, unsafe_allow_html=True)
 
-    with st.expander("Ver regra de cálculo"):
+    with st.expander("◈  VER REGRA DE CÁLCULO"):
         st.markdown(f"""
-        **Origem dos indicadores**
-        - **I1** = calculado a partir de **Posição/Trajetória**
-        - **I2** = calculado a partir de **Posição/Trajetória + Concordância com radar/outras fontes**
-        - **I3** = calculado a partir de **Velocidade/Curso**
-        - **I4** = calculado a partir de **Posição/Trajetória + Velocidade/Curso**
-        - **I5** = calculado a partir de **Contexto operacional**
-        - **I6** = calculado a partir de **Concordância com radar/outras fontes**
+        **ORIGEM DOS INDICADORES**
+        - **I1** → Posição/Trajetória
+        - **I2** → Posição + Concordância Radar
+        - **I3** → Velocidade/Curso
+        - **I4** → Posição + Velocidade
+        - **I5** → Contexto Operacional
+        - **I6** → Concordância Radar/Fontes
 
-        **Estados dos indicadores**
-        - **Baixo** = 0 pontos
-        - **Médio** = 1 ponto
-        - **Elevado** = 2 pontos
+        **ESTADOS**  Baixo=0 | Médio=1 | Elevado=2
 
-        **Pesos dos indicadores**
-        - **I1** = 3
-        - **I2** = 2
-        - **I3** = 2
-        - **I4** = 2
-        - **I5** = 1
-        - **I6** = 3
+        **PESOS**  I1=3 | I2=2 | I3=2 | I4=2 | I5=1 | I6=3
 
-        **Fórmula de cálculo**
-        - **Pontuação final = Σ (pontosᵢ × pesoᵢ), i ∈ {{I1, I2, I3, I4, I5, I6}}**
-        - **Pontuação final = (pontos_I1 × 3) + (pontos_I2 × 2) + (pontos_I3 × 2) + (pontos_I4 × 2) + (pontos_I5 × 1) + (pontos_I6 × 3)**
+        **FÓRMULA:** Pontuação = Σ (pontosᵢ × pesoᵢ)
 
-        **Fórmula aplicada a este caso**
-        <div class="formula-caso"><b>{formula_caso_texto(contributos)}</b></div>
-
-        **Conversão da pontuação em risco e ação**
-        - **Pontuação final ≤ 4** → **Risco Baixo** → **Ignorar**
-        - **Pontuação final ≤ 8** → **Risco Médio** → **Monitorizar**
-        - **Pontuação final > 8** → **Risco Elevado** → **Escalar**
+        **FÓRMULA APLICADA:**
         """, unsafe_allow_html=True)
-
+        st.markdown(
+            f'<div class="formula-caso">▸ {formula_caso_texto(contributos)}</div>',
+            unsafe_allow_html=True
+        )
+        st.markdown("""
+        **CONVERSÃO**
+        - ≤ 4 pts → **BAIXO** → Ignorar
+        - ≤ 8 pts → **MÉDIO** → Monitorizar
+        - > 8 pts → **ELEVADO** → Escalar
+        """)
     st.markdown('</div>', unsafe_allow_html=True)
-
 
 elif st.session_state.resultado_gerado and resultado_em_reserva:
     st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">Informação em reserva</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">O caso foi alterado após a última geração.</div>', unsafe_allow_html=True)
-    st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática, a rastreabilidade e a confirmação do operador.")
+    st.markdown('<div class="titulo-secao">◈ INFORMAÇÃO EM RESERVA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">Caso alterado após a última geração.</div>', unsafe_allow_html=True)
+    st.warning("⚠ ALERTA: Entradas alteradas. Regenerar antes de nova validação.")
     st.markdown('</div>', unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+# FOOTER CLASSIFICATION
+# ─────────────────────────────────────────────
+st.markdown("""
+<div class="classification-banner" style="margin-top:20px;">
+    ⬛ NATO RESTRICTED // NAVISGUARD MARITIME DECISION SUPPORT SYSTEM // ACESSO CONTROLADO ⬛
+</div>
+""", unsafe_allow_html=True)
