@@ -236,7 +236,7 @@ st.markdown("""
         border: 1px solid rgba(255,255,255,0.08);
         border-radius: 12px;
         padding: 10px 12px;
-        color: #cbd5e1;
+        color: #1f2937;
         font-size: 0.9rem;
         margin-bottom: 14px;
     }
