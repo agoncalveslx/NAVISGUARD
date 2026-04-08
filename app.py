@@ -587,7 +587,7 @@ pesos = {"I1": 3, "I2": 2, "I3": 2, "I4": 2, "I5": 1, "I6": 3}
 # Cabeçalho
 # -------------------------
 st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
-st.image("logo.png", use_container_width=True)
+st.image("logo.jpg", use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
 
 id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "Não iniciado"
