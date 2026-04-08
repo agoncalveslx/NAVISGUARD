@@ -30,34 +30,39 @@ if "decisao_guardada" not in st.session_state:
 st.markdown("""
 <style>
     .stApp {
-        background: linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
+        background:
+            radial-gradient(circle at top right, rgba(29, 78, 216, 0.08), transparent 30%),
+            linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
     }
 
     .topo-dashboard {
-        background: linear-gradient(90deg, #0f172a 0%, #1d4ed8 100%);
+        background: linear-gradient(90deg, #08111f 0%, #0f172a 45%, #1d4ed8 100%);
         padding: 24px;
         border-radius: 18px;
         color: white;
         margin-bottom: 20px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+        border: 1px solid rgba(255,255,255,0.06);
     }
 
     .topo-dashboard h1 {
         margin: 0;
         font-size: 2rem;
+        letter-spacing: 0.04em;
     }
 
     .topo-dashboard p {
         margin-top: 8px;
         font-size: 1rem;
-        color: #eef4ff;
+        color: #dbeafe;
     }
 
     .cartao {
-        background: white;
+        background: rgba(255,255,255,0.94);
+        backdrop-filter: blur(6px);
         padding: 20px;
         border-radius: 18px;
-        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
         border: 1px solid #e5e7eb;
         margin-bottom: 20px;
     }
@@ -84,9 +89,10 @@ st.markdown("""
 
     .titulo-secao {
         font-size: 1.3rem;
-        font-weight: 700;
+        font-weight: 800;
         color: #0f172a;
         margin-bottom: 4px;
+        letter-spacing: 0.02em;
     }
 
     .subtitulo-secao {
@@ -96,20 +102,10 @@ st.markdown("""
     }
 
     .etiqueta {
-        font-weight: 600;
+        font-weight: 700;
         color: #0f172a;
         margin-top: 10px;
         margin-bottom: 6px;
-    }
-
-    .acao-final {
-        padding: 16px;
-        border-radius: 14px;
-        font-weight: 700;
-        text-align: center;
-        margin-top: 12px;
-        border: 1px solid #d1d5db;
-        font-size: 1.05rem;
     }
 
     .mini-indicador {
@@ -123,7 +119,7 @@ st.markdown("""
 
     .mini-indicador .valor {
         font-size: 1.4rem;
-        font-weight: 800;
+        font-weight: 900;
         color: #0f172a;
     }
 
@@ -134,38 +130,39 @@ st.markdown("""
 
     .mini-cartao-indicador {
         border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 10px 12px;
-        margin-bottom: 10px;
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
         position: relative;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
     }
 
     .mini-cartao-baixo {
         background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
-        border: 1px solid #a7f3d0;
+        border: 1px solid #86efac;
     }
 
     .mini-cartao-medio {
         background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
-        border: 1px solid #fde68a;
+        border: 1px solid #fcd34d;
     }
 
     .mini-cartao-elevado {
         background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%);
-        border: 1px solid #fecaca;
+        border: 1px solid #fca5a5;
     }
 
     .mini-cartao-titulo {
-        font-weight: 700;
+        font-weight: 800;
         color: #0f172a;
-        margin-bottom: 6px;
-        font-size: 0.96rem;
+        margin-bottom: 8px;
+        font-size: 0.98rem;
     }
 
     .mini-cartao-linha {
-        font-size: 0.9rem;
+        font-size: 0.92rem;
         color: #334155;
-        line-height: 1.4;
+        line-height: 1.45;
     }
 
     .bloco-meta {
@@ -179,80 +176,121 @@ st.markdown("""
     }
 
     .barra-estado-caso {
-        background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+        background: linear-gradient(90deg, #08111f 0%, #0f172a 50%, #1e293b 100%);
         color: white;
         border-radius: 14px;
         padding: 12px 16px;
         margin-bottom: 18px;
         border: 1px solid #334155;
-        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18);
     }
 
     .resultado-critico {
-        background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
+        background:
+            linear-gradient(135deg, rgba(37, 99, 235, 0.12), transparent 28%),
+            linear-gradient(180deg, #08111f 0%, #0f172a 52%, #111827 100%);
         color: white;
         border-radius: 18px;
         padding: 20px;
         border: 1px solid #1f2937;
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.22);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.22);
         margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .resultado-critico::before {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 5px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #38bdf8 0%, #1d4ed8 40%, #22c55e 70%, #eab308 85%, #ef4444 100%);
+        margin-bottom: 18px;
     }
 
     .resultado-titulo {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: #1f2937;
+        font-size: 1.28rem;
+        font-weight: 900;
+        color: #f8fafc;
         margin-bottom: 4px;
+        letter-spacing: 0.03em;
     }
 
     .resultado-subtitulo {
         font-size: 0.93rem;
-        color: #1f2937;
+        color: #cbd5e1;
     }
 
     .selo-risco {
         padding: 8px 12px;
         border-radius: 999px;
-        font-weight: 800;
+        font-weight: 900;
         font-size: 0.82rem;
-        letter-spacing: 0.03em;
+        letter-spacing: 0.05em;
         white-space: nowrap;
         border: 1px solid rgba(255,255,255,0.15);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .selo-baixo {
-        background: #14532d;
+        background: linear-gradient(90deg, #14532d 0%, #166534 100%);
         color: #dcfce7;
     }
 
     .selo-medio {
-        background: #78350f;
+        background: linear-gradient(90deg, #78350f 0%, #92400e 100%);
         color: #fef3c7;
     }
 
     .selo-elevado {
-        background: #7f1d1d;
+        background: linear-gradient(90deg, #7f1d1d 0%, #991b1b 100%);
         color: #fee2e2;
     }
 
     .resultado-meta {
         background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.10);
         border-radius: 12px;
         padding: 10px 12px;
-        color: #1f2937;
+        color: #e2e8f0;
         font-size: 0.9rem;
         margin-bottom: 14px;
+    }
+
+    .metrica-operacional {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 14px;
+        min-height: 104px;
+    }
+
+    .metrica-operacional .rotulo {
+        font-size: 0.8rem;
+        color: #93c5fd;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-weight: 700;
+    }
+
+    .metrica-operacional .valor {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #f8fafc;
+        line-height: 1.1;
     }
 
     .acao-critica {
         border-radius: 14px;
         padding: 16px;
         text-align: center;
-        font-weight: 800;
+        font-weight: 900;
         font-size: 1.1rem;
         border: 1px solid rgba(255,255,255,0.10);
-        margin-top: 10px;
+        margin-top: 12px;
+        letter-spacing: 0.02em;
     }
 
     .acao-baixa {
@@ -272,13 +310,14 @@ st.markdown("""
 
     .fator-critico {
         display: inline-block;
-        background: #0f172a;
+        background: linear-gradient(90deg, #020617 0%, #0f172a 100%);
         color: white;
         font-size: 0.72rem;
-        font-weight: 700;
+        font-weight: 800;
         padding: 4px 8px;
         border-radius: 999px;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
+        letter-spacing: 0.03em;
     }
 
     .estado-confirmacao {
@@ -289,7 +328,7 @@ st.markdown("""
         border-radius: 999px;
         padding: 4px 10px;
         font-size: 0.78rem;
-        font-weight: 700;
+        font-weight: 800;
         margin-top: 6px;
     }
 
@@ -301,7 +340,7 @@ st.markdown("""
         border-radius: 999px;
         padding: 4px 10px;
         font-size: 0.78rem;
-        font-weight: 700;
+        font-weight: 800;
         margin-top: 6px;
     }
 
@@ -319,11 +358,12 @@ st.markdown("""
     div.stButton > button {
         background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
         color: white;
-        font-weight: 700;
+        font-weight: 800;
         border: none;
         border-radius: 10px;
         padding: 0.6rem 1rem;
         box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        letter-spacing: 0.01em;
     }
 
     div.stButton > button:hover {
@@ -342,24 +382,24 @@ st.markdown("""
     div[data-baseweb="select"] > div {
         border-radius: 10px !important;
         min-height: 44px;
-        font-weight: 600;
+        font-weight: 700;
     }
 
     .risco-baixo div[data-baseweb="select"] > div {
         background: #ecfdf5 !important;
-        border: 1px solid #a7f3d0 !important;
+        border: 1px solid #86efac !important;
         color: #065f46 !important;
     }
 
     .risco-medio div[data-baseweb="select"] > div {
         background: #fffbeb !important;
-        border: 1px solid #fde68a !important;
+        border: 1px solid #fcd34d !important;
         color: #92400e !important;
     }
 
     .risco-elevado div[data-baseweb="select"] > div {
         background: #fef2f2 !important;
-        border: 1px solid #fecaca !important;
+        border: 1px solid #fca5a5 !important;
         color: #991b1b !important;
     }
 
@@ -882,11 +922,20 @@ with coluna_direita:
 
         m1, m2, m3 = st.columns(3)
         with m1:
-            st.metric("Pontuação total", pontuacao_total)
+            st.markdown(
+                f'<div class="metrica-operacional"><div class="rotulo">Pontuação total</div><div class="valor">{pontuacao_total}</div></div>',
+                unsafe_allow_html=True
+            )
         with m2:
-            st.metric("Nível de risco", risco)
+            st.markdown(
+                f'<div class="metrica-operacional"><div class="rotulo">Nível de risco</div><div class="valor">{risco}</div></div>',
+                unsafe_allow_html=True
+            )
         with m3:
-            st.metric("Ação proposta", acao)
+            st.markdown(
+                f'<div class="metrica-operacional"><div class="rotulo">Ação proposta</div><div class="valor">{acao}</div></div>',
+                unsafe_allow_html=True
+            )
 
         st.markdown(
             f'<div class="acao-critica {classe_acao_resultado(risco)}">AÇÃO RECOMENDADA: {acao.upper()}</div>',
@@ -1052,15 +1101,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         destaque_a = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_a in fatores_top else ""
 
         with col_a:
-            html_a = f"""<div class="mini-cartao-indicador {classe_a}">
-{destaque_a}
-<div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
-<div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div>
-<div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div>
-<div class="mini-cartao-linha">Peso: <b>{info_a['Peso']}</b></div>
-<div class="mini-cartao-linha">Contributo: <b>{info_a['Contributo']}</b></div>
-<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_a['Contributo'])}</b></div>
-</div>"""
+            html_a = f"""<div class="mini-cartao-indicador {classe_a}">{destaque_a}<div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div><div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div><div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div><div class="mini-cartao-linha">Peso: <b>{info_a['Peso']}</b></div><div class="mini-cartao-linha">Contributo: <b>{info_a['Contributo']}</b></div><div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_a['Contributo'])}</b></div></div>"""
             st.markdown(html_a, unsafe_allow_html=True)
 
         codigo_b, info_b = pares[i + 1]
@@ -1068,15 +1109,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         destaque_b = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_b in fatores_top else ""
 
         with col_b:
-            html_b = f"""<div class="mini-cartao-indicador {classe_b}">
-{destaque_b}
-<div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
-<div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div>
-<div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div>
-<div class="mini-cartao-linha">Peso: <b>{info_b['Peso']}</b></div>
-<div class="mini-cartao-linha">Contributo: <b>{info_b['Contributo']}</b></div>
-<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_b['Contributo'])}</b></div>
-</div>"""
+            html_b = f"""<div class="mini-cartao-indicador {classe_b}">{destaque_b}<div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div><div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div><div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div><div class="mini-cartao-linha">Peso: <b>{info_b['Peso']}</b></div><div class="mini-cartao-linha">Contributo: <b>{info_b['Contributo']}</b></div><div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_b['Contributo'])}</b></div></div>"""
             st.markdown(html_b, unsafe_allow_html=True)
 
     with st.expander("Ver regra de cálculo"):
@@ -1116,7 +1149,6 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
-
 
 elif st.session_state.resultado_gerado and resultado_em_reserva:
     st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
