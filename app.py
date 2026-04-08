@@ -175,6 +175,61 @@ st.markdown("""
         color: #334155;
         font-size: 0.92rem;
     }
+
+    /* Botões */
+    div.stButton > button {
+        background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
+        color: white;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 1rem;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+    }
+
+    div.stButton > button:hover {
+        background: linear-gradient(90deg, #1e40af 0%, #1d4ed8 100%);
+        color: white;
+        border: none;
+    }
+
+    div.stButton > button:focus {
+        color: white !important;
+        border: none !important;
+        box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    }
+
+    /* Selectbox - aspeto geral */
+    div[data-baseweb="select"] > div {
+        border-radius: 10px !important;
+        min-height: 44px;
+        font-weight: 600;
+    }
+
+    /* Estados por cor */
+    .risco-baixo div[data-baseweb="select"] > div {
+        background: #ecfdf5 !important;
+        border: 1px solid #a7f3d0 !important;
+        color: #065f46 !important;
+    }
+
+    .risco-medio div[data-baseweb="select"] > div {
+        background: #fffbeb !important;
+        border: 1px solid #fde68a !important;
+        color: #92400e !important;
+    }
+
+    .risco-elevado div[data-baseweb="select"] > div {
+        background: #fef2f2 !important;
+        border: 1px solid #fecaca !important;
+        color: #991b1b !important;
+    }
+
+    .risco-neutro div[data-baseweb="select"] > div {
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -214,6 +269,15 @@ def classe_cartao_indicador(nivel):
     elif nivel == "Médio":
         return "mini-cartao-medio"
     return "mini-cartao-elevado"
+
+def classe_risco_input(valor):
+    if valor in ["Normal", "Concordante"]:
+        return "risco-baixo"
+    elif valor in ["Ligeiramente suspeita", "Ligeiramente suspeito", "Parcialmente discordante", "Pouco habitual"]:
+        return "risco-medio"
+    elif valor in ["Muito suspeita", "Muito suspeito", "Discordante"]:
+        return "risco-elevado"
+    return "risco-neutro"
 
 def calcular_indicadores(posicao, velocidade, radar, contexto):
     if posicao == "Muito suspeita":
@@ -407,35 +471,45 @@ with coluna1:
     col_a, col_b = st.columns(2)
     with col_a:
         st.markdown('<div class="etiqueta">Posição/Trajetória</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(posicao) if "posicao" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         posicao = st.selectbox(
             "Posição/Trajetória",
             ["Normal", "Ligeiramente suspeita", "Muito suspeita"],
             label_visibility="collapsed"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
+
     with col_b:
         st.markdown('<div class="etiqueta">Velocidade/Curso</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(velocidade) if "velocidade" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         velocidade = st.selectbox(
             "Velocidade/Curso",
             ["Normal", "Ligeiramente suspeito", "Muito suspeito"],
             label_visibility="collapsed"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("### Outras fontes")
     col_e, col_f = st.columns(2)
     with col_e:
         st.markdown('<div class="etiqueta">Concordância com radar/outras fontes</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(radar) if "radar" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         radar = st.selectbox(
             "Concordância com radar/outras fontes",
             ["Concordante", "Parcialmente discordante", "Discordante"],
             label_visibility="collapsed"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
+
     with col_f:
         st.markdown('<div class="etiqueta">Contexto operacional</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(contexto) if "contexto" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
         contexto = st.selectbox(
             "Contexto operacional",
             ["Normal", "Pouco habitual", "Muito suspeito"],
             label_visibility="collapsed"
         )
+        st.markdown('</div>', unsafe_allow_html=True)
 
     gerar = st.button("Gerar recomendação", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
@@ -598,7 +672,8 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
         decisao_utilizador = st.selectbox(
             "Decisão final do operador",
-            ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"]
+            ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
+            label_visibility="visible"
         )
 
         justificacao = st.text_area(
