@@ -197,13 +197,13 @@ st.markdown("""
     .resultado-titulo {
         font-size: 1.25rem;
         font-weight: 800;
-        color: #1f2937;
+        color: #f8fafc;
         margin-bottom: 4px;
     }
 
     .resultado-subtitulo {
         font-size: 0.93rem;
-        color: #1f2937;
+        color: #cbd5e1;
     }
 
     .selo-risco {
@@ -218,12 +218,12 @@ st.markdown("""
 
     .selo-baixo {
         background: #14532d;
-        color: #1f2937;
+        color: #dcfce7;
     }
 
     .selo-medio {
         background: #78350f;
-        color: #1f2937;
+        color: #fef3c7;
     }
 
     .selo-elevado {
@@ -236,7 +236,7 @@ st.markdown("""
         border: 1px solid rgba(255,255,255,0.08);
         border-radius: 12px;
         padding: 10px 12px;
-        color: #1f2937;
+        color: #cbd5e1;
         font-size: 0.9rem;
         margin-bottom: 14px;
     }
@@ -475,6 +475,9 @@ def impacto_textual(contributo):
 def novo_id_caso():
     st.session_state.contador_casos += 1
     return f"CASO-{datetime.now().strftime('%Y%m%d')}-{st.session_state.contador_casos:03d}"
+
+def gerar_id_decisao():
+    return f"DEC-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
 
 def reiniciar_caso():
     st.session_state.resultado_gerado = False
@@ -956,8 +959,12 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
     if guardar:
         decisao_final = acao if decisao_utilizador == "Confirmar ação proposta" else decisao_utilizador
+        id_decisao = gerar_id_decisao()
+        timestamp_decisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
         st.session_state.decisao_guardada = {
+            "id_decisao": id_decisao,
+            "timestamp_decisao": timestamp_decisao,
             "acao_proposta": acao,
             "decisao_final": decisao_final,
             "risco": risco,
@@ -974,6 +981,16 @@ if st.session_state.decisao_guardada is not None and not resultado_em_reserva:
     st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao">6. Decisão final</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
+
+    st.markdown(
+        f"""
+        <div class="bloco-meta">
+            <b>ID da decisão:</b> {reg["id_decisao"]}<br>
+            <b>Registado em:</b> {reg["timestamp_decisao"]}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     r1, r2, r3, r4 = st.columns(4)
     with r1:
