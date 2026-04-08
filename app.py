@@ -681,7 +681,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         - **I6** = 3
 
         **Fórmula de cálculo**
-        - **Pontuação final = Σ (pontosᵢ × pesoᵢ), para i = 1 até 6**
+        - **Pontuação final = Σ (pontosᵢ × pesoᵢ), i ∈ {I1, I2, I3, I4, I5, I6}**
         - **Pontuação final = (pontos_I1 × 3) + (pontos_I2 × 2) + (pontos_I3 × 2) + (pontos_I4 × 2) + (pontos_I5 × 1) + (pontos_I6 × 3)**
 
         **Conversão da pontuação em risco e ação**
