@@ -784,41 +784,38 @@ with coluna_direita:
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div class="resultado-critico">
-            <div class="resultado-topo">
-                <div>
-                    <div class="resultado-titulo">Resultado automático</div>
-                    <div class="resultado-subtitulo">Recomendação do sistema gerada a partir das entradas submetidas.</div>
-                </div>
-                <div class="selo-risco {classe_selo_risco(risco)}">RISCO {risco.upper()}</div>
-            </div>
+        st.markdown('<div class="resultado-critico">', unsafe_allow_html=True)
 
-            <div class="resultado-meta">
-                <b>ID do caso:</b> {dados["id_caso"]}<br>
-                <b>Processado em:</b> {dados["timestamp"]}
-            </div>
+        col_res_1, col_res_2 = st.columns([3, 1])
+        with col_res_1:
+            st.markdown('<div class="resultado-titulo">Resultado automático</div>', unsafe_allow_html=True)
+            st.markdown('<div class="resultado-subtitulo">Recomendação do sistema gerada a partir das entradas submetidas.</div>', unsafe_allow_html=True)
 
-            <div class="grid-metricas">
-                <div class="metrica-critica">
-                    <div class="metrica-rotulo">Pontuação total</div>
-                    <div class="metrica-valor">{pontuacao_total}</div>
-                </div>
-                <div class="metrica-critica">
-                    <div class="metrica-rotulo">Nível de risco</div>
-                    <div class="metrica-valor">{risco}</div>
-                </div>
-                <div class="metrica-critica">
-                    <div class="metrica-rotulo">Ação proposta</div>
-                    <div class="metrica-valor">{acao}</div>
-                </div>
-            </div>
+        with col_res_2:
+            st.markdown(
+                f'<div class="selo-risco {classe_selo_risco(risco)}" style="text-align:center;">RISCO {risco.upper()}</div>',
+                unsafe_allow_html=True
+            )
 
-            <div class="acao-critica {classe_acao_resultado(risco)}">
-                AÇÃO RECOMENDADA: {acao.upper()}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(
+            f'<div class="resultado-meta"><b>ID do caso:</b> {dados["id_caso"]}<br><b>Processado em:</b> {dados["timestamp"]}</div>',
+            unsafe_allow_html=True
+        )
+
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            st.metric("Pontuação total", pontuacao_total)
+        with m2:
+            st.metric("Nível de risco", risco)
+        with m3:
+            st.metric("Ação proposta", acao)
+
+        st.markdown(
+            f'<div class="acao-critica {classe_acao_resultado(risco)}">AÇÃO RECOMENDADA: {acao.upper()}</div>',
+            unsafe_allow_html=True
+        )
+
+st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.resultado_gerado and resultado_em_reserva:
         st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
