@@ -586,9 +586,72 @@ pesos = {"I1": 3, "I2": 2, "I3": 2, "I4": 2, "I5": 1, "I6": 3}
 # -------------------------
 # Cabeçalho
 # -------------------------
-st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
-st.image("logo.jpg", use_container_width=True)
-st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown("""
+<div style="position: relative; border-radius:18px; overflow:hidden;">
+
+    <!-- IMAGEM BASE -->
+    <img src="logo.jpg" style="width:100%; display:block;">
+
+    <!-- RADAR OVERLAY -->
+    <div style="
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        pointer-events:none;
+    ">
+
+        <!-- círculo radar -->
+        <div class="radar"></div>
+
+    </div>
+</div>
+
+<style>
+.radar {
+    position:absolute;
+    width:300px;
+    height:300px;
+    border-radius:50%;
+    top:50%;
+    left:85%;
+    transform:translate(-50%, -50%);
+    
+    background: radial-gradient(circle, rgba(0,255,150,0.15) 0%, rgba(0,255,150,0.05) 40%, transparent 70%);
+    border: 1px solid rgba(0,255,150,0.2);
+
+    overflow:hidden;
+}
+
+.radar::after {
+    content:"";
+    position:absolute;
+    width:50%;
+    height:50%;
+    top:50%;
+    left:50%;
+    transform-origin: left top;
+    
+    background: linear-gradient(90deg, rgba(0,255,150,0.6), transparent);
+    
+    animation: radarSweep 3s linear infinite;
+}
+
+@keyframes radarSweep {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+#st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
+#st.image("logo.jpg", use_container_width=True)
+#st.markdown('</div>', unsafe_allow_html=True)
 
 id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "Não iniciado"
 st.markdown(
