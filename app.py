@@ -1033,7 +1033,10 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     st.markdown('<div class="titulo-secao">7. QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Visualização compacta do estado, peso e impacto na decisão de cada indicador.</div>', unsafe_allow_html=True)
 
-    fatores_top = {f["codigo"] for f in obter_fatores_principais(contributos, top_n=3)}
+    
+    fatores_top = {
+        k for k, v in contributos.items() if v["Contributo"] > 0
+    }    
 
     pares = [
         ("I1", contributos["I1"]),
