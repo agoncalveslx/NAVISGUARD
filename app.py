@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import io
 
 st.set_page_config(
     page_title="NAVISGUARD",
@@ -136,6 +137,7 @@ st.markdown("""
         border-radius: 12px;
         padding: 10px 12px;
         margin-bottom: 10px;
+        position: relative;
     }
 
     .mini-cartao-baixo {
@@ -176,6 +178,16 @@ st.markdown("""
         font-size: 0.92rem;
     }
 
+    .barra-estado-caso {
+        background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+        border-radius: 14px;
+        padding: 12px 16px;
+        margin-bottom: 18px;
+        border: 1px solid #334155;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+    }
+
     .resultado-critico {
         background: linear-gradient(180deg, #0f172a 0%, #111827 100%);
         color: white;
@@ -184,14 +196,6 @@ st.markdown("""
         border: 1px solid #1f2937;
         box-shadow: 0 8px 22px rgba(15, 23, 42, 0.22);
         margin-bottom: 20px;
-    }
-
-    .resultado-topo {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 14px;
     }
 
     .resultado-titulo {
@@ -236,37 +240,9 @@ st.markdown("""
         border: 1px solid rgba(255,255,255,0.08);
         border-radius: 12px;
         padding: 10px 12px;
-         color: #1f2937;
+        color: #1f2937;
         font-size: 0.9rem;
         margin-bottom: 14px;
-    }
-
-    .grid-metricas {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-bottom: 14px;
-    }
-
-    .metrica-critica {
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 12px;
-        padding: 12px;
-    }
-
-    .metrica-rotulo {
-        font-size: 0.8rem;
-        color: #93c5fd;
-        margin-bottom: 4px;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-
-    .metrica-valor {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #ffffff;
     }
 
     .acao-critica {
@@ -294,6 +270,51 @@ st.markdown("""
         color: #fee2e2;
     }
 
+    .fator-critico {
+        display: inline-block;
+        background: #0f172a;
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 999px;
+        margin-bottom: 6px;
+    }
+
+    .estado-confirmacao {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
+        border: 1px solid #86efac;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-top: 6px;
+    }
+
+    .estado-alteracao {
+        display: inline-block;
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fcd34d;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-top: 6px;
+    }
+
+    .formula-caso {
+        background: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 12px;
+        color: #334155;
+        font-size: 0.92rem;
+        margin-top: 10px;
+    }
+
     /* Botões */
     div.stButton > button {
         background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
@@ -317,14 +338,13 @@ st.markdown("""
         box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
     }
 
-    /* Selectbox - aspeto geral */
+    /* Selectbox */
     div[data-baseweb="select"] > div {
         border-radius: 10px !important;
         min-height: 44px;
         font-weight: 600;
     }
 
-    /* Estados por cor */
     .risco-baixo div[data-baseweb="select"] > div {
         background: #ecfdf5 !important;
         border: 1px solid #a7f3d0 !important;
@@ -355,24 +375,21 @@ st.markdown("""
 # Funções auxiliares
 # -------------------------
 def nivel_para_pontos(nivel):
-    mapeamento = {"Baixo": 0, "Médio": 1, "Elevado": 2}
-    return mapeamento[nivel]
+    return {"Baixo": 0, "Médio": 1, "Elevado": 2}[nivel]
 
 def nivel_risco(pontuacao):
     if pontuacao <= 4:
         return "Baixo"
     elif pontuacao <= 8:
         return "Médio"
-    else:
-        return "Elevado"
+    return "Elevado"
 
 def acao_proposta(pontuacao):
     if pontuacao <= 4:
         return "Ignorar"
     elif pontuacao <= 8:
         return "Monitorizar"
-    else:
-        return "Escalar"
+    return "Escalar"
 
 def cor_risco(risco):
     if risco == "Baixo":
@@ -454,14 +471,7 @@ def calcular_indicadores(posicao, velocidade, radar, contexto):
     else:
         i6 = "Baixo"
 
-    return {
-        "I1": i1,
-        "I2": i2,
-        "I3": i3,
-        "I4": i4,
-        "I5": i5,
-        "I6": i6
-    }
+    return {"I1": i1, "I2": i2, "I3": i3, "I4": i4, "I5": i5, "I6": i6}
 
 def impacto_textual(contributo):
     if contributo >= 5:
@@ -484,6 +494,75 @@ def reiniciar_caso():
     st.session_state.dados_resultado = None
     st.session_state.decisao_guardada = None
 
+def estado_do_caso():
+    if st.session_state.decisao_guardada is not None:
+        return "Decisão registada"
+    if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None:
+        return "Recomendação gerada"
+    return "Em análise"
+
+def tipo_decisao(acao_proposta_atual, decisao_final):
+    if acao_proposta_atual == decisao_final:
+        return "Confirmada"
+    return "Alterada pelo operador"
+
+def obter_fatores_principais(contributos, top_n=3):
+    ordenados = sorted(contributos.items(), key=lambda x: x[1]["Contributo"], reverse=True)
+    return [
+        {
+            "codigo": item[0],
+            "nome": item[1]["Nome"],
+            "nivel": item[1]["Nível"],
+            "contributo": item[1]["Contributo"]
+        }
+        for item in ordenados[:top_n]
+    ]
+
+def formula_caso_texto(contributos):
+    termos = []
+    total = 0
+    for chave in ["I1", "I2", "I3", "I4", "I5", "I6"]:
+        pontos = contributos[chave]["Pontos"]
+        peso = contributos[chave]["Peso"]
+        contributo = contributos[chave]["Contributo"]
+        termos.append(f"({chave}: {pontos}×{peso}={contributo})")
+        total += contributo
+    return " + ".join(termos) + f" = {total}"
+
+def exportar_registo_txt(dados, decisao=None):
+    linhas = []
+    linhas.append("NAVISGUARD - REGISTO OPERACIONAL")
+    linhas.append("=" * 42)
+    linhas.append(f"ID do caso: {dados['id_caso']}")
+    linhas.append(f"Processado em: {dados['timestamp']}")
+    linhas.append(f"Posição/Trajetória: {dados['posicao']}")
+    linhas.append(f"Velocidade/Curso: {dados['velocidade']}")
+    linhas.append(f"Concordância com radar/outras fontes: {dados['radar']}")
+    linhas.append(f"Contexto operacional: {dados['contexto']}")
+    linhas.append("")
+    linhas.append("Indicadores:")
+    for chave in ["I1", "I2", "I3", "I4", "I5", "I6"]:
+        info = dados["contributos"][chave]
+        linhas.append(
+            f"{chave} - {info['Nome']}: Estado={info['Nível']}, Pontos={info['Pontos']}, Peso={info['Peso']}, Contributo={info['Contributo']}"
+        )
+    linhas.append("")
+    linhas.append(f"Pontuação final: {dados['pontuacao_total']}")
+    linhas.append(f"Nível de risco: {dados['risco']}")
+    linhas.append(f"Ação proposta: {dados['acao']}")
+    linhas.append(f"Fórmula aplicada: {formula_caso_texto(dados['contributos'])}")
+
+    if decisao is not None:
+        linhas.append("")
+        linhas.append("Decisão final:")
+        linhas.append(f"ID da decisão: {decisao['id_decisao']}")
+        linhas.append(f"Registado em: {decisao['timestamp_decisao']}")
+        linhas.append(f"Tipo de decisão: {tipo_decisao(decisao['acao_proposta'], decisao['decisao_final'])}")
+        linhas.append(f"Decisão final: {decisao['decisao_final']}")
+        linhas.append(f"Justificação: {decisao['justificacao'] if decisao['justificacao'] else 'Não foi fornecida justificação.'}")
+
+    return "\n".join(linhas)
+
 nomes_indicadores = {
     "I1": "Anomalia de identidade",
     "I2": "Alteração anormal de identidade",
@@ -502,14 +581,7 @@ siglas_indicadores = {
     "I6": "Entre fontes"
 }
 
-pesos = {
-    "I1": 3,
-    "I2": 2,
-    "I3": 2,
-    "I4": 2,
-    "I5": 1,
-    "I6": 3
-}
+pesos = {"I1": 3, "I2": 2, "I3": 2, "I4": 2, "I5": 1, "I6": 3}
 
 # -------------------------
 # Cabeçalho
@@ -520,6 +592,17 @@ st.markdown("""
     <p>Sistema de Apoio e Validação da Decisão em Ambiente Marítimo.</p>
 </div>
 """, unsafe_allow_html=True)
+
+id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "Não iniciado"
+st.markdown(
+    f"""
+    <div class="barra-estado-caso">
+        <b>Caso atual:</b> {id_atual} &nbsp;&nbsp;|&nbsp;&nbsp;
+        <b>Estado:</b> {estado_do_caso()}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 with st.expander("Enquadramento Operacional"):
     st.write("""
@@ -551,17 +634,15 @@ Com base nos dados introduzidos pelo operador, o sistema:
 5. **Permite validação humana da decisão**  
    O operador pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
 
----
-
 ⚠️ **Nota:**  
 Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
 """)
 
 # -------------------------
-# Processamento operacional
+# 1. Processamento operacional
 # -------------------------
 st.markdown('<div class="cartao">', unsafe_allow_html=True)
-st.markdown('<div class="titulo-secao">PROCESSAMENTO OPERACIONAL</div>', unsafe_allow_html=True)
+st.markdown('<div class="titulo-secao">1. PROCESSAMENTO OPERACIONAL</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitulo-secao">O sistema calcula indicadores, avalia o risco e emite uma recomendação.</div>', unsafe_allow_html=True)
 
 st.info("Após clicar em “Gerar recomendação”, o sistema processa os indicadores, calcula a pontuação total, determina o nível de risco e emite a ação proposta.")
@@ -622,11 +703,11 @@ st.markdown('</div>', unsafe_allow_html=True)
 coluna_esquerda, coluna_direita = st.columns([1, 1], gap="large")
 
 # -------------------------
-# Coluna esquerda: dados de entrada
+# 2. Coluna esquerda: dados de entrada
 # -------------------------
 with coluna_esquerda:
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">DADOS DE ENTRADA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">2. DADOS DE ENTRADA</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
 
     col_titulo_entrada, col_botao_reset = st.columns([3, 1])
@@ -746,7 +827,7 @@ if gerar:
     resultado_em_reserva = False
 
 # -------------------------
-# Coluna direita: avaliação tática + resultado automático
+# 3 + 4. Coluna direita: avaliação tática + proposta de ação
 # -------------------------
 with coluna_direita:
     if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
@@ -756,42 +837,36 @@ with coluna_direita:
         risco = dados["risco"]
         acao = dados["acao"]
 
-        ordenados = sorted(contributos.items(), key=lambda x: x[1]["Contributo"], reverse=True)
-        fatores_principais = [
-            {
-                "codigo": item[0],
-                "nome": item[1]["Nome"],
-                "nivel": item[1]["Nível"],
-                "contributo": item[1]["Contributo"]
-            }
-            for item in ordenados[:3]
-        ]
+        fatores_principais = obter_fatores_principais(contributos, top_n=3)
 
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Síntese dos fatores críticos e impacto na recomendação.</div>', unsafe_allow_html=True)
 
         st.info("BRIEFING OPERACIONAL")
         st.markdown("**Estado:** Avaliação concluída")
 
         st.markdown("**Fatores críticos:**")
-        for fator in fatores_principais:
-            st.write(f"• {fator['nome']}")
+        for idx, fator in enumerate(fatores_principais):
+            prefixo = "• "
+            if idx == 0:
+                prefixo = "• Principal fator: "
+            st.write(f"{prefixo}{fator['nome']}")
 
         st.markdown("##### AVALIAÇÃO DE RISCO")
         st.write(f"**Nível de risco:** {risco}")
         st.write(f"**Ação proposta:** {acao}")
-
         st.markdown(
             f"**Avaliação:** Situação classificada com risco **{risco.lower()}** devido à combinação dos fatores críticos identificados."
         )
+        st.markdown("**Fundamento principal:** inconsistência entre fatores com maior contributo e necessidade de resposta proporcional ao risco.")
         st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('<div class="resultado-critico">', unsafe_allow_html=True)
 
         col_res_1, col_res_2 = st.columns([3, 1])
         with col_res_1:
-            st.markdown('<div class="resultado-titulo">PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
+            st.markdown('<div class="resultado-titulo">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
             st.markdown('<div class="resultado-subtitulo">Recomendação do sistema gerada a partir das entradas submetidas.</div>', unsafe_allow_html=True)
 
         with col_res_2:
@@ -817,37 +892,36 @@ with coluna_direita:
             f'<div class="acao-critica {classe_acao_resultado(risco)}">AÇÃO RECOMENDADA: {acao.upper()}</div>',
             unsafe_allow_html=True
         )
-
         st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.resultado_gerado and resultado_em_reserva:
         st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">4. Avaliação Tática</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Informação em reserva.</div>', unsafe_allow_html=True)
         st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática.")
         st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">Resultado automático</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Resultado anterior invalidado.</div>', unsafe_allow_html=True)
         st.warning("Configuração alterada. O resultado anterior ficou em reserva e deve ser regenerado antes de nova validação.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     else:
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">4. Avaliação Tática</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Aguardando processamento.</div>', unsafe_allow_html=True)
         st.info("A avaliação tática será apresentada após a geração da recomendação.")
         st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">Resultado automático</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Aguardando processamento operacional.</div>', unsafe_allow_html=True)
         st.info("Introduza os dados do caso e clique em “Gerar recomendação”.")
         st.markdown('</div>', unsafe_allow_html=True)
 
 # -------------------------
-# Bloco de confirmação do operador
+# 5. Confirmação do operador
 # -------------------------
 if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
     dados = st.session_state.dados_resultado
@@ -857,7 +931,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     acao = dados["acao"]
 
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">CONFIRMAÇÃO DO OPERADOR</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">5. CONFIRMAÇÃO DO OPERADOR</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
 
     decisao_utilizador = st.selectbox(
@@ -872,36 +946,51 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         height=180
     )
 
+    alterou_decisao = decisao_utilizador != "Confirmar ação proposta"
+    if alterou_decisao:
+        st.warning("A justificação é obrigatória quando a decisão final altera a ação proposta pelo sistema.")
+
     guardar = st.button("Guardar decisão final", use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
     if guardar:
         decisao_final = acao if decisao_utilizador == "Confirmar ação proposta" else decisao_utilizador
-        id_decisao = gerar_id_decisao()
-        timestamp_decisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        st.session_state.decisao_guardada = {
-            "id_decisao": id_decisao,
-            "timestamp_decisao": timestamp_decisao,
-            "acao_proposta": acao,
-            "decisao_final": decisao_final,
-            "risco": risco,
-            "pontuacao_total": pontuacao_total,
-            "justificacao": justificacao.strip()
-        }
+        if alterou_decisao and not justificacao.strip():
+            st.error("Não é possível guardar: a justificação é obrigatória quando alteras a ação proposta.")
+        else:
+            id_decisao = gerar_id_decisao()
+            timestamp_decisao = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
+            st.session_state.decisao_guardada = {
+                "id_decisao": id_decisao,
+                "timestamp_decisao": timestamp_decisao,
+                "acao_proposta": acao,
+                "decisao_final": decisao_final,
+                "risco": risco,
+                "pontuacao_total": pontuacao_total,
+                "justificacao": justificacao.strip()
+            }
+
+    # -------------------------
+    # 6. Decisão final
+    # -------------------------
     if st.session_state.decisao_guardada is not None:
         reg = st.session_state.decisao_guardada
+        tipo = tipo_decisao(reg["acao_proposta"], reg["decisao_final"])
+        classe_tipo = "estado-confirmacao" if tipo == "Confirmada" else "estado-alteracao"
 
         st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">DECISÃO FINAL</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">6. DECISÃO FINAL</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
 
         st.markdown(
             f"""
             <div class="bloco-meta">
                 <b>ID da decisão:</b> {reg["id_decisao"]}<br>
-                <b>Registado em:</b> {reg["timestamp_decisao"]}
+                <b>Registado em:</b> {reg["timestamp_decisao"]}<br>
+                <b>Tipo de decisão:</b> {tipo}<br>
+                <span class="{classe_tipo}">{tipo}</span>
             </div>
             """,
             unsafe_allow_html=True
@@ -923,15 +1012,28 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         else:
             st.write("Não foi fornecida justificação.")
 
-        st.success("Registo concluído com recomendação automática e validação humana.")
+        st.success("Decisão final registada com sucesso no sistema.")
+
+        if st.session_state.dados_resultado is not None:
+            conteudo_txt = exportar_registo_txt(st.session_state.dados_resultado, reg)
+            st.download_button(
+                label="Exportar registo TXT",
+                data=conteudo_txt,
+                file_name=f"{st.session_state.dados_resultado['id_caso']}_{reg['id_decisao']}.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+
         st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------
-    # Quadro de indicadores
+    # 7. Quadro de indicadores
     # -------------------------
     st.markdown('<div class="cartao">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">7. QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Visualização compacta do estado, peso e impacto na decisão de cada indicador.</div>', unsafe_allow_html=True)
+
+    fatores_top = {f["codigo"] for f in obter_fatores_principais(contributos, top_n=3)}
 
     pares = [
         ("I1", contributos["I1"]),
@@ -948,8 +1050,10 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         codigo_a, info_a = pares[i]
         classe_a = classe_cartao_indicador(info_a["Contributo"])
         with col_a:
+            destaque_a = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_a in fatores_top else ""
             st.markdown(f"""
             <div class="mini-cartao-indicador {classe_a}">
+                {destaque_a}
                 <div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
                 <div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div>
                 <div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div>
@@ -962,8 +1066,10 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         codigo_b, info_b = pares[i + 1]
         classe_b = classe_cartao_indicador(info_b["Contributo"])
         with col_b:
+            destaque_b = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_b in fatores_top else ""
             st.markdown(f"""
             <div class="mini-cartao-indicador {classe_b}">
+                {destaque_b}
                 <div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
                 <div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div>
                 <div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div>
@@ -974,7 +1080,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
             """, unsafe_allow_html=True)
 
     with st.expander("Ver regra de cálculo"):
-        st.markdown("""
+        st.markdown(f"""
         **Origem dos indicadores**
         - **I1** = calculado a partir de **Posição/Trajetória**
         - **I2** = calculado a partir de **Posição/Trajetória + Concordância com radar/outras fontes**
@@ -997,14 +1103,17 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         - **I6** = 3
 
         **Fórmula de cálculo**
-        - **Pontuação final = Σ (pontosᵢ × pesoᵢ), i ∈ {I1, I2, I3, I4, I5, I6}**
+        - **Pontuação final = Σ (pontosᵢ × pesoᵢ), i ∈ {{I1, I2, I3, I4, I5, I6}}**
         - **Pontuação final = (pontos_I1 × 3) + (pontos_I2 × 2) + (pontos_I3 × 2) + (pontos_I4 × 2) + (pontos_I5 × 1) + (pontos_I6 × 3)**
+
+        **Fórmula aplicada a este caso**
+        <div class="formula-caso"><b>{formula_caso_texto(contributos)}</b></div>
 
         **Conversão da pontuação em risco e ação**
         - **Pontuação final ≤ 4** → **Risco Baixo** → **Ignorar**
         - **Pontuação final ≤ 8** → **Risco Médio** → **Monitorizar**
         - **Pontuação final > 8** → **Risco Elevado** → **Escalar**
-        """)
+        """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
