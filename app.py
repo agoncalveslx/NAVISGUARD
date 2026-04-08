@@ -815,7 +815,7 @@ with coluna_direita:
             unsafe_allow_html=True
         )
 
-st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     elif st.session_state.resultado_gerado and resultado_em_reserva:
         st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
