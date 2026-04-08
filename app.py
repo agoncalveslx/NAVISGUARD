@@ -1049,35 +1049,35 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
         codigo_a, info_a = pares[i]
         classe_a = classe_cartao_indicador(info_a["Contributo"])
+        destaque_a = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_a in fatores_top else ""
+
         with col_a:
-            destaque_a = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_a in fatores_top else ""
-            st.markdown(f"""
-            <div class="mini-cartao-indicador {classe_a}">
-                {destaque_a}
-                <div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
-                <div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div>
-                <div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div>
-                <div class="mini-cartao-linha">Peso: <b>{info_a['Peso']}</b></div>
-                <div class="mini-cartao-linha">Contributo: <b>{info_a['Contributo']}</b></div>
-                <div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_a['Contributo'])}</b></div>
-            </div>
-            """, unsafe_allow_html=True)
+            html_a = f"""<div class="mini-cartao-indicador {classe_a}">
+{destaque_a}
+<div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
+<div class="mini-cartao-linha">Estado: <b>{info_a['Nível']}</b></div>
+<div class="mini-cartao-linha">Pontos do estado: <b>{info_a['Pontos']}</b></div>
+<div class="mini-cartao-linha">Peso: <b>{info_a['Peso']}</b></div>
+<div class="mini-cartao-linha">Contributo: <b>{info_a['Contributo']}</b></div>
+<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_a['Contributo'])}</b></div>
+</div>"""
+            st.markdown(html_a, unsafe_allow_html=True)
 
         codigo_b, info_b = pares[i + 1]
         classe_b = classe_cartao_indicador(info_b["Contributo"])
+        destaque_b = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_b in fatores_top else ""
+
         with col_b:
-            destaque_b = '<div class="fator-critico">FATOR CRÍTICO</div>' if codigo_b in fatores_top else ""
-            st.markdown(f"""
-            <div class="mini-cartao-indicador {classe_b}">
-                {destaque_b}
-                <div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
-                <div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div>
-                <div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div>
-                <div class="mini-cartao-linha">Peso: <b>{info_b['Peso']}</b></div>
-                <div class="mini-cartao-linha">Contributo: <b>{info_b['Contributo']}</b></div>
-                <div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_b['Contributo'])}</b></div>
-            </div>
-            """, unsafe_allow_html=True)
+            html_b = f"""<div class="mini-cartao-indicador {classe_b}">
+{destaque_b}
+<div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
+<div class="mini-cartao-linha">Estado: <b>{info_b['Nível']}</b></div>
+<div class="mini-cartao-linha">Pontos do estado: <b>{info_b['Pontos']}</b></div>
+<div class="mini-cartao-linha">Peso: <b>{info_b['Peso']}</b></div>
+<div class="mini-cartao-linha">Contributo: <b>{info_b['Contributo']}</b></div>
+<div class="mini-cartao-linha">Impacto na decisão: <b>{impacto_textual(info_b['Contributo'])}</b></div>
+</div>"""
+            st.markdown(html_b, unsafe_allow_html=True)
 
     with st.expander("Ver regra de cálculo"):
         st.markdown(f"""
@@ -1116,6 +1116,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 elif st.session_state.resultado_gerado and resultado_em_reserva:
     st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
