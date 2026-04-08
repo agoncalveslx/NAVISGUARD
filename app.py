@@ -631,7 +631,7 @@ with coluna_esquerda:
 
     col_titulo_entrada, col_botao_reset = st.columns([3, 1])
     with col_titulo_entrada:
-        st.markdown("#### Preparação do caso")
+        st.markdown("##### Preparação do caso")
     with col_botao_reset:
         st.button("Novo caso", use_container_width=True, on_click=reiniciar_caso)
 
