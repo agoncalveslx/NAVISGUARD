@@ -623,16 +623,16 @@ coluna_esquerda, coluna_direita = st.columns([1, 1], gap="large")
 # -------------------------
 with coluna_esquerda:
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">Dados de entrada</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">DADOS DE ENTRADA</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
 
     col_titulo_entrada, col_botao_reset = st.columns([3, 1])
     with col_titulo_entrada:
-        st.markdown("### Preparação do caso")
+        st.markdown("#### Preparação do caso")
     with col_botao_reset:
         st.button("Novo caso", use_container_width=True, on_click=reiniciar_caso)
 
-    st.markdown("### Dados AIS/VMS")
+    st.markdown("#### Dados AIS/VMS")
     col_a, col_b = st.columns(2)
 
     with col_a:
@@ -655,7 +655,7 @@ with coluna_esquerda:
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("### Outras fontes")
+    st.markdown("#### Outras fontes")
     col_e, col_f = st.columns(2)
 
     with col_e:
@@ -765,7 +765,7 @@ with coluna_direita:
         ]
 
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">Avaliação Tática</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Síntese dos fatores críticos e impacto na recomendação.</div>', unsafe_allow_html=True)
 
         st.info("BRIEFING OPERACIONAL")
