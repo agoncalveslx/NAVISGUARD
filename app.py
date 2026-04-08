@@ -681,8 +681,13 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         - **I6** = 3
 
         **Fórmula de cálculo**
-        - **Contributo do indicador = pontos do estado × peso**
-        - **Pontuação final = soma dos contributos de todos os indicadores**
+        - **Pontuação final = Σ (pontosᵢ × pesoᵢ), para i = 1 até 6**
+        - **Pontuação final = (pontos_I1 × 3) + (pontos_I2 × 2) + (pontos_I3 × 2) + (pontos_I4 × 2) + (pontos_I5 × 1) + (pontos_I6 × 3)**
+
+        **Conversão da pontuação em risco e ação**
+        - **Pontuação final ≤ 4** → **Risco Baixo** → **Ignorar**
+        - **Pontuação final ≤ 8** → **Risco Médio** → **Monitorizar**
+        - **Pontuação final > 8** → **Risco Elevado** → **Escalar**
         """)
 
     st.markdown('</div>', unsafe_allow_html=True)
