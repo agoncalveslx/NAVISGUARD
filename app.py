@@ -635,7 +635,7 @@ with coluna_esquerda:
     with col_botao_reset:
         st.button("Novo caso", use_container_width=True, on_click=reiniciar_caso)
 
-    st.markdown("###### Dados AIS/VMS")
+    st.markdown("##### Dados AIS/VMS")
     col_a, col_b = st.columns(2)
 
     with col_a:
@@ -658,7 +658,7 @@ with coluna_esquerda:
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("###### Outras fontes")
+    st.markdown("##### Outras fontes")
     col_e, col_f = st.columns(2)
 
     with col_e:
