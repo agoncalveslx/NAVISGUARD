@@ -263,12 +263,12 @@ def cor_risco(risco):
         return "#fef3c7", "#92400e", "cartao-amarelo"
     return "#fee2e2", "#991b1b", "cartao-vermelho"
 
-def classe_cartao_indicador(nivel):
-    if nivel == "Baixo":
-        return "mini-cartao-baixo"
-    elif nivel == "Médio":
+def classe_cartao_indicador(contributo):
+    if contributo >= 5:
+        return "mini-cartao-elevado"
+    elif contributo >= 2:
         return "mini-cartao-medio"
-    return "mini-cartao-elevado"
+    return "mini-cartao-baixo"
 
 def classe_risco_input(valor):
     if valor in ["Normal", "Concordante"]:
@@ -735,7 +735,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         col_a, col_b = st.columns([1, 1], gap="small")
 
         codigo_a, info_a = pares[i]
-        classe_a = classe_cartao_indicador(info_a["Nível"])
+        classe_a = classe_cartao_indicador(info_a["Contributo"])
         with col_a:
             st.markdown(f"""
             <div class="mini-cartao-indicador {classe_a}">
@@ -749,7 +749,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
             """, unsafe_allow_html=True)
 
         codigo_b, info_b = pares[i + 1]
-        classe_b = classe_cartao_indicador(info_b["Nível"])
+        classe_b = classe_cartao_indicador(info_b["Contributo"])
         with col_b:
             st.markdown(f"""
             <div class="mini-cartao-indicador {classe_b}">
