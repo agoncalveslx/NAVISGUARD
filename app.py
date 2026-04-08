@@ -561,7 +561,7 @@ Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógic
 # Processamento operacional
 # -------------------------
 st.markdown('<div class="cartao">', unsafe_allow_html=True)
-st.markdown('<div class="titulo-secao">Processamento Operacional</div>', unsafe_allow_html=True)
+st.markdown('<div class="titulo-secao">PROCESSAMENTO OPERACIONAL</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitulo-secao">O sistema calcula indicadores, avalia o risco e emite uma recomendação.</div>', unsafe_allow_html=True)
 
 st.info("Após clicar em “Gerar recomendação”, o sistema processa os indicadores, calcula a pontuação total, determina o nível de risco e emite a ação proposta.")
@@ -791,7 +791,7 @@ with coluna_direita:
 
         col_res_1, col_res_2 = st.columns([3, 1])
         with col_res_1:
-            st.markdown('<div class="resultado-titulo">Resultado automático</div>', unsafe_allow_html=True)
+            st.markdown('<div class="resultado-titulo">PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
             st.markdown('<div class="resultado-subtitulo">Recomendação do sistema gerada a partir das entradas submetidas.</div>', unsafe_allow_html=True)
 
         with col_res_2:
@@ -857,7 +857,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     acao = dados["acao"]
 
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">Confirmação do operador</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">CONFIRMAÇÃO DO OPERADOR</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
 
     decisao_utilizador = st.selectbox(
