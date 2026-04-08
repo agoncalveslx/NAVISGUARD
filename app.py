@@ -626,9 +626,9 @@ st.markdown("""<div style="position: relative; border-radius:18px; overflow:hidd
 }
 </style>""", unsafe_allow_html=True)
 
-#st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
-#st.image("logo.jpg", use_container_width=True)
-#st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
+st.image("logo.jpg", use_container_width=True)
+st.markdown('</div>', unsafe_allow_html=True)
 
 id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados_resultado else "Não iniciado"
 st.markdown(
