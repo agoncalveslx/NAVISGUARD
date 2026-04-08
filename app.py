@@ -197,13 +197,13 @@ st.markdown("""
     .resultado-titulo {
         font-size: 1.25rem;
         font-weight: 800;
-        color: #cbd5e1;
+        color: #1f2937;
         margin-bottom: 4px;
     }
 
     .resultado-subtitulo {
         font-size: 0.93rem;
-        color: #cbd5e1;
+        color: #1f2937;
     }
 
     .selo-risco {
