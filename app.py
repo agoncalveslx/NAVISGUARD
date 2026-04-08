@@ -765,7 +765,7 @@ with coluna_direita:
         ]
 
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">4. Avaliação Tática</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">Avaliação Tática</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Síntese dos fatores críticos e impacto na recomendação.</div>', unsafe_allow_html=True)
 
         st.info("BRIEFING OPERACIONAL")
@@ -854,7 +854,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     acao = dados["acao"]
 
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">5. Confirmação do operador</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">Confirmação do operador</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
 
     decisao_utilizador = st.selectbox(
