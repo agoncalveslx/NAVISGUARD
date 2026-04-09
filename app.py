@@ -978,9 +978,8 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     acao = dados["acao"]
 
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">5. CONFIRMAÇÃO DO OPERADOR</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">O operador pode confirmar ou alterar a recomendação automática com justificação.</div>', unsafe_allow_html=True)
-
+    st.markdown('<div class="titulo-secao">5. VALIDAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">O especialista procede à validação tática da recomendação automática, podendo confirmá-la ou ajustá-la com a devida fundamentação.</div>', unsafe_allow_html=True)
     decisao_utilizador = st.selectbox(
         "Decisão final do operador",
         ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
