@@ -735,6 +735,22 @@ with coluna_esquerda:
     st.markdown('<div class="titulo-secao">2. DADOS DE ENTRADA</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
 
+    with st.expander("Nota sobre integração futura dos dados"):
+        st.write("""
+Atualmente, os dados de entrada são introduzidos manualmente para efeitos de demonstração e validação conceptual do sistema.
+
+Numa fase futura, estes dados poderão ser obtidos automaticamente a partir de **fontes externas**, incluindo sistemas operacionais e sensores relevantes, desde que sejam asseguradas as **devidas medidas de proteção**, nomeadamente ao nível da:
+- confidencialidade;
+- integridade;
+- autenticação das fontes;
+- controlo de acessos;
+- rastreabilidade;
+- e transmissão segura da informação.
+
+Esta evolução permitirá reduzir intervenção manual, aumentar a rapidez de processamento e reforçar a ligação do sistema a ambientes operacionais reais.
+""")
+
+
     col_titulo_entrada, col_botao_reset, col_botao_random = st.columns([3, 1, 1])
     with col_titulo_entrada:
         st.markdown("##### PREPARAÇÃO DO CASO")
