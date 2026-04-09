@@ -597,7 +597,7 @@ id_atual = st.session_state.dados_resultado["id_caso"] if st.session_state.dados
 st.markdown(
     f"""
     <div class="barra-estado-caso">
-        <b>Casoiiiii atual:</b> {id_atual} &nbsp;&nbsp;|&nbsp;&nbsp;
+        <b>Caso atual:</b> {id_atual} &nbsp;&nbsp;|&nbsp;&nbsp;
         <b>Estado:</b> {estado_do_caso()}
     </div>
     """,
