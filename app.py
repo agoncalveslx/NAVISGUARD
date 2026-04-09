@@ -532,7 +532,7 @@ def estado_do_caso():
 def tipo_decisao(acao_proposta_atual, decisao_final):
     if acao_proposta_atual == decisao_final:
         return "Confirmada"
-    return "Alterada pelo operador"
+    return "Alterada pelo Especialista"
 
 def obter_fatores_principais(contributos, top_n=3):
     ordenados = sorted(contributos.items(), key=lambda x: x[1]["Contributo"], reverse=True)
@@ -638,7 +638,7 @@ A aplicação simula a análise de informação proveniente de sistemas como:
 - VMS (Vessel Monitoring System)
 - Radar e outras fontes externas
 
-Com base nos dados introduzidos pelo operador, o sistema:
+Com base nos dados introduzidos pelo Especialista, o sistema:
 
 1. **Gera indicadores internos de risco (I1–I6)**  
    Avalia dimensões como identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
@@ -657,7 +657,7 @@ Com base nos dados introduzidos pelo operador, o sistema:
    - Escalar  
 
 5. **Permite validação humana da decisão**  
-   O operador pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
+   O Especialista pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
 
 ⚠️ **Nota:**  
 Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
@@ -733,7 +733,7 @@ coluna_esquerda, coluna_direita = st.columns([1, 1], gap="large")
 with coluna_esquerda:
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao">2. DADOS DE ENTRADA</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">Nesta secção, o especialista descreve o caso em análise.</div>', unsafe_allow_html=True)
 
     with st.expander("Nota sobre integração futura dos dados"):
         st.write("""
@@ -981,7 +981,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     st.markdown('<div class="titulo-secao">5. VALIDAÇÃO TÁTICA</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O especialista procede à validação tática da recomendação automática, podendo confirmá-la ou ajustá-la com a devida fundamentação.</div>', unsafe_allow_html=True)
     decisao_utilizador = st.selectbox(
-        "Decisão final do operador",
+        "Decisão Tática Final",
         ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
         label_visibility="visible"
     )
@@ -1169,5 +1169,5 @@ elif st.session_state.resultado_gerado and resultado_em_reserva:
     st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao">Informação em reserva</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O caso foi alterado após a última geração.</div>', unsafe_allow_html=True)
-    st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática, a rastreabilidade e a confirmação do operador.")
+    st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática, a rastreabilidade e a confirmação do especialista.")
     st.markdown('</div>', unsafe_allow_html=True)
