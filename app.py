@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import io
+import random
 
 
 st.set_page_config(
@@ -24,6 +25,19 @@ if "contador_casos" not in st.session_state:
 
 if "decisao_guardada" not in st.session_state:
     st.session_state.decisao_guardada = None
+
+# Valores dos inputs
+if "posicao" not in st.session_state:
+    st.session_state.posicao = "Normal"
+
+if "velocidade" not in st.session_state:
+    st.session_state.velocidade = "Normal"
+
+if "radar" not in st.session_state:
+    st.session_state.radar = "Concordante"
+
+if "contexto" not in st.session_state:
+    st.session_state.contexto = "Normal"
 
 # -------------------------
 # Estilo visual
@@ -494,6 +508,19 @@ def reiniciar_caso():
     st.session_state.resultado_gerado = False
     st.session_state.dados_resultado = None
     st.session_state.decisao_guardada = None
+    st.session_state.posicao = "Normal"
+    st.session_state.velocidade = "Normal"
+    st.session_state.radar = "Concordante"
+    st.session_state.contexto = "Normal"
+
+def gerar_caso_aleatorio():
+    st.session_state.resultado_gerado = False
+    st.session_state.dados_resultado = None
+    st.session_state.decisao_guardada = None
+    st.session_state.posicao = random.choice(["Normal", "Ligeiramente suspeita", "Muito suspeita"])
+    st.session_state.velocidade = random.choice(["Normal", "Ligeiramente suspeito", "Muito suspeito"])
+    st.session_state.radar = random.choice(["Concordante", "Parcialmente discordante", "Discordante"])
+    st.session_state.contexto = random.choice(["Normal", "Pouco habitual", "Muito suspeito"])
 
 def estado_do_caso():
     if st.session_state.decisao_guardada is not None:
@@ -587,9 +614,6 @@ pesos = {"I1": 3, "I2": 2, "I3": 2, "I4": 2, "I5": 1, "I6": 3}
 # -------------------------
 # Cabeçalho
 # -------------------------
-
-
-
 st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
 st.image("logo.jpg", use_container_width=True)
 st.markdown('</div>', unsafe_allow_html=True)
@@ -711,31 +735,35 @@ with coluna_esquerda:
     st.markdown('<div class="titulo-secao">2. DADOS DE ENTRADA</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Nesta secção, o operador descreve o caso em análise.</div>', unsafe_allow_html=True)
 
-    col_titulo_entrada, col_botao_reset = st.columns([3, 1])
+    col_titulo_entrada, col_botao_reset, col_botao_random = st.columns([3, 1, 1])
     with col_titulo_entrada:
         st.markdown("##### PREPARAÇÃO DO CASO")
     with col_botao_reset:
         st.button("Novo caso", use_container_width=True, on_click=reiniciar_caso)
+    with col_botao_random:
+        st.button("Caso aleatório", use_container_width=True, on_click=gerar_caso_aleatorio)
 
     st.markdown("##### Dados AIS/VMS")
     col_a, col_b = st.columns(2)
 
     with col_a:
         st.markdown('<div class="etiqueta">Posição/Trajetória</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="{classe_risco_input(posicao) if "posicao" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(st.session_state.posicao)}">', unsafe_allow_html=True)
         posicao = st.selectbox(
             "Posição/Trajetória",
             ["Normal", "Ligeiramente suspeita", "Muito suspeita"],
+            key="posicao",
             label_visibility="collapsed"
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_b:
         st.markdown('<div class="etiqueta">Velocidade/Curso</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="{classe_risco_input(velocidade) if "velocidade" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(st.session_state.velocidade)}">', unsafe_allow_html=True)
         velocidade = st.selectbox(
             "Velocidade/Curso",
             ["Normal", "Ligeiramente suspeito", "Muito suspeito"],
+            key="velocidade",
             label_visibility="collapsed"
         )
         st.markdown('</div>', unsafe_allow_html=True)
@@ -745,20 +773,22 @@ with coluna_esquerda:
 
     with col_e:
         st.markdown('<div class="etiqueta">Concordância com radar/outras fontes</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="{classe_risco_input(radar) if "radar" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(st.session_state.radar)}">', unsafe_allow_html=True)
         radar = st.selectbox(
             "Concordância com radar/outras fontes",
             ["Concordante", "Parcialmente discordante", "Discordante"],
+            key="radar",
             label_visibility="collapsed"
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col_f:
         st.markdown('<div class="etiqueta">Contexto operacional</div>', unsafe_allow_html=True)
-        st.markdown(f'<div class="{classe_risco_input(contexto) if "contexto" in locals() else "risco-neutro"}">', unsafe_allow_html=True)
+        st.markdown(f'<div class="{classe_risco_input(st.session_state.contexto)}">', unsafe_allow_html=True)
         contexto = st.selectbox(
             "Contexto operacional",
             ["Normal", "Pouco habitual", "Muito suspeito"],
+            key="contexto",
             label_visibility="collapsed"
         )
         st.markdown('</div>', unsafe_allow_html=True)
@@ -1034,10 +1064,9 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     st.markdown('<div class="titulo-secao">7. QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Visualização compacta do estado, peso e impacto na decisão de cada indicador.</div>', unsafe_allow_html=True)
 
-    
     fatores_top = {
         k for k, v in contributos.items() if v["Contributo"] > 0
-    }    
+    }
 
     pares = [
         ("I1", contributos["I1"]),
@@ -1120,7 +1149,6 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
-
 
 elif st.session_state.resultado_gerado and resultado_em_reserva:
     st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
