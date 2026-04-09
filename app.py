@@ -988,7 +988,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
     justificacao = st.text_area(
         "Justificação da decisão final",
-        placeholder="Explica por que motivo confirmas ou alteras a ação proposta...",
+        placeholder="Fundamenta a decisão tática adotada com base na situação operacional..."
         height=180
     )
 
