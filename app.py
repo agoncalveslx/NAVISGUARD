@@ -3,7 +3,6 @@ import pandas as pd
 from datetime import datetime
 import io
 import random
-import pydeck as pdk
 
 
 st.set_page_config(
@@ -592,277 +591,6 @@ def exportar_registo_txt(dados, decisao=None):
 
     return "\n".join(linhas)
 
-# -------------------------
-# Funções do mapa tático
-# -------------------------
-def obter_coordenadas_caso(posicao, contexto):
-    """
-    Coordenadas simplificadas para demonstração tática em áreas marítimas portuguesas.
-    """
-    if contexto == "Muito suspeito":
-        if posicao == "Muito suspeita":
-            return 36.95, -8.95, "Algarve / Sul", "Zona de elevada sensibilidade"
-        elif posicao == "Ligeiramente suspeita":
-            return 38.55, -9.35, "Lisboa / Setúbal", "Aproximação a corredor marítimo"
-        return 41.25, -8.95, "Norte / Leixões", "Aproximação a zona portuária"
-
-    if contexto == "Pouco habitual":
-        if posicao == "Muito suspeita":
-            return 39.45, -9.55, "Peniche / Oeste", "Trajetória pouco habitual"
-        elif posicao == "Ligeiramente suspeita":
-            return 40.20, -8.95, "Figueira da Foz", "Comportamento pouco habitual"
-        return 37.85, -8.95, "Sines", "Tráfego sob observação"
-
-    if posicao == "Muito suspeita":
-        return 32.70, -16.95, "Madeira", "Contacto isolado em área atlântica"
-    elif posicao == "Ligeiramente suspeita":
-        return 37.75, -25.55, "Açores", "Contacto sob monitorização"
-    return 38.70, -9.20, "Costa de Portugal", "Tráfego regular"
-
-def cor_risco_mapa(risco):
-    if risco == "Baixo":
-        return [34, 197, 94, 220]
-    elif risco == "Médio":
-        return [245, 158, 11, 230]
-    return [239, 68, 68, 235]
-
-def raio_risco(risco):
-    if risco == "Baixo":
-        return 10000
-    elif risco == "Médio":
-        return 18000
-    return 26000
-
-def espessura_trajetoria(velocidade):
-    if velocidade == "Muito suspeito":
-        return 7
-    elif velocidade == "Ligeiramente suspeito":
-        return 5
-    return 3
-
-def gerar_trajetoria(lat, lon, velocidade, posicao):
-    """
-    Gera uma trajetória mais credível para demonstração.
-    """
-    if velocidade == "Muito suspeito":
-        desloc = 1.00
-    elif velocidade == "Ligeiramente suspeito":
-        desloc = 0.60
-    else:
-        desloc = 0.30
-
-    ajuste_lat = 0.18 if posicao == "Muito suspeita" else 0.10
-
-    return [
-        [lon - desloc, lat - ajuste_lat],
-        [lon - desloc * 0.65, lat - ajuste_lat * 0.55],
-        [lon - desloc * 0.30, lat - ajuste_lat * 0.20],
-        [lon, lat]
-    ]
-
-def obter_contactos_referencia():
-    """
-    Contactos adicionais apenas para dar contexto visual ao mapa.
-    """
-    return pd.DataFrame([
-        {"lat": 41.05, "lon": -8.85, "tipo": "Tráfego regular"},
-        {"lat": 39.85, "lon": -9.10, "tipo": "Tráfego regular"},
-        {"lat": 38.10, "lon": -9.60, "tipo": "Tráfego regular"},
-        {"lat": 37.55, "lon": -8.80, "tipo": "Tráfego regular"},
-    ])
-
-def obter_zonas_maritimas():
-    """
-    Polígonos simplificados para enquadramento visual.
-    """
-    return pd.DataFrame([
-        {
-            "nome": "Zona Norte",
-            "poligono": [
-                [-9.90, 41.90],
-                [-8.10, 41.90],
-                [-8.10, 40.80],
-                [-9.90, 40.80]
-            ]
-        },
-        {
-            "nome": "Zona Centro",
-            "poligono": [
-                [-10.10, 40.80],
-                [-8.40, 40.80],
-                [-8.40, 38.80],
-                [-10.10, 38.80]
-            ]
-        },
-        {
-            "nome": "Zona Sul",
-            "poligono": [
-                [-9.80, 38.80],
-                [-7.80, 38.80],
-                [-7.80, 36.70],
-                [-9.80, 36.70]
-            ]
-        }
-    ])
-
-def desenhar_legenda_tatica():
-    st.markdown(
-        """
-        <div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; margin-bottom:6px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:14px; height:14px; border-radius:50%; background:#22c55e;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Baixo</b></span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:14px; height:14px; border-radius:50%; background:#f59e0b;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Médio</b></span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:14px; height:14px; border-radius:50%; background:#ef4444;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Elevado</b></span>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:18px; height:3px; background:#60a5fa;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Trajetória estimada</b></span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
-    lat, lon, zona, observacao = obter_coordenadas_caso(posicao, contexto)
-    cor = cor_risco_mapa(risco)
-    trajetoria = gerar_trajetoria(lat, lon, velocidade, posicao)
-    raio = raio_risco(risco)
-    largura = espessura_trajetoria(velocidade)
-
-    df_contacto = pd.DataFrame([{
-        "lat": lat,
-        "lon": lon,
-        "zona": zona,
-        "risco": risco,
-        "observacao": observacao
-    }])
-
-    df_trajetoria = pd.DataFrame([{
-        "path": trajetoria,
-        "nome": "Trajetória estimada"
-    }])
-
-    df_referencia = obter_contactos_referencia()
-    df_zonas = obter_zonas_maritimas()
-
-    layer_zonas = pdk.Layer(
-        "PolygonLayer",
-        data=df_zonas,
-        get_polygon="poligono",
-        get_fill_color=[30, 41, 59, 40],
-        get_line_color=[71, 85, 105, 120],
-        line_width_min_pixels=1,
-        stroked=True,
-        filled=True,
-        pickable=True
-    )
-
-    layer_trajetoria = pdk.Layer(
-        "PathLayer",
-        data=df_trajetoria,
-        get_path="path",
-        get_color=[96, 165, 250, 220],
-        width_scale=20,
-        width_min_pixels=2,
-        get_width=largura,
-        pickable=True
-    )
-
-    layer_contactos_ref = pdk.Layer(
-        "ScatterplotLayer",
-        data=df_referencia,
-        get_position="[lon, lat]",
-        get_fill_color=[148, 163, 184, 140],
-        get_radius=5500,
-        pickable=True
-    )
-
-    layer_anel_risco = pdk.Layer(
-        "ScatterplotLayer",
-        data=df_contacto,
-        get_position="[lon, lat]",
-        get_fill_color=[0, 0, 0, 0],
-        get_line_color=cor,
-        line_width_min_pixels=2,
-        stroked=True,
-        filled=False,
-        get_radius=raio,
-        pickable=False
-    )
-
-    layer_contacto_principal = pdk.Layer(
-        "ScatterplotLayer",
-        data=df_contacto,
-        get_position="[lon, lat]",
-        get_fill_color=cor,
-        get_line_color=[255, 255, 255, 230],
-        line_width_min_pixels=2,
-        stroked=True,
-        filled=True,
-        get_radius=12000,
-        pickable=True
-    )
-
-    layer_centro = pdk.Layer(
-        "TextLayer",
-        data=pd.DataFrame([{
-            "lat": lat,
-            "lon": lon,
-            "texto": "▲"
-        }]),
-        get_position="[lon, lat]",
-        get_text="texto",
-        get_size=20,
-        get_color=[255, 255, 255, 230],
-        get_angle=0,
-        get_text_anchor="'middle'",
-        get_alignment_baseline="'center'"
-    )
-
-    view_state = pdk.ViewState(
-        latitude=38.70,
-        longitude=-9.50,
-        zoom=5.15,
-        pitch=0
-    )
-
-    deck = pdk.Deck(
-        map_provider="carto",
-        map_style=pdk.map_styles.CARTO_DARK,
-        initial_view_state=view_state,
-        layers=[
-            layer_zonas,
-            layer_trajetoria,
-            layer_contactos_ref,
-            layer_anel_risco,
-            layer_contacto_principal,
-            layer_centro
-        ],
-        tooltip={
-            "html": """
-                <b>Zona:</b> {zona}<br/>
-                <b>Risco:</b> {risco}<br/>
-                <b>Observação:</b> {observacao}
-            """,
-            "style": {
-                "backgroundColor": "#0f172a",
-                "color": "white",
-                "fontSize": "12px"
-            }
-        }
-    )
-
-    st.pydeck_chart(deck, use_container_width=True)
-    desenhar_legenda_tatica()
-
 nomes_indicadores = {
     "I1": "Anomalia de identidade",
     "I2": "Alteração anormal de identidade",
@@ -1022,6 +750,7 @@ Numa fase futura, estes dados poderão ser obtidos automaticamente a partir de *
 Esta evolução permitirá reduzir intervenção manual, aumentar a rapidez de processamento e reforçar a ligação do sistema a ambientes operacionais reais.
 """)
 
+
     col_titulo_entrada, col_botao_reset, col_botao_random = st.columns([3, 1, 1])
     with col_titulo_entrada:
         st.markdown("##### PREPARAÇÃO DO CASO")
@@ -1145,7 +874,7 @@ if gerar:
     resultado_em_reserva = False
 
 # -------------------------
-# 3 + 4 + 5. Coluna direita: avaliação tática + proposta de ação + mapa tático
+# 3 + 4. Coluna direita: avaliação tática + proposta de ação
 # -------------------------
 with coluna_direita:
     if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
@@ -1212,18 +941,6 @@ with coluna_direita:
         )
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">5. MAPA TÁTICO</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">Representação geográfica tática do contacto, da trajetória estimada e da área de atenção ao longo da costa portuguesa.</div>', unsafe_allow_html=True)
-        st.info("Visualização geográfica de apoio à apreciação tática, com trajetória estimada, área de atenção e enquadramento marítimo simplificado.")
-        desenhar_mapa_tatico(
-            dados["posicao"],
-            dados["velocidade"],
-            dados["contexto"],
-            dados["risco"]
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
-
     elif st.session_state.resultado_gerado and resultado_em_reserva:
         st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
         st.markdown('<div class="titulo-secao">3. AVALIAÇÃO TÁTICA</div>', unsafe_allow_html=True)
@@ -1235,12 +952,6 @@ with coluna_direita:
         st.markdown('<div class="titulo-secao">4. PROPOSTA DE AÇÃO</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Resultado anterior invalidado.</div>', unsafe_allow_html=True)
         st.warning("Configuração alterada. O resultado anterior ficou em reserva e deve ser regenerado antes de nova validação.")
-        st.markdown('</div>', unsafe_allow_html=True)
-
-        st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">5. MAPA TÁTICO</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">Visualização em espera.</div>', unsafe_allow_html=True)
-        st.warning("O mapa tático será atualizado após a geração de nova recomendação.")
         st.markdown('</div>', unsafe_allow_html=True)
 
     else:
@@ -1256,14 +967,8 @@ with coluna_direita:
         st.info("Introduza os dados do caso e clique em “Gerar recomendação”.")
         st.markdown('</div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="cartao">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">5. MAPA TÁTICO</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">Aguardando geração do caso.</div>', unsafe_allow_html=True)
-        st.info("O mapa tático será apresentado após a geração da recomendação.")
-        st.markdown('</div>', unsafe_allow_html=True)
-
 # -------------------------
-# 6. Validação tática
+# 5. Confirmação do operador
 # -------------------------
 if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
     dados = st.session_state.dados_resultado
@@ -1273,9 +978,8 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     acao = dados["acao"]
 
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">6. VALIDAÇÃO TÁTICA</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">5. VALIDAÇÃO TÁTICA</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O especialista procede à validação tática da recomendação automática, podendo confirmá-la ou ajustá-la com a devida fundamentação.</div>', unsafe_allow_html=True)
-
     decisao_utilizador = st.selectbox(
         "Decisão Tática Final",
         ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
@@ -1315,7 +1019,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
             }
 
     # -------------------------
-    # 7. Decisão final
+    # 6. Decisão final
     # -------------------------
     if st.session_state.decisao_guardada is not None:
         reg = st.session_state.decisao_guardada
@@ -1323,7 +1027,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         classe_tipo = "estado-confirmacao" if tipo == "Confirmada" else "estado-alteracao"
 
         st.markdown('<div class="cartao cartao-verde">', unsafe_allow_html=True)
-        st.markdown('<div class="titulo-secao">7. DECISÃO FINAL</div>', unsafe_allow_html=True)
+        st.markdown('<div class="titulo-secao">6. DECISÃO FINAL</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Registo final da decisão humana apoiada pelo sistema.</div>', unsafe_allow_html=True)
 
         st.markdown(
@@ -1369,10 +1073,10 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
         st.markdown('</div>', unsafe_allow_html=True)
 
     # -------------------------
-    # 8. Quadro de indicadores
+    # 7. Quadro de indicadores
     # -------------------------
     st.markdown('<div class="cartao">', unsafe_allow_html=True)
-    st.markdown('<div class="titulo-secao">8. QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
+    st.markdown('<div class="titulo-secao">7. QUADRO DE INDICADORES</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">Visualização compacta do estado, peso e impacto na decisão de cada indicador.</div>', unsafe_allow_html=True)
 
     fatores_top = {
@@ -1465,5 +1169,5 @@ elif st.session_state.resultado_gerado and resultado_em_reserva:
     st.markdown('<div class="cartao cartao-amarelo">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao">Informação em reserva</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O caso foi alterado após a última geração.</div>', unsafe_allow_html=True)
-    st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática, a rastreabilidade, o mapa tático e a confirmação do especialista.")
+    st.warning("As entradas foram alteradas. Gere nova recomendação para atualizar a avaliação tática, a rastreabilidade e a confirmação do especialista.")
     st.markdown('</div>', unsafe_allow_html=True)
