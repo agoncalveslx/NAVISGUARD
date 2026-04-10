@@ -841,7 +841,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
 
     deck = pdk.Deck(
         map_provider="carto",
-        map_style = pdk.map_styles.CARTO_DARK_MATTER,
+        map_style = pdk.map_styles.CARTO_DARK,
         initial_view_state=view_state,
         layers=[
             layer_trajetoria,
