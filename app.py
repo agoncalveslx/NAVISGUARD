@@ -768,23 +768,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     df_referencia = obter_contactos_referencia()
 
     
-    df_mar = pd.DataFrame([{
-        "poligono": [
-            [-11.5, 42.5],
-            [-6.0, 42.5],
-            [-6.0, 35.5],
-            [-11.5, 35.5]
-        ]
-    }])
-
-    layer_mar = pdk.Layer(
-        "PolygonLayer",
-        data=df_mar,
-        get_polygon="poligono",
-        get_fill_color=[180, 200, 220, 40],  # azul MUITO leve
-        stroked=False,
-        filled=True
-    )
+    
     
     layer_trajetoria = pdk.Layer(
         "PathLayer",
@@ -860,7 +844,6 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         map_style = "light",
         initial_view_state=view_state,
         layers=[
-            layer_mar,
             layer_trajetoria,
             layer_contactos_ref,
             layer_anel_risco,
