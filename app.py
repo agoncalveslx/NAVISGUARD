@@ -670,12 +670,7 @@ def raio_risco(risco):
         return 24000
     return 34000
 
-def espessura_trajetoria(velocidade):
-    if velocidade == "Muito suspeito":
-        return 7
-    elif velocidade == "Ligeiramente suspeito":
-        return 5
-    return 3
+
 
 def gerar_trajetoria(lat, lon, velocidade, posicao):
     """
