@@ -993,13 +993,7 @@ else:
         percentagem_escalados = round((total_escalados / total_casos) * 100, 1) if total_casos > 0 else 0
         st.metric("% escalados", f"{percentagem_escalados}%")
 
-    f1, f2, f3 = st.columns(3)
-    with f1:
-        st.metric("Casos alterados", total_alteracoes)
-    with f2:
-        st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
-    with f3:
-        st.metric("Taxa de alteração", f"{taxa_alteracao}%")
+   
 
     if total_validados > 0:
         if taxa_alteracao >= 40:
@@ -1444,7 +1438,6 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
                     caso["justificacao"] = justificacao.strip()
                     caso["timestamp_decisao"] = timestamp_decisao
                     break
-    st.rerun()
     # -------------------------
     # 7. Decisão final
     # -------------------------
