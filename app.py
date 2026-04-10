@@ -1037,7 +1037,7 @@ c1, c2, c3 = st.columns(3)
 with c1:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#ecfdf5;border:1px solid #22c55e;">
-            <div class="valor">{resumo_risco["Baixo"]}</div>
+            <div class="valor">{resumo_risco['Baixo']}</div>
             <div class="rotulo">Risco Baixo</div>
         </div>
         """, unsafe_allow_html=True)
