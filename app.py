@@ -378,7 +378,6 @@ st.markdown("""
         margin-top: 10px;
     }
 
-    /* Botões */
     div.stButton > button {
         background: linear-gradient(90deg, #1d4ed8 0%, #2563eb 100%);
         color: white;
@@ -401,7 +400,6 @@ st.markdown("""
         box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
     }
 
-    /* Selectbox */
     div[data-baseweb="select"] > div {
         border-radius: 10px !important;
         min-height: 44px;
@@ -645,26 +643,62 @@ def exportar_registo_txt(dados, decisao=None):
 def obter_coordenadas_caso(posicao, contexto):
     """
     Coordenadas reais simplificadas no mar ao largo da costa continental portuguesa.
+    Todas as posições ficam suficientemente afastadas da linha de costa.
     """
     if contexto == "Muito suspeito":
         if posicao == "Muito suspeita":
-            return 37.10, -9.80, "Sul / Algarve Ocidental", "Contacto em área marítima sensível"
+            return 37.20, -10.20, "Sul / Algarve Ocidental", "Contacto em área marítima sensível"
         elif posicao == "Ligeiramente suspeita":
-            return 38.35, -10.05, "Oeste de Lisboa / Setúbal", "Aproximação a corredor marítimo"
-        return 41.10, -9.75, "Noroeste / Norte", "Contacto em aproximação marítima"
+            return 38.45, -10.10, "Oeste de Lisboa / Setúbal", "Aproximação a corredor marítimo"
+        return 41.15, -9.95, "Noroeste / Norte", "Contacto em aproximação marítima"
 
     if contexto == "Pouco habitual":
         if posicao == "Muito suspeita":
-            return 39.60, -10.45, "Oeste / Centro", "Trajetória pouco habitual em mar aberto"
+            return 39.70, -10.35, "Oeste / Centro", "Trajetória pouco habitual em mar aberto"
         elif posicao == "Ligeiramente suspeita":
-            return 38.00, -9.55, "Sines / Sudoeste", "Movimento sob observação"
-        return 40.45, -9.60, "Figueira da Foz / Oeste", "Tráfego sob observação"
+            return 38.05, -9.95, "Sines / Sudoeste", "Movimento sob observação"
+        return 40.50, -9.95, "Figueira da Foz / Oeste", "Tráfego sob observação"
 
     if posicao == "Muito suspeita":
-        return 41.45, -9.60, "Alto Mar / Norte", "Contacto na envolvente marítima"
+        return 41.35, -10.05, "Alto Mar / Norte", "Contacto na envolvente marítima"
     elif posicao == "Ligeiramente suspeita":
-        return 38.85, -9.65, "Costa Central", "Contacto sob monitorização"
-    return 39.40, -9.30, "Costa Portuguesa", "Tráfego regular em espaço marítimo português"
+        return 38.90, -9.95, "Costa Central", "Contacto sob monitorização"
+    return 39.45, -9.75, "Costa Portuguesa", "Tráfego regular em espaço marítimo português"
+
+def classe_zona_maritima(zona):
+    zona_lower = zona.lower()
+    if "norte" in zona_lower:
+        return "Zona Norte"
+    elif "centro" in zona_lower or "lisboa" in zona_lower or "setúbal" in zona_lower or "sines" in zona_lower or "figueira" in zona_lower:
+        return "Zona Centro"
+    return "Zona Sul"
+
+def desenhar_bloco_zona_maritima(zona, observacao):
+    zona_operacional = classe_zona_maritima(zona)
+    st.markdown(
+        f"""
+        <div style="
+            background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
+        ">
+            <div style="font-size: 0.82rem; color: #93c5fd; font-weight: 700; letter-spacing: 0.04em;">
+                ENQUADRAMENTO MARÍTIMO
+            </div>
+            <div style="font-size: 1.05rem; font-weight: 800; margin-top: 2px;">
+                {zona_operacional} — {zona}
+            </div>
+            <div style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px;">
+                {observacao}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 def cor_risco_mapa(risco):
     if risco == "Baixo":
@@ -689,43 +723,40 @@ def espessura_trajetoria(velocidade):
 
 def gerar_trajetoria(lat, lon, velocidade, posicao):
     """
-    Trajetória estimada sobre o Atlântico junto à costa portuguesa.
+    Gera uma trajetória mais paralela à costa e sempre no mar.
     """
     if velocidade == "Muito suspeito":
-        desloc_lon = 1.20
-        desloc_lat = 0.45
+        desloc_lon = 1.10
+        desloc_lat = 0.18
     elif velocidade == "Ligeiramente suspeito":
         desloc_lon = 0.80
-        desloc_lat = 0.28
+        desloc_lat = 0.12
     else:
         desloc_lon = 0.45
-        desloc_lat = 0.14
+        desloc_lat = 0.08
 
     if posicao == "Muito suspeita":
-        desloc_lat *= 1.2
+        desloc_lat *= 1.15
 
     return [
-        [lon - desloc_lon, lat - desloc_lat],
-        [lon - desloc_lon * 0.65, lat - desloc_lat * 0.55],
-        [lon - desloc_lon * 0.30, lat - desloc_lat * 0.20],
+        [lon - desloc_lon, lat + desloc_lat],
+        [lon - desloc_lon * 0.66, lat + desloc_lat * 0.45],
+        [lon - desloc_lon * 0.33, lat + desloc_lat * 0.15],
         [lon, lat]
     ]
 
 def obter_contactos_referencia():
     """
-    Contactos secundários no mar ao largo da costa continental.
+    Contactos secundários posicionados no mar ao largo da costa continental.
     """
     return pd.DataFrame([
-        {"lat": 41.00, "lon": -9.20, "tipo": "Tráfego regular"},
-        {"lat": 39.80, "lon": -9.75, "tipo": "Tráfego regular"},
-        {"lat": 38.40, "lon": -9.35, "tipo": "Tráfego regular"},
-        {"lat": 37.30, "lon": -8.95, "tipo": "Tráfego regular"},
+        {"lat": 41.05, "lon": -9.85, "tipo": "Tráfego regular"},
+        {"lat": 39.95, "lon": -10.05, "tipo": "Tráfego regular"},
+        {"lat": 38.55, "lon": -9.95, "tipo": "Tráfego regular"},
+        {"lat": 37.45, "lon": -9.45, "tipo": "Tráfego regular"},
     ])
 
 def obter_zonas_maritimas_costa():
-    """
-    Zonas marítimas simplificadas para enquadramento visual.
-    """
     return pd.DataFrame([
         {
             "nome": "Zona Norte",
@@ -792,6 +823,8 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     raio = raio_risco(risco)
     largura = espessura_trajetoria(velocidade)
 
+    desenhar_bloco_zona_maritima(zona, observacao)
+
     df_contacto = pd.DataFrame([{
         "lat": lat,
         "lon": lon,
@@ -812,19 +845,19 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         "PolygonLayer",
         data=df_zonas,
         get_polygon="poligono",
-        get_fill_color=[30, 41, 59, 35],
-        get_line_color=[71, 85, 105, 80],
+        get_fill_color=[30, 41, 59, 22],
+        get_line_color=[71, 85, 105, 50],
         line_width_min_pixels=1,
         stroked=True,
         filled=True,
-        pickable=True
+        pickable=False
     )
 
     layer_costa = pdk.Layer(
         "GeoJsonLayer",
         data=geojson_costa_portugal,
-        get_fill_color=[51, 65, 85, 170],
-        get_line_color=[148, 163, 184, 220],
+        get_fill_color=[51, 65, 85, 185],
+        get_line_color=[148, 163, 184, 230],
         line_width_min_pixels=1,
         stroked=True,
         filled=True,
@@ -835,20 +868,20 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         "PathLayer",
         data=df_trajetoria,
         get_path="path",
-        get_color=[96, 165, 250, 220],
+        get_color=[96, 165, 250, 235],
         width_scale=20,
         width_min_pixels=2,
         get_width=largura,
-        pickable=True
+        pickable=False
     )
 
     layer_contactos_ref = pdk.Layer(
         "ScatterplotLayer",
         data=df_referencia,
         get_position="[lon, lat]",
-        get_fill_color=[148, 163, 184, 120],
-        get_radius=7000,
-        pickable=True
+        get_fill_color=[148, 163, 184, 110],
+        get_radius=5000,
+        pickable=False
     )
 
     layer_anel_risco = pdk.Layer(
@@ -869,11 +902,11 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         data=df_contacto,
         get_position="[lon, lat]",
         get_fill_color=cor,
-        get_line_color=[255, 255, 255, 230],
-        line_width_min_pixels=2,
+        get_line_color=[255, 255, 255, 240],
+        line_width_min_pixels=3,
         stroked=True,
         filled=True,
-        get_radius=13000,
+        get_radius=14000,
         pickable=True
     )
 
@@ -887,7 +920,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         get_position="[lon, lat]",
         get_text="texto",
         get_size=18,
-        get_color=[255, 255, 255, 230],
+        get_color=[255, 255, 255, 240],
         get_angle=0,
         get_text_anchor="'middle'",
         get_alignment_baseline="'center'"
@@ -922,7 +955,8 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
             "style": {
                 "backgroundColor": "#0f172a",
                 "color": "white",
-                "fontSize": "12px"
+                "fontSize": "12px",
+                "border": "1px solid #334155"
             }
         }
     )
@@ -1281,7 +1315,7 @@ with coluna_direita:
 
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
         st.markdown('<div class="titulo-secao">5. MAPA TÁTICO</div>', unsafe_allow_html=True)
-        st.markdown('<div class="subtitulo-secao">Representação geográfica tática do contacto no mar ao largo da costa continental portuguesa, com trajetória estimada e área de atenção.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="subtitulo-secao">Representação geográfica tática do contacto no espaço marítimo adjacente à costa continental portuguesa, com trajetória estimada e perímetro de atenção.</div>', unsafe_allow_html=True)
         st.info("Visualização geográfica de apoio à apreciação tática, centrada no litoral continental português, com enquadramento costeiro, trajetória estimada e área de atenção.")
         desenhar_mapa_tatico(
             dados["posicao"],
@@ -1501,7 +1535,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
 
         **Estados dos indicadores**
         - **Baixo** = 0 pontos
-        - **Médio** = 1 pontos
+        - **Médio** = 1 ponto
         - **Elevado** = 2 pontos
 
         **Pesos dos indicadores**
