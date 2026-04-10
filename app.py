@@ -994,14 +994,32 @@ else:
         st.metric("% escalados", f"{percentagem_escalados}%")
 
     st.markdown("#### Distribuição por nível de risco")
-    grafico_df = pd.DataFrame(
-        {
-            "Nível de risco": ["Baixo", "Médio", "Elevado"],
-            "Casos": [resumo_risco["Baixo"], resumo_risco["Médio"], resumo_risco["Elevado"]]
-        }
-    )    
 
-    st.bar_chart(grafico_df.set_index("Nível de risco"), height=180)
+    c1, c2, c3 = st.columns(3)
+
+    with c1:
+        st.markdown(f"""
+        <div class="mini-indicador" style="background:#ecfdf5;border:1px solid #22c55e;">
+            <div class="valor">{resumo_risco["Baixo"]}</div>
+            <div class="rotulo">Risco Baixo</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with c2:
+        st.markdown(f"""
+        <div class="mini-indicador" style="background:#fffbeb;border:1px solid #f59e0b;">
+            <div class="valor">{resumo_risco["Médio"]}</div>
+        <    div class="rotulo">Risco Médio</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with c3:
+        st.markdown(f"""
+        <div class="mini-indicador" style="background:#fef2f2;border:1px solid #ef4444;">
+            <div class="valor">{resumo_risco["Elevado"]}</div>
+            <div class="rotulo">Risco Elevado</div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with st.expander("Ver histórico resumido"):
         st.dataframe(
