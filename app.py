@@ -11,10 +11,10 @@ geojson_costa_portugal = {
     "features": [
         {
             "type": "Feature",
-            "properties": {"name": "Portugal Continental"},
+            "properties": {"name": "Costa Portuguesa"},
             "geometry": {
-                "type": "Polygon",
-                "coordinates": [[
+                "type": "LineString",
+                "coordinates": [
                     [-9.55, 41.95],
                     [-8.90, 41.85],
                     [-8.75, 41.55],
@@ -32,21 +32,8 @@ geojson_costa_portugal = {
                     [-8.90, 37.80],
                     [-8.80, 37.30],
                     [-8.65, 37.05],
-                    [-8.20, 37.00],
-                    [-7.60, 37.05],
-                    [-7.20, 37.10],
-                    [-7.10, 37.40],
-                    [-7.20, 38.10],
-                    [-7.30, 38.80],
-                    [-7.35, 39.60],
-                    [-7.30, 40.30],
-                    [-7.20, 41.00],
-                    [-7.10, 41.60],
-                    [-7.15, 41.95],
-                    [-8.10, 41.95],
-                    [-9.00, 41.98],
-                    [-9.55, 41.95]
-                ]]
+                    [-8.20, 37.00]
+                ]
             }
         }
     ]
@@ -813,16 +800,15 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
 
     
     layer_costa = pdk.Layer(
-        "GeoJsonLayer",
-        data=geojson_costa_portugal,
-        get_fill_color=[0, 0, 0, 0],
-        get_line_color=[148, 163, 184, 230],
-        line_width_min_pixels=1,
-        stroked=True,
-        filled=False,
-        pickable=True
+    "GeoJsonLayer",
+    data=geojson_costa_portugal,
+    get_line_color=[120, 144, 156, 200],  # mais suave
+    line_width_min_pixels=2,
+    stroked=True,
+    filled=False,
+    pickable=False
     )
-
+    
     layer_trajetoria = pdk.Layer(
         "PathLayer",
         data=df_trajetoria,
