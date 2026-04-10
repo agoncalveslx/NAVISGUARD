@@ -6,38 +6,7 @@ import random
 import pydeck as pdk
 
 
-geojson_costa_portugal = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "properties": {"name": "Costa Portuguesa"},
-            "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                    [-9.55, 41.95],
-                    [-8.90, 41.85],
-                    [-8.75, 41.55],
-                    [-8.80, 41.20],
-                    [-8.95, 40.90],
-                    [-9.15, 40.55],
-                    [-9.25, 40.20],
-                    [-9.35, 39.90],
-                    [-9.40, 39.55],
-                    [-9.35, 39.20],
-                    [-9.20, 38.95],
-                    [-9.10, 38.70],
-                    [-9.00, 38.45],
-                    [-8.95, 38.10],
-                    [-8.90, 37.80],
-                    [-8.80, 37.30],
-                    [-8.65, 37.05],
-                    [-8.20, 37.00]
-                ]
-            }
-        }
-    ]
-}
+
 
 
 st.set_page_config(
@@ -799,15 +768,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     df_referencia = obter_contactos_referencia()
 
     
-    layer_costa = pdk.Layer(
-    "GeoJsonLayer",
-    data=geojson_costa_portugal,
-    get_line_color=[120, 144, 156, 200],  # mais suave
-    line_width_min_pixels=2,
-    stroked=True,
-    filled=False,
-    pickable=False
-    )
+    
     
     layer_trajetoria = pdk.Layer(
         "PathLayer",
@@ -883,7 +844,6 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         map_style=pdk.map_styles.CARTO_DARK,
         initial_view_state=view_state,
         layers=[
-            layer_costa,
             layer_trajetoria,
             layer_contactos_ref,
             layer_anel_risco,
