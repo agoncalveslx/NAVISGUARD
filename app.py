@@ -1,12 +1,8 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-import io
 import random
 import pydeck as pdk
-
-
-
 
 
 st.set_page_config(
@@ -29,7 +25,7 @@ if "contador_casos" not in st.session_state:
 
 if "decisao_guardada" not in st.session_state:
     st.session_state.decisao_guardada = None
-    
+
 if "historico_casos" not in st.session_state:
     st.session_state.historico_casos = []
 
@@ -597,15 +593,15 @@ def exportar_registo_txt(dados, decisao=None):
     return "\n".join(linhas)
 
 def contar_escalados(historico):
-        return sum(1 for caso in historico if caso["acao"] == "Escalar")
+    return sum(1 for caso in historico if caso["acao"] == "Escalar")
 
 def obter_resumo_risco(historico):
-        contagem = {"Baixo": 0, "Médio": 0, "Elevado": 0}
-        for caso in historico:
-            risco = caso["risco"]
-            if risco in contagem:
-                contagem[risco] += 1
-        return contagem
+    contagem = {"Baixo": 0, "Médio": 0, "Elevado": 0}
+    for caso in historico:
+        risco = caso["risco"]
+        if risco in contagem:
+            contagem[risco] += 1
+    return contagem
 
 def contar_confirmacoes(historico):
     return sum(
@@ -629,10 +625,6 @@ def total_casos_validados(historico):
 # Funções do mapa tático
 # -------------------------
 def obter_coordenadas_caso(posicao, contexto):
-    """
-    Coordenadas reais simplificadas no mar ao largo da costa continental portuguesa.
-    Todas as posições ficam suficientemente afastadas da linha de costa.
-    """
     if contexto == "Muito suspeito":
         if posicao == "Muito suspeita":
             return 37.20, -10.20, "Sul / Algarve Ocidental", "Contacto em área marítima sensível"
@@ -690,11 +682,10 @@ def desenhar_bloco_zona_maritima(zona, observacao):
 
 def cor_risco_mapa(risco):
     if risco == "Baixo":
-        return [34, 197, 94, 255]   # verde forte
+        return [34, 197, 94, 255]
     elif risco == "Médio":
-        return [245, 158, 11, 255]  # laranja forte
-    return [220, 38, 38, 255]       # vermelho intenso
-
+        return [245, 158, 11, 255]
+    return [220, 38, 38, 255]
 
 def raio_risco(risco):
     if risco == "Baixo":
@@ -703,12 +694,7 @@ def raio_risco(risco):
         return 24000
     return 34000
 
-
-
 def gerar_trajetoria(lat, lon, velocidade, posicao):
-    """
-    Gera uma trajetória mais paralela à costa e sempre no mar.
-    """
     if velocidade == "Muito suspeito":
         desloc_lon = 1.10
         desloc_lat = 0.18
@@ -730,17 +716,12 @@ def gerar_trajetoria(lat, lon, velocidade, posicao):
     ]
 
 def obter_contactos_referencia():
-    """
-    Contactos secundários posicionados no mar ao largo da costa continental.
-    """
     return pd.DataFrame([
         {"lat": 41.05, "lon": -9.85, "tipo": "Tráfego regular"},
         {"lat": 39.95, "lon": -10.05, "tipo": "Tráfego regular"},
         {"lat": 38.55, "lon": -9.95, "tipo": "Tráfego regular"},
         {"lat": 37.45, "lon": -9.45, "tipo": "Tráfego regular"},
     ])
-
-
 
 def desenhar_legenda_tatica():
     st.markdown(
@@ -776,7 +757,6 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     cor = cor_risco_mapa(risco)
     trajetoria = gerar_trajetoria(lat, lon, velocidade, posicao)
     raio = raio_risco(risco)
-    
 
     desenhar_bloco_zona_maritima(zona, observacao)
 
@@ -795,9 +775,6 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
 
     df_referencia = obter_contactos_referencia()
 
-    
-    
-    
     layer_trajetoria = pdk.Layer(
         "PathLayer",
         data=df_trajetoria,
@@ -808,7 +785,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         get_width=5 if velocidade == "Muito suspeito" else 4 if velocidade == "Ligeiramente suspeito" else 3,
         pickable=False
     )
-    
+
     layer_contactos_ref = pdk.Layer(
         "ScatterplotLayer",
         data=df_referencia,
@@ -882,7 +859,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
 
     deck = pdk.Deck(
         map_provider="carto",
-        map_style = "light",
+        map_style="light",
         initial_view_state=view_state,
         layers=[
             layer_trajetoria,
@@ -982,6 +959,9 @@ Com base nos dados introduzidos pelo Especialista, o sistema:
 Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
 """)
 
+# -------------------------
+# Dashboard de risco
+# -------------------------
 st.markdown('<div class="cartao">', unsafe_allow_html=True)
 st.markdown('<div class="titulo-secao">DASHBOARD DE RISCO</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitulo-secao">Síntese estatística dos casos processados pelo sistema.</div>', unsafe_allow_html=True)
@@ -998,7 +978,7 @@ else:
     total_validados = total_casos_validados(st.session_state.historico_casos)
     taxa_confirmacao = round((total_confirmacoes / total_validados) * 100, 1) if total_validados > 0 else 0
     taxa_alteracao = round((total_alteracoes / total_validados) * 100, 1) if total_validados > 0 else 0
-    
+
     d1, d2, d3, d4 = st.columns(4)
     with d1:
         st.metric("Total de casos", total_casos)
@@ -1030,11 +1010,11 @@ else:
         elif taxa_confirmacao >= 80:
             st.success("A recomendação automática apresenta elevada taxa de confirmação pelo especialista.")
 
-st.markdown("#### Distribuição por nível de risco")
+    st.markdown("#### Distribuição por nível de risco")
 
-c1, c2, c3 = st.columns(3)
+    c1, c2, c3 = st.columns(3)
 
-with c1:
+    with c1:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#ecfdf5;border:1px solid #22c55e;">
             <div class="valor">{resumo_risco['Baixo']}</div>
@@ -1042,23 +1022,23 @@ with c1:
         </div>
         """, unsafe_allow_html=True)
 
-with c2:
+    with c2:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#fffbeb;border:1px solid #f59e0b;">
-            <div class="valor">{resumo_risco["Médio"]}</div>
+            <div class="valor">{resumo_risco['Médio']}</div>
             <div class="rotulo">Risco Médio</div>
         </div>
         """, unsafe_allow_html=True)
 
-with c3:
+    with c3:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#fef2f2;border:1px solid #ef4444;">
-            <div class="valor">{resumo_risco["Elevado"]}</div>
+            <div class="valor">{resumo_risco['Elevado']}</div>
             <div class="rotulo">Risco Elevado</div>
         </div>
         """, unsafe_allow_html=True)
-    
-with st.expander("Ver histórico resumido"):
+
+    with st.expander("Ver histórico resumido"):
         st.dataframe(
             historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]],
             use_container_width=True,
@@ -1272,6 +1252,7 @@ if gerar:
         "risco": risco,
         "acao": acao
     }
+
     st.session_state.historico_casos.append({
         "id_caso": st.session_state.dados_resultado["id_caso"],
         "timestamp": st.session_state.dados_resultado["timestamp"],
@@ -1283,12 +1264,13 @@ if gerar:
         "radar": st.session_state.dados_resultado["radar"],
         "contexto": st.session_state.dados_resultado["contexto"]
     })
+
     st.session_state.resultado_gerado = True
     st.session_state.decisao_guardada = None
     resultado_em_reserva = False
 
 # -------------------------
-# 3 + 4 + 5. Coluna direita: avaliação tática + proposta de ação + mapa tático
+# 3 + 4 + 5. Coluna direita
 # -------------------------
 with coluna_direita:
     if st.session_state.resultado_gerado and st.session_state.dados_resultado is not None and not resultado_em_reserva:
@@ -1418,6 +1400,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
     st.markdown('<div class="cartao cartao-azul">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao">6. VALIDAÇÃO TÁTICA</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitulo-secao">O especialista procede à validação tática da recomendação automática, podendo confirmá-la ou ajustá-la com a devida fundamentação.</div>', unsafe_allow_html=True)
+
     decisao_utilizador = st.selectbox(
         "Decisão Tática Final",
         ["Confirmar ação proposta", "Ignorar", "Monitorizar", "Escalar", "Requer revisão"],
@@ -1455,6 +1438,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
                 "pontuacao_total": pontuacao_total,
                 "justificacao": justificacao.strip()
             }
+
             for caso in reversed(st.session_state.historico_casos):
                 if caso["id_caso"] == dados["id_caso"]:
                     caso["decisao_final"] = decisao_final
