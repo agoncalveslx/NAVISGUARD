@@ -998,31 +998,31 @@ else:
     total_validados = total_casos_validados(st.session_state.historico_casos)
     taxa_confirmacao = round((total_confirmacoes / total_validados) * 100, 1) if total_validados > 0 else 0
     taxa_alteracao = round((total_alteracoes / total_validados) * 100, 1) if total_validados > 0 else 0
-
-d1, d2, d3, d4 = st.columns(4)
-with d1:
-    st.metric("Total de casos", total_casos)
-with d2:
-    st.metric("Risco baixo", resumo_risco["Baixo"])
-with d3:
-    st.metric("Risco médio", resumo_risco["Médio"])
-with d4:
+    
+    d1, d2, d3, d4 = st.columns(4)
+    with d1:
+        st.metric("Total de casos", total_casos)
+    with d2:
+        st.metric("Risco baixo", resumo_risco["Baixo"])
+    with d3:
+        st.metric("Risco médio", resumo_risco["Médio"])
+    with d4:
         st.metric("Risco elevado", resumo_risco["Elevado"])
 
-e1, e2 = st.columns(2)
-with e1:
-    st.metric("Casos escalados", total_escalados)
-with e2:
-    percentagem_escalados = round((total_escalados / total_casos) * 100, 1) if total_casos > 0 else 0
-    st.metric("% escalados", f"{percentagem_escalados}%")
+    e1, e2 = st.columns(2)
+    with e1:
+        st.metric("Casos escalados", total_escalados)
+    with e2:
+        percentagem_escalados = round((total_escalados / total_casos) * 100, 1) if total_casos > 0 else 0
+        st.metric("% escalados", f"{percentagem_escalados}%")
 
-f1, f2, f3 = st.columns(3)
-with f1:
-    st.metric("Casos validados", total_validados)
-with f2:
-    st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
-with f3:
-    st.metric("Taxa de alteração", f"{taxa_alteracao}%")
+    f1, f2, f3 = st.columns(3)
+    with f1:
+        st.metric("Casos validados", total_validados)
+    with f2:
+        st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
+    with f3:
+        st.metric("Taxa de alteração", f"{taxa_alteracao}%")
 
 if total_validados > 0:
     if taxa_alteracao >= 40:
