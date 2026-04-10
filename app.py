@@ -996,9 +996,8 @@ else:
     total_confirmacoes = contar_confirmacoes(st.session_state.historico_casos)
     total_alteracoes = contar_alteracoes(st.session_state.historico_casos)
     total_validados = total_casos_validados(st.session_state.historico_casos)
-
-taxa_confirmacao = round((total_confirmacoes / total_validados) * 100, 1) if total_validados > 0 else 0
-taxa_alteracao = round((total_alteracoes / total_validados) * 100, 1) if total_validados > 0 else 0
+    taxa_confirmacao = round((total_confirmacoes / total_validados) * 100, 1) if total_validados > 0 else 0
+    taxa_alteracao = round((total_alteracoes / total_validados) * 100, 1) if total_validados > 0 else 0
 
 d1, d2, d3, d4 = st.columns(4)
 with d1:
