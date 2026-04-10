@@ -774,19 +774,19 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         "PathLayer",
         data=df_trajetoria,
         get_path="path",
-        get_color=[96, 165, 250, 235],
+        get_color=[59, 130, 246, 220],
         width_scale=20,
-        width_min_pixels=2,
-        get_width=largura,
+        width_min_pixels=3,
+        get_width=5 if velocidade == "Muito suspeito" else 4 if velocidade == "Ligeiramente suspeito" else 3,
         pickable=False
     )
-
+    
     layer_contactos_ref = pdk.Layer(
         "ScatterplotLayer",
         data=df_referencia,
         get_position="[lon, lat]",
-        get_fill_color=[148, 163, 184, 110],
-        get_radius=5000,
+        get_fill_color=[120, 140, 160, 70],
+        get_radius=3000,
         pickable=False
     )
 
@@ -808,11 +808,11 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         data=df_contacto,
         get_position="[lon, lat]",
         get_fill_color=cor,
-        get_line_color=[255, 255, 255, 240],
+        get_line_color=[255, 255, 255, 255],
         line_width_min_pixels=3,
         stroked=True,
         filled=True,
-        get_radius=14000,
+        get_radius=12000,
         pickable=True
     )
 
