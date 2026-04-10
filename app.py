@@ -791,10 +791,23 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         get_position="[lon, lat]",
         get_fill_color=[0, 0, 0, 0],
         get_line_color=cor,
-        line_width_min_pixels=2,
+        line_width_min_pixels=3,
         stroked=True,
         filled=False,
         get_radius=raio,
+        pickable=False
+    )
+
+    layer_anel_secundario = pdk.Layer(
+        "ScatterplotLayer",
+        data=df_contacto,
+        get_position="[lon, lat]",
+        get_fill_color=[0, 0, 0, 0],
+        get_line_color=[cor[0], cor[1], cor[2], 80],
+        line_width_min_pixels=1,
+        stroked=True,
+        filled=False,
+        get_radius=raio + 8000,
         pickable=False
     )
 
@@ -807,7 +820,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         line_width_min_pixels=3,
         stroked=True,
         filled=True,
-        get_radius=12000,
+        get_radius=14000,
         pickable=True
     )
 
@@ -841,6 +854,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         layers=[
             layer_trajetoria,
             layer_contactos_ref,
+            layer_anel_secundario,
             layer_anel_risco,
             layer_contacto_principal,
             layer_centro
