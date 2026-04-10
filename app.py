@@ -1444,7 +1444,7 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
                     caso["justificacao"] = justificacao.strip()
                     caso["timestamp_decisao"] = timestamp_decisao
                     break
-
+    st.rerun()
     # -------------------------
     # 7. Decisão final
     # -------------------------
