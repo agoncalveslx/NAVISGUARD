@@ -994,15 +994,14 @@ else:
         st.metric("% escalados", f"{percentagem_escalados}%")
 
     st.markdown("#### Distribuição por nível de risco")
-    grafico_df = pd.DataFrame.from_dict(resumo_risco, orient="index", columns=["Casos"])
+    grafico_df = pd.DataFrame(
+        {
+            "Nível de risco": ["Baixo", "Médio", "Elevado"],
+            "Casos": [resumo_risco["Baixo"], resumo_risco["Médio"], resumo_risco["Elevado"]]
+        }
+    )    
 
-    col_grafico, col_tabela = st.columns([2, 1])
-
-    with col_grafico:
-        st.bar_chart(grafico_df, height=220)
-
-    with col_tabela:
-        st.dataframe(grafico_df, use_container_width=True)
+    st.bar_chart(grafico_df.set_index("Nível de risco"), height=180)
     
     with st.expander("Ver histórico resumido"):
         st.dataframe(
