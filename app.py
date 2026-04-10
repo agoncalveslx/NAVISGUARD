@@ -29,6 +29,9 @@ if "contador_casos" not in st.session_state:
 
 if "decisao_guardada" not in st.session_state:
     st.session_state.decisao_guardada = None
+    
+if "historico_casos" not in st.session_state:
+    st.session_state.historico_casos = []
 
 # Valores dos inputs
 if "posicao" not in st.session_state:
@@ -593,6 +596,17 @@ def exportar_registo_txt(dados, decisao=None):
 
     return "\n".join(linhas)
 
+    def contar_escalados(historico):
+    return sum(1 for caso in historico if caso["acao"] == "Escalar")
+
+    def obter_resumo_risco(historico):
+        contagem = {"Baixo": 0, "Médio": 0, "Elevado": 0}
+        for caso in historico:
+            risco = caso["risco"]
+            if risco in contagem:
+                contagem[risco] += 1
+        return contagem
+
 # -------------------------
 # Funções do mapa tático
 # -------------------------
@@ -950,6 +964,48 @@ Com base nos dados introduzidos pelo Especialista, o sistema:
 Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
 """)
 
+st.markdown('<div class="cartao">', unsafe_allow_html=True)
+st.markdown('<div class="titulo-secao">DASHBOARD DE RISCO</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitulo-secao">Síntese estatística dos casos processados pelo sistema.</div>', unsafe_allow_html=True)
+
+if len(st.session_state.historico_casos) == 0:
+    st.info("Ainda não existem casos registados para análise estatística.")
+else:
+    historico_df = pd.DataFrame(st.session_state.historico_casos)
+    resumo_risco = obter_resumo_risco(st.session_state.historico_casos)
+    total_casos = len(st.session_state.historico_casos)
+    total_escalados = contar_escalados(st.session_state.historico_casos)
+
+    d1, d2, d3, d4 = st.columns(4)
+    with d1:
+        st.metric("Total de casos", total_casos)
+    with d2:
+        st.metric("Risco baixo", resumo_risco["Baixo"])
+    with d3:
+        st.metric("Risco médio", resumo_risco["Médio"])
+    with d4:
+        st.metric("Risco elevado", resumo_risco["Elevado"])
+
+    e1, e2 = st.columns(2)
+    with e1:
+        st.metric("Casos escalados", total_escalados)
+    with e2:
+        percentagem_escalados = round((total_escalados / total_casos) * 100, 1) if total_casos > 0 else 0
+        st.metric("% escalados", f"{percentagem_escalados}%")
+
+    st.markdown("#### Distribuição por nível de risco")
+    grafico_df = pd.DataFrame.from_dict(resumo_risco, orient="index", columns=["Casos"])
+    st.bar_chart(grafico_df)
+
+    with st.expander("Ver histórico resumido"):
+        st.dataframe(
+            historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]],
+            use_container_width=True,
+            hide_index=True
+        )
+
+st.markdown('</div>', unsafe_allow_html=True)
+
 # -------------------------
 # 1. Processamento operacional
 # -------------------------
@@ -1155,6 +1211,17 @@ if gerar:
         "risco": risco,
         "acao": acao
     }
+    st.session_state.historico_casos.append({
+        "id_caso": st.session_state.dados_resultado["id_caso"],
+        "timestamp": st.session_state.dados_resultado["timestamp"],
+        "risco": st.session_state.dados_resultado["risco"],
+        "acao": st.session_state.dados_resultado["acao"],
+        "pontuacao_total": st.session_state.dados_resultado["pontuacao_total"],
+        "posicao": st.session_state.dados_resultado["posicao"],
+        "velocidade": st.session_state.dados_resultado["velocidade"],
+        "radar": st.session_state.dados_resultado["radar"],
+        "contexto": st.session_state.dados_resultado["contexto"]
+    })
     st.session_state.resultado_gerado = True
     st.session_state.decisao_guardada = None
     resultado_em_reserva = False
