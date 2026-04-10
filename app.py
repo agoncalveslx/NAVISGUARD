@@ -607,6 +607,24 @@ def obter_resumo_risco(historico):
                 contagem[risco] += 1
         return contagem
 
+def contar_confirmacoes(historico):
+    return sum(
+        1 for caso in historico
+        if caso.get("tipo_decisao") == "Confirmada"
+    )
+
+def contar_alteracoes(historico):
+    return sum(
+        1 for caso in historico
+        if caso.get("tipo_decisao") == "Alterada pelo Especialista"
+    )
+
+def total_casos_validados(historico):
+    return sum(
+        1 for caso in historico
+        if "tipo_decisao" in caso
+    )
+
 # -------------------------
 # Funções do mapa tático
 # -------------------------
@@ -975,6 +993,12 @@ else:
     resumo_risco = obter_resumo_risco(st.session_state.historico_casos)
     total_casos = len(st.session_state.historico_casos)
     total_escalados = contar_escalados(st.session_state.historico_casos)
+    total_confirmacoes = contar_confirmacoes(st.session_state.historico_casos)
+    total_alteracoes = contar_alteracoes(st.session_state.historico_casos)
+    total_validados = total_casos_validados(st.session_state.historico_casos)
+
+taxa_confirmacao = round((total_confirmacoes / total_validados) * 100, 1) if total_validados > 0 else 0
+taxa_alteracao = round((total_alteracoes / total_validados) * 100, 1) if total_validados > 0 else 0
 
     d1, d2, d3, d4 = st.columns(4)
     with d1:
@@ -992,6 +1016,20 @@ else:
     with e2:
         percentagem_escalados = round((total_escalados / total_casos) * 100, 1) if total_casos > 0 else 0
         st.metric("% escalados", f"{percentagem_escalados}%")
+
+    f1, f2, f3 = st.columns(3)
+    with f1:
+        st.metric("Casos validados", total_validados)
+    with f2:
+        st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
+    with f3:
+        st.metric("Taxa de alteração", f"{taxa_alteracao}%")
+
+    if total_validados > 0:
+        if taxa_alteracao >= 40:
+            st.warning("A taxa de alteração pelo especialista está elevada. Pode justificar revisão das regras automáticas.")
+        elif taxa_confirmacao >= 80:
+            st.success("A recomendação automática apresenta elevada taxa de confirmação pelo especialista.")
 
     st.markdown("#### Distribuição por nível de risco")
 
@@ -1418,6 +1456,14 @@ if st.session_state.resultado_gerado and st.session_state.dados_resultado is not
                 "pontuacao_total": pontuacao_total,
                 "justificacao": justificacao.strip()
             }
+            for caso in reversed(st.session_state.historico_casos):
+                if caso["id_caso"] == dados["id_caso"]:
+                    caso["decisao_final"] = decisao_final
+                    caso["acao_proposta"] = acao
+                    caso["tipo_decisao"] = tipo_decisao(acao, decisao_final)
+                    caso["justificacao"] = justificacao.strip()
+                    caso["timestamp_decisao"] = timestamp_decisao
+                    break
 
     # -------------------------
     # 7. Decisão final
