@@ -792,7 +792,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         get_position="[lon, lat]",
         get_fill_color=[0, 0, 0, 0],
         get_line_color=cor,
-        line_width_min_pixels=3,
+        line_width_min_pixels=4,
         stroked=True,
         filled=False,
         get_radius=raio,
