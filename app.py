@@ -1035,7 +1035,7 @@ st.markdown("#### Distribuição por nível de risco")
 
 c1, c2, c3 = st.columns(3)
 
-    with c1:
+with c1:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#ecfdf5;border:1px solid #22c55e;">
             <div class="valor">{resumo_risco["Baixo"]}</div>
@@ -1043,7 +1043,7 @@ c1, c2, c3 = st.columns(3)
         </div>
         """, unsafe_allow_html=True)
 
-    with c2:
+with c2:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#fffbeb;border:1px solid #f59e0b;">
             <div class="valor">{resumo_risco["Médio"]}</div>
@@ -1051,7 +1051,7 @@ c1, c2, c3 = st.columns(3)
         </div>
         """, unsafe_allow_html=True)
 
-    with c3:
+with c3:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#fef2f2;border:1px solid #ef4444;">
             <div class="valor">{resumo_risco["Elevado"]}</div>
@@ -1059,7 +1059,7 @@ c1, c2, c3 = st.columns(3)
         </div>
         """, unsafe_allow_html=True)
     
-    with st.expander("Ver histórico resumido"):
+with st.expander("Ver histórico resumido"):
         st.dataframe(
             historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]],
             use_container_width=True,
