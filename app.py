@@ -743,7 +743,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     cor = cor_risco_mapa(risco)
     trajetoria = gerar_trajetoria(lat, lon, velocidade, posicao)
     raio = raio_risco(risco)
-    largura = espessura_trajetoria(velocidade)
+    
 
     desenhar_bloco_zona_maritima(zona, observacao)
 
