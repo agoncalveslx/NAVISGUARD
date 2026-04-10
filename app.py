@@ -756,36 +756,7 @@ def obter_contactos_referencia():
         {"lat": 37.45, "lon": -9.45, "tipo": "Tráfego regular"},
     ])
 
-def obter_zonas_maritimas_costa():
-    return pd.DataFrame([
-        {
-            "nome": "Zona Norte",
-            "poligono": [
-                [-10.20, 42.10],
-                [-8.70, 42.10],
-                [-8.70, 40.80],
-                [-10.20, 40.80]
-            ]
-        },
-        {
-            "nome": "Zona Centro",
-            "poligono": [
-                [-10.40, 40.80],
-                [-8.60, 40.80],
-                [-8.60, 38.60],
-                [-10.40, 38.60]
-            ]
-        },
-        {
-            "nome": "Zona Sul",
-            "poligono": [
-                [-10.00, 38.60],
-                [-7.90, 38.60],
-                [-7.90, 36.70],
-                [-10.00, 36.70]
-            ]
-        }
-    ])
+
 
 def desenhar_legenda_tatica():
     st.markdown(
@@ -839,20 +810,8 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     }])
 
     df_referencia = obter_contactos_referencia()
-    df_zonas = obter_zonas_maritimas_costa()
 
-    layer_zonas = pdk.Layer(
-        "PolygonLayer",
-        data=df_zonas,
-        get_polygon="poligono",
-        get_fill_color=[30, 41, 59, 22],
-        get_line_color=[71, 85, 105, 50],
-        line_width_min_pixels=1,
-        stroked=True,
-        filled=True,
-        pickable=False
-    )
-
+    
     layer_costa = pdk.Layer(
         "GeoJsonLayer",
         data=geojson_costa_portugal,
@@ -938,7 +897,6 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         map_style=pdk.map_styles.CARTO_DARK,
         initial_view_state=view_state,
         layers=[
-            layer_zonas,
             layer_costa,
             layer_trajetoria,
             layer_contactos_ref,
