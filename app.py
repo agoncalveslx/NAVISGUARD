@@ -1009,7 +1009,7 @@ else:
         st.markdown(f"""
         <div class="mini-indicador" style="background:#fffbeb;border:1px solid #f59e0b;">
             <div class="valor">{resumo_risco["Médio"]}</div>
-        <    div class="rotulo">Risco Médio</div>
+            <div class="rotulo">Risco Médio</div>
         </div>
         """, unsafe_allow_html=True)
 
