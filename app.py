@@ -815,11 +815,11 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     layer_costa = pdk.Layer(
         "GeoJsonLayer",
         data=geojson_costa_portugal,
-        get_fill_color=[51, 65, 85, 185],
+        get_fill_color=[0, 0, 0, 0],
         get_line_color=[148, 163, 184, 230],
         line_width_min_pixels=1,
         stroked=True,
-        filled=True,
+        filled=False,
         pickable=True
     )
 
