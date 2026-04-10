@@ -995,7 +995,7 @@ else:
 
     f1, f2, f3 = st.columns(3)
     with f1:
-        st.metric("Casos validados", total_validados)
+        st.metric("Casos alterados", total_alteracoes)
     with f2:
         st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
     with f3:
