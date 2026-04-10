@@ -597,7 +597,7 @@ def exportar_registo_txt(dados, decisao=None):
     return "\n".join(linhas)
 
     def contar_escalados(historico):
-    return sum(1 for caso in historico if caso["acao"] == "Escalar")
+        return sum(1 for caso in historico if caso["acao"] == "Escalar")
 
     def obter_resumo_risco(historico):
         contagem = {"Baixo": 0, "Médio": 0, "Elevado": 0}
