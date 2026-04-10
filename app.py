@@ -1024,11 +1024,11 @@ else:
     with f3:
         st.metric("Taxa de alteração", f"{taxa_alteracao}%")
 
-if total_validados > 0:
-    if taxa_alteracao >= 40:
-        st.warning("A taxa de alteração pelo especialista está elevada. Pode justificar revisão das regras automáticas.")
-    elif taxa_confirmacao >= 80:
-        st.success("A recomendação automática apresenta elevada taxa de confirmação pelo especialista.")
+    if total_validados > 0:
+        if taxa_alteracao >= 40:
+            st.warning("A taxa de alteração pelo especialista está elevada. Pode justificar revisão das regras automáticas.")
+        elif taxa_confirmacao >= 80:
+            st.success("A recomendação automática apresenta elevada taxa de confirmação pelo especialista.")
 
 st.markdown("#### Distribuição por nível de risco")
 
