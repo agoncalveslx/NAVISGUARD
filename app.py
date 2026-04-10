@@ -658,10 +658,11 @@ def desenhar_bloco_zona_maritima(zona, observacao):
 
 def cor_risco_mapa(risco):
     if risco == "Baixo":
-        return [34, 197, 94, 220]
+        return [34, 197, 94, 255]   # verde forte
     elif risco == "Médio":
-        return [245, 158, 11, 230]
-    return [239, 68, 68, 235]
+        return [245, 158, 11, 255]  # laranja forte
+    return [220, 38, 38, 255]       # vermelho intenso
+
 
 def raio_risco(risco):
     if risco == "Baixo":
