@@ -616,11 +616,8 @@ def contar_alteracoes(historico):
     )
 
 def total_casos_validados(historico):
-    return sum(
-        1 for caso in historico
-        if "tipo_decisao" in caso
-    )
-
+    return len(historico)
+    
 # -------------------------
 # Funções do mapa tático
 # -------------------------
