@@ -995,8 +995,15 @@ else:
 
     st.markdown("#### Distribuição por nível de risco")
     grafico_df = pd.DataFrame.from_dict(resumo_risco, orient="index", columns=["Casos"])
-    st.bar_chart(grafico_df)
 
+    col_grafico, col_tabela = st.columns([2, 1])
+
+    with col_grafico:
+        st.bar_chart(grafico_df, height=220)
+
+    with col_tabela:
+        st.dataframe(grafico_df, use_container_width=True)
+    
     with st.expander("Ver histórico resumido"):
         st.dataframe(
             historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]],
