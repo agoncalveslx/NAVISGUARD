@@ -24,11 +24,11 @@ def main():
 
     with coluna_esquerda:
         render_input_panel()
+        render_validation_section()
 
     with coluna_direita:
         render_tactical_sections()
 
-    render_validation_section()
     render_indicators_section()
 
 
