@@ -48,22 +48,40 @@ def render_dashboard():
         st.markdown("#### Situação Operacional")
 
         if resumo_risco["Elevado"] > 0:
-            st.error(
-                f"**ESTADO DO QUADRO: RISCO ELEVADO** | "
-                f"Casos elevados: {resumo_risco['Elevado']} | "
-                f"Escalamentos: {total_escalados}"
+            st.markdown(
+                f"""
+                <div class="faixa-estado faixa-vermelha">
+                    ESTADO DO QUADRO: RISCO ELEVADO
+                    <div class="faixa-estado-linha-secundaria">
+                        Casos elevados: {resumo_risco['Elevado']} | Escalamentos: {total_escalados}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
         elif resumo_risco["Médio"] > 0:
-            st.warning(
-                f"**ESTADO DO QUADRO: RISCO MÉDIO** | "
-                f"Casos médios: {resumo_risco['Médio']} | "
-                f"Total de casos: {total_casos}"
+            st.markdown(
+                f"""
+                <div class="faixa-estado faixa-amarela">
+                    ESTADO DO QUADRO: RISCO MÉDIO
+                    <div class="faixa-estado-linha-secundaria">
+                        Casos médios: {resumo_risco['Médio']} | Total de casos: {total_casos}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
         else:
-            st.success(
-                f"**ESTADO DO QUADRO: RISCO BAIXO** | "
-                f"Total de casos: {total_casos} | "
-                f"Escalamentos: {total_escalados}"
+            st.markdown(
+                f"""
+                <div class="faixa-estado faixa-verde">
+                    ESTADO DO QUADRO: RISCO BAIXO
+                    <div class="faixa-estado-linha-secundaria">
+                        Total de casos: {total_casos} | Escalamentos: {total_escalados}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
 
         k1, k2, k3, k4 = st.columns(4)
