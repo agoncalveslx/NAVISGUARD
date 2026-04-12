@@ -3,7 +3,9 @@ from utils.cases import estado_do_caso
 
 
 def render_header():
-    st.image("logo.jpg", width=500)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.image("logo.jpg", width=700)
 
     id_atual = (
         st.session_state.dados_resultado["id_caso"]
