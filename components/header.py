@@ -3,9 +3,7 @@ from utils.cases import estado_do_caso
 
 
 def render_header():
-    st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
-    st.image("logo.jpg", width=900)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.image("logo.jpg", width=500)
 
     id_atual = (
         st.session_state.dados_resultado["id_caso"]
