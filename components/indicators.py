@@ -55,18 +55,18 @@ def render_indicators_section():
         destaque_a = '<div class="fator-critico">DOMINANTE</div>' if codigo_a in dominantes[:2] else ""
 
         with col_a:
-            html_a = f"""
-<div class="mini-cartao-indicador {classe_a}">
-    {destaque_a}
-    <div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
-    <div class="mini-cartao-linha"><b>Estado:</b> {info_a['Nível']}</div>
-    <div class="mini-cartao-linha"><b>Contributo:</b> {info_a['Contributo']}</div>
-    <div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_a['Contributo'])}</div>
-    <div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">
-        Pontos: <b>{info_a['Pontos']}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_a['Peso']}</b>
-    </div>
-</div>
-"""
+            html_a = (
+                f'<div class="mini-cartao-indicador {classe_a}">'
+                f'{destaque_a}'
+                f'<div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>'
+                f'<div class="mini-cartao-linha"><b>Estado:</b> {info_a["Nível"]}</div>'
+                f'<div class="mini-cartao-linha"><b>Contributo:</b> {info_a["Contributo"]}</div>'
+                f'<div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_a["Contributo"])}</div>'
+                f'<div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">'
+                f'Pontos: <b>{info_a["Pontos"]}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_a["Peso"]}</b>'
+                f'</div>'
+                f'</div>'
+            )
             st.markdown(html_a, unsafe_allow_html=True)
 
         codigo_b, info_b = pares[i + 1]
@@ -74,18 +74,18 @@ def render_indicators_section():
         destaque_b = '<div class="fator-critico">DOMINANTE</div>' if codigo_b in dominantes[:2] else ""
 
         with col_b:
-            html_b = f"""
-<div class="mini-cartao-indicador {classe_b}">
-    {destaque_b}
-    <div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
-    <div class="mini-cartao-linha"><b>Estado:</b> {info_b['Nível']}</div>
-    <div class="mini-cartao-linha"><b>Contributo:</b> {info_b['Contributo']}</div>
-    <div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_b['Contributo'])}</div>
-    <div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">
-        Pontos: <b>{info_b['Pontos']}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_b['Peso']}</b>
-    </div>
-</div>
-"""
+            html_b = (
+                f'<div class="mini-cartao-indicador {classe_b}">'
+                f'{destaque_b}'
+                f'<div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>'
+                f'<div class="mini-cartao-linha"><b>Estado:</b> {info_b["Nível"]}</div>'
+                f'<div class="mini-cartao-linha"><b>Contributo:</b> {info_b["Contributo"]}</div>'
+                f'<div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_b["Contributo"])}</div>'
+                f'<div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">'
+                f'Pontos: <b>{info_b["Pontos"]}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_b["Peso"]}</b>'
+                f'</div>'
+                f'</div>'
+            )
             st.markdown(html_b, unsafe_allow_html=True)
 
     with st.expander("Ver regra de cálculo"):
