@@ -30,7 +30,6 @@ def render_indicators_section():
         ("I6", contributos["I6"])
     ]
 
-    # Ordenação por contributo para identificar indicadores dominantes
     ordenados = sorted(
         pares,
         key=lambda x: (x[1]["Contributo"], x[1]["Pontos"], x[1]["Peso"]),
@@ -44,11 +43,7 @@ def render_indicators_section():
             [f"{codigo} — {siglas_indicadores[codigo]}" for codigo in dominantes]
         )
         st.markdown(
-            f"""
-            <div class="bloco-meta">
-                <b>Indicadores dominantes:</b> {nomes_dominantes}
-            </div>
-            """,
+            f'<div class="bloco-meta"><b>Indicadores dominantes:</b> {nomes_dominantes}</div>',
             unsafe_allow_html=True
         )
 
@@ -61,17 +56,17 @@ def render_indicators_section():
 
         with col_a:
             html_a = f"""
-            <div class="mini-cartao-indicador {classe_a}">
-                {destaque_a}
-                <div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
-                <div class="mini-cartao-linha"><b>Estado:</b> {info_a['Nível']}</div>
-                <div class="mini-cartao-linha"><b>Contributo:</b> {info_a['Contributo']}</div>
-                <div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_a['Contributo'])}</div>
-                <div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">
-                    Pontos: <b>{info_a['Pontos']}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_a['Peso']}</b>
-                </div>
-            </div>
-            """
+<div class="mini-cartao-indicador {classe_a}">
+    {destaque_a}
+    <div class="mini-cartao-titulo">{codigo_a} — {siglas_indicadores[codigo_a]}</div>
+    <div class="mini-cartao-linha"><b>Estado:</b> {info_a['Nível']}</div>
+    <div class="mini-cartao-linha"><b>Contributo:</b> {info_a['Contributo']}</div>
+    <div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_a['Contributo'])}</div>
+    <div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">
+        Pontos: <b>{info_a['Pontos']}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_a['Peso']}</b>
+    </div>
+</div>
+"""
             st.markdown(html_a, unsafe_allow_html=True)
 
         codigo_b, info_b = pares[i + 1]
@@ -80,43 +75,43 @@ def render_indicators_section():
 
         with col_b:
             html_b = f"""
-            <div class="mini-cartao-indicador {classe_b}">
-                {destaque_b}
-                <div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
-                <div class="mini-cartao-linha"><b>Estado:</b> {info_b['Nível']}</div>
-                <div class="mini-cartao-linha"><b>Contributo:</b> {info_b['Contributo']}</div>
-                <div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_b['Contributo'])}</div>
-                <div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">
-                    Pontos: <b>{info_b['Pontos']}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_b['Peso']}</b>
-                </div>
-            </div>
-            """
+<div class="mini-cartao-indicador {classe_b}">
+    {destaque_b}
+    <div class="mini-cartao-titulo">{codigo_b} — {siglas_indicadores[codigo_b]}</div>
+    <div class="mini-cartao-linha"><b>Estado:</b> {info_b['Nível']}</div>
+    <div class="mini-cartao-linha"><b>Contributo:</b> {info_b['Contributo']}</div>
+    <div class="mini-cartao-linha"><b>Impacto:</b> {impacto_textual(info_b['Contributo'])}</div>
+    <div class="mini-cartao-linha" style="margin-top:4px; color:#64748b;">
+        Pontos: <b>{info_b['Pontos']}</b> &nbsp;&nbsp;|&nbsp;&nbsp; Peso: <b>{info_b['Peso']}</b>
+    </div>
+</div>
+"""
             st.markdown(html_b, unsafe_allow_html=True)
 
     with st.expander("Ver regra de cálculo"):
         st.markdown(
             f"""
-            **Origem dos indicadores**
-            - **I1** = Posição/Trajetória
-            - **I2** = Posição/Trajetória + Concordância com radar/outras fontes
-            - **I3** = Velocidade/Curso
-            - **I4** = Posição/Trajetória + Velocidade/Curso
-            - **I5** = Contexto operacional
-            - **I6** = Concordância com radar/outras fontes
+**Origem dos indicadores**
+- **I1** = Posição/Trajetória
+- **I2** = Posição/Trajetória + Concordância com radar/outras fontes
+- **I3** = Velocidade/Curso
+- **I4** = Posição/Trajetória + Velocidade/Curso
+- **I5** = Contexto operacional
+- **I6** = Concordância com radar/outras fontes
 
-            **Estados**
-            - **Baixo** = 0 pontos
-            - **Médio** = 1 ponto
-            - **Elevado** = 2 pontos
+**Estados**
+- **Baixo** = 0 pontos
+- **Médio** = 1 ponto
+- **Elevado** = 2 pontos
 
-            **Fórmula aplicada a este caso**
-            <div class="formula-caso"><b>{formula_caso_texto(contributos)}</b></div>
+**Fórmula aplicada a este caso**
+<div class="formula-caso"><b>{formula_caso_texto(contributos)}</b></div>
 
-            **Conversão em risco e ação**
-            - **Pontuação final ≤ 4** → **Risco Baixo** → **Ignorar**
-            - **Pontuação final ≤ 8** → **Risco Médio** → **Monitorizar**
-            - **Pontuação final > 8** → **Risco Elevado** → **Escalar**
-            """,
+**Conversão em risco e ação**
+- **Pontuação final ≤ 4** → **Risco Baixo** → **Ignorar**
+- **Pontuação final ≤ 8** → **Risco Médio** → **Monitorizar**
+- **Pontuação final > 8** → **Risco Elevado** → **Escalar**
+""",
             unsafe_allow_html=True
         )
 
