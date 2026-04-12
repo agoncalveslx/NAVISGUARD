@@ -3,7 +3,7 @@ from utils.cases import estado_do_caso
 
 
 def render_header():
-    col1, col2, col3 = st.columns([1, 2.4, 1])
+    col1, col2, col3 = st.columns([1.2, 2.6, 1.2])
     with col2:
         st.image("logo.jpg", use_container_width=True)
 
@@ -23,8 +23,8 @@ def render_header():
         unsafe_allow_html=True
     )
 
-   with st.expander("Enquadramento Operacional"):
-    st.markdown("""
+    with st.expander("Enquadramento Operacional"):
+        st.markdown("""
 ### Finalidade
 Esta aplicação constitui uma **plataforma de apoio à decisão em ambiente marítimo**, desenvolvida para analisar comportamentos potencialmente anómalos de embarcações com base em dados operacionais.
 
