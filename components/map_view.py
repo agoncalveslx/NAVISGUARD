@@ -28,10 +28,10 @@ def obter_coordenadas_caso(posicao, contexto):
 def classe_zona_maritima(zona):
     zona_lower = zona.lower()
     if "norte" in zona_lower:
-        return "Zona Norte"
+        return "SETOR NORTE"
     elif "centro" in zona_lower or "lisboa" in zona_lower or "setúbal" in zona_lower or "sines" in zona_lower or "figueira" in zona_lower:
-        return "Zona Centro"
-    return "Zona Sul"
+        return "SETOR CENTRO"
+    return "SETOR SUL"
 
 
 def desenhar_bloco_zona_maritima(zona, observacao):
@@ -42,18 +42,18 @@ def desenhar_bloco_zona_maritima(zona, observacao):
             background: linear-gradient(90deg, #0f172a 0%, #1e293b 100%);
             color: white;
             border: 1px solid #334155;
-            border-radius: 14px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.14);
         ">
-            <div style="font-size: 0.82rem; color: #93c5fd; font-weight: 700; letter-spacing: 0.04em;">
+            <div style="font-size: 0.76rem; color: #93c5fd; font-weight: 800; letter-spacing: 0.05em;">
                 ENQUADRAMENTO MARÍTIMO
             </div>
-            <div style="font-size: 1.05rem; font-weight: 800; margin-top: 2px;">
-                {zona_operacional} — {zona}
+            <div style="font-size: 1rem; font-weight: 800; margin-top: 2px;">
+                {zona_operacional} | {zona}
             </div>
-            <div style="font-size: 0.9rem; color: #cbd5e1; margin-top: 4px;">
+            <div style="font-size: 0.84rem; color: #cbd5e1; margin-top: 3px;">
                 {observacao}
             </div>
         </div>
@@ -72,10 +72,10 @@ def cor_risco_mapa(risco):
 
 def raio_risco(risco):
     if risco == "Baixo":
-        return 14000
+        return 12000
     elif risco == "Médio":
-        return 24000
-    return 34000
+        return 20000
+    return 28000
 
 
 def gerar_trajetoria(lat, lon, velocidade, posicao):
@@ -112,26 +112,26 @@ def obter_contactos_referencia():
 def desenhar_legenda_tatica():
     st.markdown(
         """
-        <div style="display:flex; gap:18px; flex-wrap:wrap; margin-top:8px; margin-bottom:6px;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:14px; height:14px; border-radius:50%; background:#22c55e;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Baixo</b></span>
+        <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:6px; margin-bottom:4px;">
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:12px; height:12px; border-radius:50%; background:#ef4444;"></div>
+                <span style="font-size:0.84rem; color:#334155;"><b>Elevado</b></span>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:14px; height:14px; border-radius:50%; background:#f59e0b;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Médio</b></span>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:12px; height:12px; border-radius:50%; background:#f59e0b;"></div>
+                <span style="font-size:0.84rem; color:#334155;"><b>Médio</b></span>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:14px; height:14px; border-radius:50%; background:#ef4444;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Elevado</b></span>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:12px; height:12px; border-radius:50%; background:#22c55e;"></div>
+                <span style="font-size:0.84rem; color:#334155;"><b>Baixo</b></span>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:18px; height:3px; background:#60a5fa;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Trajetória estimada</b></span>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:18px; height:3px; background:#2563eb;"></div>
+                <span style="font-size:0.84rem; color:#334155;"><b>Trajetória estimada</b></span>
             </div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:18px; height:12px; background:#334155; border:1px solid #94a3b8;"></div>
-                <span style="font-size:0.9rem; color:#334155;"><b>Costa continental</b></span>
+            <div style="display:flex; align-items:center; gap:6px;">
+                <div style="width:12px; height:12px; border-radius:50%; background:#64748b;"></div>
+                <span style="font-size:0.84rem; color:#334155;"><b>Referência</b></span>
             </div>
         </div>
         """,
@@ -166,10 +166,10 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         "PathLayer",
         data=df_trajetoria,
         get_path="path",
-        get_color=[59, 130, 246, 220],
+        get_color=[37, 99, 235, 235],
         width_scale=20,
-        width_min_pixels=3,
-        get_width=5 if velocidade == "Muito suspeito" else 4 if velocidade == "Ligeiramente suspeito" else 3,
+        width_min_pixels=4,
+        get_width=6 if velocidade == "Muito suspeito" else 5 if velocidade == "Ligeiramente suspeito" else 4,
         pickable=False
     )
 
@@ -177,8 +177,8 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         "ScatterplotLayer",
         data=df_referencia,
         get_position="[lon, lat]",
-        get_fill_color=[120, 140, 160, 70],
-        get_radius=3000,
+        get_fill_color=[100, 116, 139, 90],
+        get_radius=2200,
         pickable=False
     )
 
@@ -188,23 +188,23 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         get_position="[lon, lat]",
         get_fill_color=[0, 0, 0, 0],
         get_line_color=cor,
-        line_width_min_pixels=4,
+        line_width_min_pixels=3,
         stroked=True,
         filled=False,
         get_radius=raio,
         pickable=False
     )
 
-    layer_anel_secundario = pdk.Layer(
+    layer_perimetro_atencao = pdk.Layer(
         "ScatterplotLayer",
         data=df_contacto,
         get_position="[lon, lat]",
-        get_fill_color=[0, 0, 0, 0],
-        get_line_color=[cor[0], cor[1], cor[2], 80],
+        get_fill_color=[cor[0], cor[1], cor[2], 20],
+        get_line_color=[cor[0], cor[1], cor[2], 70],
         line_width_min_pixels=1,
         stroked=True,
-        filled=False,
-        get_radius=raio + 8000,
+        filled=True,
+        get_radius=raio + 7000,
         pickable=False
     )
 
@@ -213,11 +213,11 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         data=df_contacto,
         get_position="[lon, lat]",
         get_fill_color=cor,
-        get_line_color=[255, 255, 255, 255],
-        line_width_min_pixels=3,
+        get_line_color=[255, 255, 255, 240],
+        line_width_min_pixels=2,
         stroked=True,
         filled=True,
-        get_radius=14000,
+        get_radius=9000,
         pickable=True
     )
 
@@ -230,17 +230,18 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         }]),
         get_position="[lon, lat]",
         get_text="texto",
-        get_size=18,
-        get_color=[255, 255, 255, 240],
+        get_size=16,
+        get_color=[255, 255, 255, 245],
         get_angle=0,
         get_text_anchor="'middle'",
         get_alignment_baseline="'center'"
     )
 
+    # Mais foco no mar e no contacto, menos interior terrestre
     view_state = pdk.ViewState(
-        latitude=39.30,
-        longitude=-9.20,
-        zoom=6.0,
+        latitude=lat,
+        longitude=lon - 0.55,
+        zoom=6.8,
         pitch=0
     )
 
@@ -251,7 +252,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         layers=[
             layer_trajetoria,
             layer_contactos_ref,
-            layer_anel_secundario,
+            layer_perimetro_atencao,
             layer_anel_risco,
             layer_contacto_principal,
             layer_centro
