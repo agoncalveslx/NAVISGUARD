@@ -4,7 +4,7 @@ from utils.cases import estado_do_caso
 
 def render_header():
     st.markdown('<div class="topo-dashboard" style="padding:10px;">', unsafe_allow_html=True)
-    st.image("logo.jpg", use_container_width=True)
+    st.image("logo.jpg", width=900)
     st.markdown('</div>', unsafe_allow_html=True)
 
     id_atual = (
