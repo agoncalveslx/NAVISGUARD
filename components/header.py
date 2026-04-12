@@ -24,22 +24,19 @@ def render_header():
     )
 
     with st.expander("Enquadramento Operacional"):
+        st.info("""
+**Finalidade:** apoiar a decisão em ambiente marítimo através da análise de comportamentos potencialmente anómalos com base em dados operacionais.
+
+**Fontes consideradas:** AIS, VMS, radar e outras fontes externas.
+""")
+
         st.markdown("""
-### Finalidade
-Esta aplicação constitui uma **plataforma de apoio à decisão em ambiente marítimo**, desenvolvida para analisar comportamentos potencialmente anómalos de embarcações com base em dados operacionais.
-
-### Fontes de informação consideradas
-- **AIS (Automatic Identification System)**
-- **VMS (Vessel Monitoring System)**
-- **Radar**
-- **Outras fontes externas**
-
-### Funções principais do sistema
+### Funções principais
 1. **Gerar indicadores internos de risco (I1–I6)**  
-   Avalia dimensões como identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
+   Avalia identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
 
 2. **Calcular uma pontuação agregada**  
-   Cada indicador contribui de forma ponderada para o risco global.
+   Combina os indicadores numa avaliação global de risco.
 
 3. **Classificar o nível de risco**  
    - Baixo  
@@ -51,9 +48,10 @@ Esta aplicação constitui uma **plataforma de apoio à decisão em ambiente mar
    - Monitorizar  
    - Escalar
 
-5. **Permitir validação humana da decisão**  
-   O Especialista pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
+5. **Permitir validação humana**  
+   O Especialista pode confirmar ou ajustar a recomendação proposta.
+""")
 
-### Nota
-Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo. Não substitui sistemas reais de vigilância ou comando operacional.
+        st.warning("""
+**Nota:** esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo. Não substitui sistemas reais de vigilância ou comando operacional.
 """)
