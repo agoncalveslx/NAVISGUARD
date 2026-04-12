@@ -23,36 +23,37 @@ def render_header():
         unsafe_allow_html=True
     )
 
-    with st.expander("Enquadramento Operacional"):
-        st.write("""
-Este sistema constitui uma **plataforma de apoio à decisão em ambiente marítimo**, desenvolvida para avaliar comportamentos potencialmente anómalos de embarcações com base em dados operacionais.
+   with st.expander("Enquadramento Operacional"):
+    st.markdown("""
+### Finalidade
+Esta aplicação constitui uma **plataforma de apoio à decisão em ambiente marítimo**, desenvolvida para analisar comportamentos potencialmente anómalos de embarcações com base em dados operacionais.
 
-A aplicação simula a análise de informação proveniente de sistemas como:
-- AIS (Automatic Identification System)
-- VMS (Vessel Monitoring System)
-- Radar e outras fontes externas
+### Fontes de informação consideradas
+- **AIS (Automatic Identification System)**
+- **VMS (Vessel Monitoring System)**
+- **Radar**
+- **Outras fontes externas**
 
-Com base nos dados introduzidos pelo Especialista, o sistema:
-
-1. **Gera indicadores internos de risco (I1–I6)**
+### Funções principais do sistema
+1. **Gerar indicadores internos de risco (I1–I6)**  
    Avalia dimensões como identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
 
-2. **Calcula uma pontuação agregada**
+2. **Calcular uma pontuação agregada**  
    Cada indicador contribui de forma ponderada para o risco global.
 
-3. **Classifica o nível de risco**
-   - Baixo
-   - Médio
+3. **Classificar o nível de risco**  
+   - Baixo  
+   - Médio  
    - Elevado
 
-4. **Propõe uma ação operacional**
-   - Ignorar
-   - Monitorizar
+4. **Propor uma ação operacional**  
+   - Ignorar  
+   - Monitorizar  
    - Escalar
 
-5. **Permite validação humana da decisão**
+5. **Permitir validação humana da decisão**  
    O Especialista pode confirmar ou ajustar a recomendação, garantindo controlo humano no processo.
 
-⚠️ **Nota:**
-Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo, não substituindo sistemas reais de vigilância ou comando operacional.
+### Nota
+Esta aplicação é uma **demo conceptual**, desenvolvida para ilustrar a lógica de um sistema de apoio à decisão em contexto marítimo. Não substitui sistemas reais de vigilância ou comando operacional.
 """)
