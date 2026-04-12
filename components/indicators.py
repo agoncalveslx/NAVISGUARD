@@ -88,31 +88,31 @@ def render_indicators_section():
             )
             st.markdown(html_b, unsafe_allow_html=True)
 
-    with st.expander("Ver regra de cálculo"):
-        st.markdown(
-            f"""
+        with st.expander("Ver regra de cálculo"):
+            st.markdown(
+        f"""
 **Origem dos indicadores**
 - **I1** = Posição/Trajetória
-- **I2** = Posição/Trajetória + Concordância com radar/outras fontes
+- **I2** = Posição/Trajetória + Radar/Outras fontes
 - **I3** = Velocidade/Curso
 - **I4** = Posição/Trajetória + Velocidade/Curso
 - **I5** = Contexto operacional
-- **I6** = Concordância com radar/outras fontes
+- **I6** = Radar/Outras fontes
 
-**Estados**
-- **Baixo** = 0 pontos
-- **Médio** = 1 ponto
-- **Elevado** = 2 pontos
+**Escala de estados**
+- **Baixo** = 0
+- **Médio** = 1
+- **Elevado** = 2
 
 **Fórmula aplicada a este caso**
 <div class="formula-caso"><b>{formula_caso_texto(contributos)}</b></div>
 
-**Conversão em risco e ação**
+**Resultado operacional**
 - **Pontuação final ≤ 4** → **Risco Baixo** → **Ignorar**
 - **Pontuação final ≤ 8** → **Risco Médio** → **Monitorizar**
 - **Pontuação final > 8** → **Risco Elevado** → **Escalar**
 """,
-            unsafe_allow_html=True
-        )
+        unsafe_allow_html=True
+    )
 
     st.markdown('</div>', unsafe_allow_html=True)
