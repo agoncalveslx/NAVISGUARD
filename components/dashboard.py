@@ -37,26 +37,29 @@ def render_dashboard():
         }
         risco_predominante = max(valores_risco, key=valores_risco.get)
 
-        # Estado do quadro mais direto e operacional
+        # Estado do quadro mais compacto
         if resumo_risco["Elevado"] > 0:
             st.error(
-                f"**ESTADO DO QUADRO: RISCO ELEVADO**  \n"
-                f"Casos elevados: {resumo_risco['Elevado']} | Escalamentos: {total_escalados}"
+                f"**ESTADO DO QUADRO: RISCO ELEVADO** | "
+                f"Casos elevados: {resumo_risco['Elevado']} | "
+                f"Escalamentos: {total_escalados}"
             )
         elif resumo_risco["Médio"] > 0:
             st.warning(
-                f"**ESTADO DO QUADRO: RISCO MÉDIO**  \n"
-                f"Casos médios: {resumo_risco['Médio']} | Total de casos: {total_casos}"
+                f"**ESTADO DO QUADRO: RISCO MÉDIO** | "
+                f"Casos médios: {resumo_risco['Médio']} | "
+                f"Total de casos: {total_casos}"
             )
         else:
             st.success(
-                f"**ESTADO DO QUADRO: RISCO BAIXO**  \n"
-                f"Total de casos: {total_casos} | Escalamentos: {total_escalados}"
+                f"**ESTADO DO QUADRO: RISCO BAIXO** | "
+                f"Total de casos: {total_casos} | "
+                f"Escalamentos: {total_escalados}"
             )
 
         st.markdown("#### Resumo da Situação")
 
-        # KPIs primários
+        # Bloco único de métricas: primárias + secundárias
         d1, d2, d3, d4 = st.columns(4)
         with d1:
             st.metric("Total de casos", total_casos)
@@ -67,9 +70,7 @@ def render_dashboard():
         with d4:
             st.metric("Risco predominante", risco_predominante)
 
-        # KPIs secundários
         if total_validados > 0:
-            st.markdown("##### Indicadores de Validação")
             a1, a2 = st.columns(2)
             with a1:
                 st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
@@ -111,8 +112,6 @@ def render_dashboard():
         st.markdown("#### Registo Operacional Recente")
 
         historico_df = historico_df.sort_values(by="timestamp", ascending=False)
-
-        # Limita a visualização imediata aos casos mais recentes
         historico_recente = historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]].head(10)
 
         with st.expander("Ver histórico resumido"):
