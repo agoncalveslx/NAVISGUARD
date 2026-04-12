@@ -411,5 +411,41 @@ def aplicar_estilos():
             font-size: 0.88rem;
             color: #334155;
         }
+
+        /* Faixa de estado do quadro */
+        .faixa-estado {
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            border: 1px solid;
+            font-weight: 800;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+
+        .faixa-estado-linha-secundaria {
+            margin-top: 4px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            letter-spacing: 0;
+        }
+
+        .faixa-vermelha {
+            background: #7f1d1d;
+            color: #fee2e2;
+            border-color: #991b1b;
+        }
+
+        .faixa-amarela {
+            background: #78350f;
+            color: #fef3c7;
+            border-color: #92400e;
+        }
+
+        .faixa-verde {
+            background: #14532d;
+            color: #dcfce7;
+            border-color: #166534;
+        }
     </style>
     """, unsafe_allow_html=True)
