@@ -74,29 +74,29 @@ def raio_risco(risco):
     if risco == "Baixo":
         return 12000
     elif risco == "Médio":
-        return 20000
-    return 28000
+        return 19000
+    return 26000
 
 
 def gerar_trajetoria(lat, lon, velocidade, posicao):
     if velocidade == "Muito suspeito":
-        desloc_lon = 1.25
-        desloc_lat = 0.22
+        desloc_lon = 1.35
+        desloc_lat = 0.24
     elif velocidade == "Ligeiramente suspeito":
-        desloc_lon = 0.90
-        desloc_lat = 0.14
+        desloc_lon = 0.98
+        desloc_lat = 0.15
     else:
-        desloc_lon = 0.55
-        desloc_lat = 0.09
+        desloc_lon = 0.65
+        desloc_lat = 0.10
 
     if posicao == "Muito suspeita":
         desloc_lat *= 1.15
 
     return [
         [lon - desloc_lon, lat + desloc_lat],
-        [lon - desloc_lon * 0.75, lat + desloc_lat * 0.55],
-        [lon - desloc_lon * 0.45, lat + desloc_lat * 0.22],
-        [lon - desloc_lon * 0.20, lat + desloc_lat * 0.08],
+        [lon - desloc_lon * 0.78, lat + desloc_lat * 0.58],
+        [lon - desloc_lon * 0.50, lat + desloc_lat * 0.26],
+        [lon - desloc_lon * 0.23, lat + desloc_lat * 0.10],
         [lon, lat]
     ]
 
@@ -113,26 +113,26 @@ def obter_contactos_referencia():
 def desenhar_legenda_tatica():
     st.markdown(
         """
-        <div style="display:flex; gap:14px; flex-wrap:wrap; margin-top:6px; margin-bottom:2px;">
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:6px; margin-bottom:2px;">
             <div style="display:flex; align-items:center; gap:6px;">
-                <div style="width:12px; height:12px; border-radius:50%; background:#ef4444;"></div>
-                <span style="font-size:0.84rem; color:#334155;"><b>Elevado</b></span>
+                <div style="width:11px; height:11px; border-radius:50%; background:#ef4444;"></div>
+                <span style="font-size:0.82rem; color:#475569;"><b>Elevado</b></span>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
-                <div style="width:12px; height:12px; border-radius:50%; background:#f59e0b;"></div>
-                <span style="font-size:0.84rem; color:#334155;"><b>Médio</b></span>
+                <div style="width:11px; height:11px; border-radius:50%; background:#f59e0b;"></div>
+                <span style="font-size:0.82rem; color:#475569;"><b>Médio</b></span>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
-                <div style="width:12px; height:12px; border-radius:50%; background:#22c55e;"></div>
-                <span style="font-size:0.84rem; color:#334155;"><b>Baixo</b></span>
+                <div style="width:11px; height:11px; border-radius:50%; background:#22c55e;"></div>
+                <span style="font-size:0.82rem; color:#475569;"><b>Baixo</b></span>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
-                <div style="width:20px; height:3px; background:#2563eb;"></div>
-                <span style="font-size:0.84rem; color:#334155;"><b>Trajetória estimada</b></span>
+                <div style="width:18px; height:3px; background:#2563eb;"></div>
+                <span style="font-size:0.82rem; color:#475569;"><b>Trajetória</b></span>
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
-                <div style="width:12px; height:12px; border-radius:50%; background:#64748b;"></div>
-                <span style="font-size:0.84rem; color:#334155;"><b>Referência</b></span>
+                <div style="width:11px; height:11px; border-radius:50%; background:#64748b;"></div>
+                <span style="font-size:0.82rem; color:#475569;"><b>Referência</b></span>
             </div>
         </div>
         """,
@@ -170,7 +170,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         get_color=[37, 99, 235, 235],
         width_scale=20,
         width_min_pixels=5,
-        get_width=7 if velocidade == "Muito suspeito" else 6 if velocidade == "Ligeiramente suspeito" else 5,
+        get_width=8 if velocidade == "Muito suspeito" else 7 if velocidade == "Ligeiramente suspeito" else 6,
         pickable=False
     )
 
@@ -178,8 +178,8 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         "ScatterplotLayer",
         data=df_referencia,
         get_position="[lon, lat]",
-        get_fill_color=[100, 116, 139, 90],
-        get_radius=2200,
+        get_fill_color=[100, 116, 139, 85],
+        get_radius=2000,
         pickable=False
     )
 
@@ -187,12 +187,12 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         "ScatterplotLayer",
         data=df_contacto,
         get_position="[lon, lat]",
-        get_fill_color=[cor[0], cor[1], cor[2], 28],
-        get_line_color=[cor[0], cor[1], cor[2], 95],
+        get_fill_color=[cor[0], cor[1], cor[2], 20],
+        get_line_color=[cor[0], cor[1], cor[2], 70],
         line_width_min_pixels=1,
         stroked=True,
         filled=True,
-        get_radius=raio + 8000,
+        get_radius=raio + 6000,
         pickable=False
     )
 
@@ -218,7 +218,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         line_width_min_pixels=2,
         stroked=True,
         filled=True,
-        get_radius=7000,
+        get_radius=5800,
         pickable=True
     )
 
@@ -231,7 +231,7 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
         }]),
         get_position="[lon, lat]",
         get_text="texto",
-        get_size=15,
+        get_size=14,
         get_color=[255, 255, 255, 245],
         get_angle=0,
         get_text_anchor="'middle'",
@@ -239,9 +239,9 @@ def desenhar_mapa_tatico(posicao, velocidade, contexto, risco):
     )
 
     view_state = pdk.ViewState(
-        latitude=lat + 0.02,
-        longitude=lon - 0.75,
-        zoom=7.1,
+        latitude=lat + 0.01,
+        longitude=lon - 0.78,
+        zoom=7.0,
         pitch=0
     )
 
