@@ -13,7 +13,7 @@ from utils.history import (
 def render_dashboard():
     st.markdown('<div class="cartao">', unsafe_allow_html=True)
     st.markdown('<div class="titulo-secao">QUADRO DE SITUAÇÃO DE RISCO</div>', unsafe_allow_html=True)
-    st.markdown('<div class="subtitulo-secao">Síntese operacional dos casos processados pelo sistema.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="subtitulo-secao">Síntese operacional dos casos processados.</div>', unsafe_allow_html=True)
 
     if len(st.session_state.historico_casos) == 0:
         st.info("Ainda não existem casos registados para análise estatística.")
@@ -37,88 +37,106 @@ def render_dashboard():
         }
         risco_predominante = max(valores_risco, key=valores_risco.get)
 
-        # Estado do quadro mais compacto
-        if resumo_risco["Elevado"] > 0:
-            st.error(
-                f"**ESTADO DO QUADRO: RISCO ELEVADO** | "
-                f"Casos elevados: {resumo_risco['Elevado']} | "
-                f"Escalamentos: {total_escalados}"
-            )
-        elif resumo_risco["Médio"] > 0:
-            st.warning(
-                f"**ESTADO DO QUADRO: RISCO MÉDIO** | "
-                f"Casos médios: {resumo_risco['Médio']} | "
-                f"Total de casos: {total_casos}"
-            )
-        else:
-            st.success(
-                f"**ESTADO DO QUADRO: RISCO BAIXO** | "
-                f"Total de casos: {total_casos} | "
-                f"Escalamentos: {total_escalados}"
-            )
+        esquerda, direita = st.columns([1, 2], gap="large")
 
-        st.markdown("#### Resumo da Situação")
+        with esquerda:
+            st.markdown("#### Painel de Comando")
 
-        # Bloco único de métricas: primárias + secundárias
-        d1, d2, d3, d4 = st.columns(4)
-        with d1:
-            st.metric("Total de casos", total_casos)
-        with d2:
-            st.metric("Casos escalados", total_escalados)
-        with d3:
-            st.metric("Taxa de escalamento", f"{percentagem_escalados}%")
-        with d4:
+            if resumo_risco["Elevado"] > 0:
+                st.error(
+                    f"**ESTADO DO QUADRO: RISCO ELEVADO**\n\n"
+                    f"Casos elevados: {resumo_risco['Elevado']}  \n"
+                    f"Escalamentos: {total_escalados}"
+                )
+            elif resumo_risco["Médio"] > 0:
+                st.warning(
+                    f"**ESTADO DO QUADRO: RISCO MÉDIO**\n\n"
+                    f"Casos médios: {resumo_risco['Médio']}  \n"
+                    f"Total de casos: {total_casos}"
+                )
+            else:
+                st.success(
+                    f"**ESTADO DO QUADRO: RISCO BAIXO**\n\n"
+                    f"Total de casos: {total_casos}  \n"
+                    f"Escalamentos: {total_escalados}"
+                )
+
             st.metric("Risco predominante", risco_predominante)
+            st.metric("Casos escalados", total_escalados)
+            st.metric("Taxa de escalamento", f"{percentagem_escalados}%")
 
-        if total_validados > 0:
-            a1, a2 = st.columns(2)
-            with a1:
+            if not historico_df.empty:
+                historico_ordenado = historico_df.sort_values(by="timestamp", ascending=False)
+                ultimo = historico_ordenado.iloc[0]
+
+                st.markdown("#### Último Caso")
+                st.markdown(
+                    f"""
+**Caso:** {ultimo['id_caso']}  
+**Risco:** {ultimo['risco']}  
+**Ação:** {ultimo['acao']}  
+**Pontuação:** {ultimo['pontuacao_total']}
+"""
+                )
+
+            if total_validados > 0:
+                st.markdown("#### Validação")
                 st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
-            with a2:
                 st.metric("Taxa de alteração", f"{taxa_alteracao}%")
 
-            if taxa_alteracao >= 40:
-                st.warning("Taxa de alteração elevada. Recomenda-se revisão das regras automáticas.")
-            elif taxa_confirmacao >= 80:
-                st.success("Confirmação elevada da recomendação automática.")
+                if taxa_alteracao >= 40:
+                    st.warning("Taxa de alteração elevada.")
+                elif taxa_confirmacao >= 80:
+                    st.success("Confirmação elevada da recomendação automática.")
 
-        st.markdown("#### Distribuição por Nível de Risco")
+        with direita:
+            st.markdown("#### Resumo da Situação")
 
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.markdown(f"""
-            <div class="mini-indicador" style="background:#e8f3ee;border:1px solid #3d8b5f;">
-                <div class="valor">{resumo_risco['Baixo']}</div>
-                <div class="rotulo">Risco Baixo</div>
-            </div>
-            """, unsafe_allow_html=True)
+            d1, d2 = st.columns(2)
+            with d1:
+                st.metric("Total de casos", total_casos)
+            with d2:
+                st.metric("Casos validados", total_validados)
 
-        with c2:
-            st.markdown(f"""
-            <div class="mini-indicador" style="background:#f4efe2;border:1px solid #b7791f;">
-                <div class="valor">{resumo_risco['Médio']}</div>
-                <div class="rotulo">Risco Médio</div>
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown("#### Distribuição por Nível de Risco")
 
-        with c3:
-            st.markdown(f"""
-            <div class="mini-indicador" style="background:#f3e8e8;border:1px solid #b91c1c;">
-                <div class="valor">{resumo_risco['Elevado']}</div>
-                <div class="rotulo">Risco Elevado</div>
-            </div>
-            """, unsafe_allow_html=True)
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                st.markdown(f"""
+                <div class="mini-indicador" style="background:#e8f3ee;border:1px solid #3d8b5f;">
+                    <div class="valor">{resumo_risco['Baixo']}</div>
+                    <div class="rotulo">Risco Baixo</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-        st.markdown("#### Registo Operacional Recente")
+            with c2:
+                st.markdown(f"""
+                <div class="mini-indicador" style="background:#f4efe2;border:1px solid #b7791f;">
+                    <div class="valor">{resumo_risco['Médio']}</div>
+                    <div class="rotulo">Risco Médio</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-        historico_df = historico_df.sort_values(by="timestamp", ascending=False)
-        historico_recente = historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]].head(10)
+            with c3:
+                st.markdown(f"""
+                <div class="mini-indicador" style="background:#f3e8e8;border:1px solid #b91c1c;">
+                    <div class="valor">{resumo_risco['Elevado']}</div>
+                    <div class="rotulo">Risco Elevado</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-        with st.expander("Ver histórico resumido"):
-            st.dataframe(
-                historico_recente,
-                use_container_width=True,
-                hide_index=True
-            )
+            st.markdown("#### Registo Operacional Recente")
+
+            historico_df = historico_df.sort_values(by="timestamp", ascending=False)
+            historico_recente = historico_df[
+                ["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]
+            ].head(10)
+
+            with st.expander("Ver histórico resumido"):
+                st.dataframe(
+                    historico_recente,
+                    use_container_width=True,
+                    hide_index=True
+                )
 
     st.markdown('</div>', unsafe_allow_html=True)
