@@ -37,21 +37,26 @@ def render_dashboard():
         }
         risco_predominante = max(valores_risco, key=valores_risco.get)
 
+        # Estado do quadro mais direto e operacional
         if resumo_risco["Elevado"] > 0:
-            estado_quadro = "Risco Elevado"
-            mensagem_quadro = f"Situação operacional com {resumo_risco['Elevado']} caso(s) de risco elevado e {total_escalados} escalamento(s) registado(s)."
-            st.error(f"**Estado do quadro:** {estado_quadro} — {mensagem_quadro}")
+            st.error(
+                f"**ESTADO DO QUADRO: RISCO ELEVADO**  \n"
+                f"Casos elevados: {resumo_risco['Elevado']} | Escalamentos: {total_escalados}"
+            )
         elif resumo_risco["Médio"] > 0:
-            estado_quadro = "Risco Médio"
-            mensagem_quadro = f"Situação operacional com predominância de risco médio. Total de casos: {total_casos}."
-            st.warning(f"**Estado do quadro:** {estado_quadro} — {mensagem_quadro}")
+            st.warning(
+                f"**ESTADO DO QUADRO: RISCO MÉDIO**  \n"
+                f"Casos médios: {resumo_risco['Médio']} | Total de casos: {total_casos}"
+            )
         else:
-            estado_quadro = "Risco Baixo"
-            mensagem_quadro = f"Situação operacional estável. Total de casos processados: {total_casos}."
-            st.success(f"**Estado do quadro:** {estado_quadro} — {mensagem_quadro}")
+            st.success(
+                f"**ESTADO DO QUADRO: RISCO BAIXO**  \n"
+                f"Total de casos: {total_casos} | Escalamentos: {total_escalados}"
+            )
 
         st.markdown("#### Resumo da Situação")
 
+        # KPIs primários
         d1, d2, d3, d4 = st.columns(4)
         with d1:
             st.metric("Total de casos", total_casos)
@@ -62,7 +67,9 @@ def render_dashboard():
         with d4:
             st.metric("Risco predominante", risco_predominante)
 
+        # KPIs secundários
         if total_validados > 0:
+            st.markdown("##### Indicadores de Validação")
             a1, a2 = st.columns(2)
             with a1:
                 st.metric("Taxa de confirmação", f"{taxa_confirmacao}%")
@@ -70,9 +77,9 @@ def render_dashboard():
                 st.metric("Taxa de alteração", f"{taxa_alteracao}%")
 
             if taxa_alteracao >= 40:
-                st.warning("A taxa de alteração pelo especialista está elevada. Pode justificar revisão das regras automáticas.")
+                st.warning("Taxa de alteração elevada. Recomenda-se revisão das regras automáticas.")
             elif taxa_confirmacao >= 80:
-                st.success("A recomendação automática apresenta elevada taxa de confirmação pelo especialista.")
+                st.success("Confirmação elevada da recomendação automática.")
 
         st.markdown("#### Distribuição por Nível de Risco")
 
@@ -105,9 +112,12 @@ def render_dashboard():
 
         historico_df = historico_df.sort_values(by="timestamp", ascending=False)
 
+        # Limita a visualização imediata aos casos mais recentes
+        historico_recente = historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]].head(10)
+
         with st.expander("Ver histórico resumido"):
             st.dataframe(
-                historico_df[["id_caso", "timestamp", "risco", "acao", "pontuacao_total"]],
+                historico_recente,
                 use_container_width=True,
                 hide_index=True
             )
