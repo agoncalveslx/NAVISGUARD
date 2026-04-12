@@ -80,7 +80,6 @@ def render_tactical_sections():
         st.markdown('<div class="cartao">', unsafe_allow_html=True)
         st.markdown('<div class="titulo-secao">5. MAPA TÁTICO</div>', unsafe_allow_html=True)
         st.markdown('<div class="subtitulo-secao">Representação do contacto, trajetória estimada e perímetro de atenção no espaço marítimo adjacente à costa continental portuguesa.</div>', unsafe_allow_html=True)
-        st.info("Quadro geográfico de apoio à apreciação tática do contacto marítimo.")
         desenhar_mapa_tatico(
             dados["posicao"],
             dados["velocidade"],
