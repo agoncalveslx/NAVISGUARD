@@ -8,25 +8,27 @@ def aplicar_estilos():
             background: linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
         }
 
-        .topo-dashboard {
+       .topo-dashboard {
             background: linear-gradient(90deg, #0f172a 0%, #1d4ed8 100%);
-            padding: 24px;
-            border-radius: 18px;
+            padding: 12px 18px;
+            border-radius: 16px;
             color: white;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-        }
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }    
 
-        .topo-dashboard h1 {
-            margin: 0;
-            font-size: 2rem;
-        }
-
-        .topo-dashboard p {
-            margin-top: 8px;
-            font-size: 1rem;
-            color: #eef4ff;
-        }
+    .topo-dashboard h1 {
+        margin: 0;
+        font-size: 1.35rem;
+        line-height: 1.1;
+    }
+    
+    .topo-dashboard p {
+        margin-top: 4px;
+        margin-bottom: 0;
+        font-size: 0.88rem;
+        color: #eef4ff;
+    }
 
         .cartao {
             background: white;
