@@ -347,5 +347,69 @@ def aplicar_estilos():
             border: 1px solid #cbd5e1 !important;
             color: #0f172a !important;
         }
+
+        /* Afinar st.metric */
+        div[data-testid="stMetric"] {
+            background: #f8fafc;
+            border: 1px solid #dbe2ea;
+            border-radius: 8px;
+            padding: 10px 12px;
+            box-shadow: none;
+        }
+
+        div[data-testid="stMetricLabel"] {
+            color: #475569;
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+
+        div[data-testid="stMetricValue"] {
+            color: #0f172a;
+            font-weight: 800;
+            font-size: 1.45rem;
+            line-height: 1.1;
+        }
+
+        div[data-testid="stMetricDelta"] {
+            font-size: 0.78rem;
+        }
+
+        /* Afinar expander */
+        div[data-testid="stExpander"] {
+            border: 1px solid #dbe2ea;
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: none;
+        }
+
+        div[data-testid="stExpander"] details {
+            border-radius: 8px;
+        }
+
+        div[data-testid="stExpander"] summary {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* Afinar dataframe */
+        div[data-testid="stDataFrame"] {
+            border: 1px solid #dbe2ea;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        div[data-testid="stDataFrame"] [role="columnheader"] {
+            background: #e2e8f0 !important;
+            color: #0f172a !important;
+            font-weight: 800 !important;
+            border-bottom: 1px solid #cbd5e1 !important;
+        }
+
+        div[data-testid="stDataFrame"] [role="gridcell"] {
+            font-size: 0.88rem;
+            color: #334155;
+        }
     </style>
     """, unsafe_allow_html=True)
