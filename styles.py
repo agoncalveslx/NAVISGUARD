@@ -112,10 +112,11 @@ def aplicar_estilos():
             margin-top: 2px;
         }
 
+        /* Quadro de indicadores */
         .mini-cartao-indicador {
             border: 1px solid #d7dde5;
             border-radius: 8px;
-            padding: 10px 12px;
+            padding: 9px 11px;
             margin-bottom: 8px;
             position: relative;
             box-shadow: none;
@@ -137,26 +138,28 @@ def aplicar_estilos():
         }
 
         .mini-cartao-titulo {
-            font-weight: 700;
+            font-weight: 800;
             color: #0f172a;
-            margin-bottom: 5px;
-            font-size: 0.92rem;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+            line-height: 1.2;
         }
 
         .mini-cartao-linha {
-            font-size: 0.88rem;
+            font-size: 0.85rem;
             color: #334155;
-            line-height: 1.35;
+            line-height: 1.28;
+            margin-bottom: 2px;
         }
 
         .bloco-meta {
             background: #f8fafc;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #dbe2ea;
             border-radius: 8px;
-            padding: 10px 12px;
+            padding: 9px 11px;
             margin-bottom: 10px;
             color: #334155;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
         }
 
         .barra-estado-caso {
@@ -255,11 +258,12 @@ def aplicar_estilos():
             display: inline-block;
             background: #0f172a;
             color: white;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 999px;
+            font-size: 0.64rem;
+            font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 6px;
             margin-bottom: 6px;
+            letter-spacing: 0.03em;
         }
 
         .estado-confirmacao {
@@ -292,7 +296,7 @@ def aplicar_estilos():
             border-radius: 8px;
             padding: 10px 12px;
             color: #334155;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             margin-top: 8px;
         }
 
