@@ -25,7 +25,7 @@ def render_header():
 
     with st.expander("Enquadramento Operacional"):
         st.info("""
-**Finalidade:** apoiar a decisão em ambiente marítimo através da análise de comportamentos potencialmente anómalos com base em dados operacionais.
+**Finalidade:** apoiar a decisão em ambiente marítimo com base na análise de comportamentos potencialmente anómalos.
 
 **Fontes consideradas:** AIS, VMS, radar e outras fontes externas.
 """)
