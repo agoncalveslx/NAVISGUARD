@@ -88,7 +88,7 @@ def render_indicators_section():
             )
             st.markdown(html_b, unsafe_allow_html=True)
 
-        with st.expander("Ver regra de cálculo"):
+    with st.expander("Ver regra de cálculo"):
             st.markdown(
         f"""
 **Origem dos indicadores**
