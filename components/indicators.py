@@ -94,7 +94,7 @@ def render_indicators_section():
 **Origem dos indicadores**
 - **I1** = Posição/Trajetória
 - **I2** = Posição/Trajetória + Radar/Outras fontes
-- **I3** = Velocidade/Curso
+- **I3** = Velocidade/Rumo
 - **I4** = Posição/Trajetória + Velocidade/Curso
 - **I5** = Contexto operacional
 - **I6** = Radar/Outras fontes
