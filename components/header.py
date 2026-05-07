@@ -31,7 +31,7 @@ def render_header():
 """)
 
         st.markdown("""
-### Funç
+### Funções Principais
 1. **Gerar indicadores internos de risco (I1–I6)**  
    Avalia identidade, comportamento cinemático, coerência espacial e consistência entre fontes.
 
